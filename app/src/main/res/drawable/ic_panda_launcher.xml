@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Panda Outer Head Circle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,24C37.43,24 24,37.43 24,54C24,70.57 37.43,84 54,84C70.57,84 84,70.57 84,54C84,37.43 70.57,24 54,24Z" />
+
+    <!-- Left Ear -->
+    <path
+        android:fillColor="#7C4DFF"
+        android:pathData="M30,22C24.48,22 20,26.48 20,32C20,37.52 24.48,42 30,42C35.52,42 40,37.52 40,32C40,26.48 35.52,22 30,22Z" />
+
+    <!-- Right Ear -->
+    <path
+        android:fillColor="#7C4DFF"
+        android:pathData="M78,22C72.48,22 68,26.48 68,32C68,37.52 72.48,42 78,42C83.52,42 88,37.52 88,32C88,26.48 83.52,22 78,22Z" />
+
+    <!-- Left Eye Patch -->
+    <path
+        android:fillColor="#1E1E2C"
+        android:pathData="M43,46C38.58,46 35,49.58 35,54C35,58.42 38.58,62 43,62C47.42,62 51,58.42 51,54C51,49.58 47.42,46 43,46Z" />
+
+    <!-- Right Eye Patch -->
+    <path
+        android:fillColor="#1E1E2C"
+        android:pathData="M65,46C60.58,46 57,49.58 57,54C57,58.42 60.58,62 65,62C69.42,62 73,58.42 73,54C73,49.58 69.42,46 65,46Z" />
+
+    <!-- Left Pupil -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,52C42.9,52 42,52.9 42,54C42,55.1 42.9,56 44,56C45.1,56 46,55.1 46,54C46,52.9 45.1,52 44,52Z" />
+
+    <!-- Right Pupil -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,52C62.9,52 62,52.9 62,54C62,55.1 62.9,56 64,56C65.1,56 66,55.1 66,54C66,52.9 65.1,52 64,52Z" />
+
+    <!-- Nose -->
+    <path
+        android:fillColor="#7C4DFF"
+        android:pathData="M54,64C51.79,64 50,65.79 50,68C50,70.21 54,73 54,73C54,73 58,70.21 58,68C58,65.79 56.21,64 54,64Z" />
+
+</vector>

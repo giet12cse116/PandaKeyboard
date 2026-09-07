@@ -1,0 +1,298 @@
+{
+  "themes": [
+    {
+      "id": "default_dark",
+      "name": "Default Dark",
+      "isPro": false,
+      "previewImage": "preview_default_dark",
+      "keyBackgroundColor": "#3A3A3C",
+      "keyTextColor": "#FFFFFF",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#1C1C1E"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#7C4DFF"
+    },
+    {
+      "id": "midnight",
+      "name": "Midnight",
+      "isPro": false,
+      "previewImage": "preview_midnight",
+      "keyBackgroundColor": "#1A1A2E",
+      "keyTextColor": "#E0E0FF",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#0F0F23", "#1A1A2E", "#16213E"],
+        "angle": 0
+      },
+      "keyShape": "rounded",
+      "accentColor": "#5C6BC0"
+    },
+    {
+      "id": "pastel_dream",
+      "name": "Pastel Dream",
+      "isPro": false,
+      "previewImage": "preview_pastel_dream",
+      "keyBackgroundColor": "#F5E6F0",
+      "keyTextColor": "#4A4A4A",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#FFECD2", "#FCB69F", "#FF9A9E"],
+        "angle": 45
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF6B9D"
+    },
+    {
+      "id": "forest",
+      "name": "Forest",
+      "isPro": false,
+      "previewImage": "preview_forest",
+      "keyBackgroundColor": "#2D4A3E",
+      "keyTextColor": "#E8F5E9",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#1B2A21", "#2D4A3E"],
+        "angle": 0
+      },
+      "keyShape": "rounded",
+      "accentColor": "#66BB6A"
+    },
+    {
+      "id": "sunset_glow",
+      "name": "Sunset Glow",
+      "isPro": false,
+      "previewImage": "preview_sunset_glow",
+      "keyBackgroundColor": "#3D2040",
+      "keyTextColor": "#FFE0B2",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#1A0A2E", "#3D1053", "#6D2077"],
+        "angle": 135
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF7043"
+    },
+    {
+      "id": "panda",
+      "name": "Panda",
+      "isPro": false,
+      "previewImage": "preview_panda",
+      "keyBackgroundColor": "#FAFAFA",
+      "keyTextColor": "#212121",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#EEEEEE"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#7C4DFF"
+    },
+    {
+      "id": "neon_cyberpunk",
+      "name": "Neon Cyberpunk",
+      "isPro": false,
+      "previewImage": "preview_neon_cyberpunk",
+      "keyBackgroundColor": "#120826",
+      "keyTextColor": "#00F5FF",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#05021A", "#2A093D"],
+        "angle": 45
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF007F"
+    },
+    {
+      "id": "ocean_breeze",
+      "name": "Ocean Breeze",
+      "isPro": false,
+      "previewImage": "preview_ocean_breeze",
+      "keyBackgroundColor": "#162A38",
+      "keyTextColor": "#E0F7FA",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#0D1B2A", "#1B263B", "#62B6CB"],
+        "angle": 90
+      },
+      "keyShape": "rounded",
+      "accentColor": "#00E5FF"
+    },
+    {
+      "id": "rose_gold",
+      "name": "Rose Gold",
+      "isPro": false,
+      "previewImage": "preview_rose_gold",
+      "keyBackgroundColor": "#3E272A",
+      "keyTextColor": "#FCE4EC",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#2B1B1D", "#4A2E33", "#784B50"],
+        "angle": 135
+      },
+      "keyShape": "rounded",
+      "accentColor": "#F48FB1"
+    },
+    {
+      "id": "amoled_black",
+      "name": "AMOLED Black",
+      "isPro": false,
+      "previewImage": "preview_amoled_black",
+      "keyBackgroundColor": "#121212",
+      "keyTextColor": "#FFFFFF",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#000000"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#BB86FC"
+    },
+    {
+      "id": "cherry_blossom",
+      "name": "Cherry Blossom",
+      "isPro": false,
+      "previewImage": "preview_cherry_blossom",
+      "keyBackgroundColor": "#FFF0F5",
+      "keyTextColor": "#4A2E35",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#FFE4E1", "#FFC0CB", "#FFB6C1"],
+        "angle": 45
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF69B4"
+    },
+    {
+      "id": "golden_luxury",
+      "name": "Golden Luxury",
+      "isPro": false,
+      "previewImage": "preview_golden_luxury",
+      "keyBackgroundColor": "#261F10",
+      "keyTextColor": "#FFECB3",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#12100A", "#292211", "#42371C"],
+        "angle": 90
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FFD700"
+    },
+    {
+      "id": "nordic_snow",
+      "name": "Nordic Snow",
+      "isPro": false,
+      "previewImage": "preview_nordic_snow",
+      "keyBackgroundColor": "#ECEFF1",
+      "keyTextColor": "#263238",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#CFD8DC"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#0288D1"
+    },
+    {
+      "id": "lavender_mist",
+      "name": "Lavender Mist",
+      "isPro": false,
+      "previewImage": "preview_lavender_mist",
+      "keyBackgroundColor": "#2B213A",
+      "keyTextColor": "#EDE7F6",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#181424", "#302644", "#45385C"],
+        "angle": 45
+      },
+      "keyShape": "rounded",
+      "accentColor": "#B388FF"
+    },
+    {
+      "id": "emerald_velvet",
+      "name": "Emerald Velvet",
+      "isPro": false,
+      "previewImage": "preview_emerald_velvet",
+      "keyBackgroundColor": "#0E291E",
+      "keyTextColor": "#E0F2F1",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#051710", "#103828", "#1B523D"],
+        "angle": 135
+      },
+      "keyShape": "rounded",
+      "accentColor": "#00E676"
+    },
+    {
+      "id": "solar_fire",
+      "name": "Solar Fire",
+      "isPro": false,
+      "previewImage": "preview_solar_fire",
+      "keyBackgroundColor": "#3D1308",
+      "keyTextColor": "#FFF3E0",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#210702", "#4D170A", "#78220A"],
+        "angle": 45
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF3D00"
+    },
+    {
+      "id": "matcha_latte",
+      "name": "Matcha Latte",
+      "isPro": false,
+      "previewImage": "preview_matcha_latte",
+      "keyBackgroundColor": "#E8F5E9",
+      "keyTextColor": "#2D3B2D",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#C8E6C9"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#4CAF50"
+    },
+    {
+      "id": "nebula",
+      "name": "Deep Space Nebula",
+      "isPro": false,
+      "previewImage": "preview_nebula",
+      "keyBackgroundColor": "#1B0F33",
+      "keyTextColor": "#E1BEE7",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#080417", "#210B3B", "#3B1254"],
+        "angle": 135
+      },
+      "keyShape": "rounded",
+      "accentColor": "#E040FB"
+    },
+    {
+      "id": "retrowave",
+      "name": "Retro Wave 80s",
+      "isPro": false,
+      "previewImage": "preview_retrowave",
+      "keyBackgroundColor": "#240038",
+      "keyTextColor": "#00FFFF",
+      "keyboardBackground": {
+        "type": "gradient",
+        "colors": ["#0D001A", "#33004D", "#590080"],
+        "angle": 90
+      },
+      "keyShape": "rounded",
+      "accentColor": "#FF00AA"
+    },
+    {
+      "id": "minimalist_white",
+      "name": "Minimalist White",
+      "isPro": false,
+      "previewImage": "preview_minimalist_white",
+      "keyBackgroundColor": "#F5F5F5",
+      "keyTextColor": "#000000",
+      "keyboardBackground": {
+        "type": "solid",
+        "color": "#FFFFFF"
+      },
+      "keyShape": "rounded",
+      "accentColor": "#212121"
+    }
+  ]
+}
