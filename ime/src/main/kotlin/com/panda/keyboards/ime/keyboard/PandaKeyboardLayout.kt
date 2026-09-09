@@ -68,17 +68,32 @@ fun PandaKeyboardLayout(
     availableThemes: List<KeyboardTheme> = emptyList(),
     recentEmojis: List<String> = emptyList(),
     clipboardHistory: List<com.panda.keyboards.theme.ClipboardItem> = emptyList(),
+    persistedDismissedClipId: String? = null,
+    persistedLastShownClipText: String? = null,
+    voiceStatusText: String = "",
+    voicePartialText: String = "",
+    voiceRmsDb: Float = 0f,
+    isVoiceRecording: Boolean = false,
+    hasAudioPermission: Boolean = true,
+    isVoiceOfflineUnavailable: Boolean = false,
+    onStartVoiceRecording: () -> Unit = {},
+    onStopVoiceRecording: () -> Unit = {},
+    onCancelVoiceRecording: () -> Unit = {},
+    onRequestAudioPermission: () -> Unit = {},
+    onOpenVoiceSettings: () -> Unit = {},
     onFontStyleSelected: (FontStyle) -> Unit = {},
     onThemeSelected: (String) -> Unit = {},
     onEmojiUsed: (String) -> Unit = {},
     onDeleteClipItem: (String) -> Unit = {},
     onClearClipboardHistory: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
-    onTriggerVoiceInput: () -> Unit = {}
+    onTriggerVoiceInput: () -> Unit = {},
+    onDismissClip: (String) -> Unit = {},
+    inputSessionId: Int = 0
 ) {
-    // Resolve theme to Compose rendering values — memoized per theme instance
-    val resolvedTheme = remember(theme) {
-        if (theme != null) ResolvedTheme.from(theme) else ResolvedTheme.DEFAULT
+    // Resolve theme to Compose rendering values — memoized per theme instance and height setting
+    val resolvedTheme = remember(theme, settings.keyboardHeight) {
+        if (theme != null) ResolvedTheme.from(theme, settings.keyboardHeight) else ResolvedTheme.DEFAULT
     }
 
     var keyboardState by remember {
@@ -87,6 +102,14 @@ fun PandaKeyboardLayout(
 
     var currentTopPanel by remember {
         mutableStateOf(TopToolbarPanel.NONE)
+    }
+
+    // Reset to default alphabet screen whenever a new input session starts
+    androidx.compose.runtime.LaunchedEffect(inputSessionId) {
+        if (inputSessionId > 0) {
+            keyboardState = keyboardState.copy(mode = KeyboardMode.LOWERCASE)
+            currentTopPanel = TopToolbarPanel.NONE
+        }
     }
 
     // Update IME action when it changes
@@ -103,7 +126,7 @@ fun PandaKeyboardLayout(
             KeyboardLayouts.getLetterRows(settings.qwertyOrder)
         KeyboardMode.SYMBOLS_1 -> KeyboardLayouts.symbols1Rows
         KeyboardMode.SYMBOLS_2 -> KeyboardLayouts.symbols2Rows
-        KeyboardMode.EMOJI, KeyboardMode.CLIPBOARD -> emptyList()
+        KeyboardMode.EMOJI, KeyboardMode.CLIPBOARD, KeyboardMode.VOICE -> emptyList()
     }
 
     val rows = if (settings.numberRowEnabled && (keyboardState.mode == KeyboardMode.LOWERCASE || keyboardState.mode == KeyboardMode.UPPERCASE || keyboardState.mode == KeyboardMode.CAPS_LOCK)) {
@@ -115,8 +138,45 @@ fun PandaKeyboardLayout(
     // Track current suggestions reactively for SuggestionBar
     var suggestions by remember { mutableStateOf<List<String>>(emptyList()) }
 
+    // Track quick-paste visibility: display to user only once per distinct new copy event
+    var hasKeyPressed by remember { mutableStateOf(false) }
+    var dismissedClipId by remember { mutableStateOf<String?>(null) }
+    var currentClipId by remember { mutableStateOf<String?>(null) }
+
+    val latestClip = clipboardHistory.firstOrNull()
+    val latestClipId = latestClip?.id
+    val latestClipText = latestClip?.text
+
+    if (latestClipId != currentClipId) {
+        currentClipId = latestClipId
+        hasKeyPressed = false
+    }
+
+    val activeQuickPasteText = if (
+        latestClipText != null &&
+        latestClipText.isNotBlank() &&
+        !hasKeyPressed &&
+        latestClipId != dismissedClipId &&
+        latestClipId != persistedDismissedClipId &&
+        latestClipText != persistedLastShownClipText
+    ) {
+        latestClipText
+    } else {
+        null
+    }
+
+    fun dismissCurrentClip() {
+        hasKeyPressed = true
+        latestClipText?.let { clipText ->
+            latestClipId?.let { clipId ->
+                dismissedClipId = clipId
+                onDismissClip(clipText)
+            }
+        }
+    }
+
     fun checkAutoCap() {
-        if (settings.autoCorrectionEnabled && actionHandler != null && keyboardState.mode == KeyboardMode.LOWERCASE) {
+        if (settings.autoCapitalizationEnabled && actionHandler != null && keyboardState.mode == KeyboardMode.LOWERCASE) {
             if (actionHandler.shouldAutoCapitalize()) {
                 keyboardState = keyboardState.copy(mode = KeyboardMode.UPPERCASE)
             }
@@ -124,7 +184,7 @@ fun PandaKeyboardLayout(
     }
 
     fun refreshSuggestions() {
-        if (settings.autoCorrectionEnabled && actionHandler != null && keyboardState.mode != KeyboardMode.EMOJI && keyboardState.mode != KeyboardMode.CLIPBOARD) {
+        if (settings.autoCorrectionEnabled && actionHandler != null && keyboardState.mode != KeyboardMode.EMOJI && keyboardState.mode != KeyboardMode.CLIPBOARD && keyboardState.mode != KeyboardMode.VOICE) {
             val currentWord = actionHandler.getCurrentWord()
             suggestions = com.panda.keyboards.ime.autocomplete.SuggestionManager.getSuggestions(currentWord, 4)
         } else {
@@ -133,19 +193,24 @@ fun PandaKeyboardLayout(
         checkAutoCap()
     }
 
-    androidx.compose.runtime.LaunchedEffect(settings.autoCorrectionEnabled, keyboardState.mode) {
+    androidx.compose.runtime.LaunchedEffect(settings.autoCorrectionEnabled, settings.autoCapitalizationEnabled, keyboardState.mode) {
         refreshSuggestions()
         checkAutoCap()
     }
 
-    // Decode custom background image bitmap if theme is image-backed
+    // Decode background image bitmap (supports local files and bundled assets)
+    val context = androidx.compose.ui.platform.LocalContext.current
     val bgImageBitmap = remember(resolvedTheme.imagePath) {
         resolvedTheme.imagePath?.let { path ->
             try {
                 val file = java.io.File(path)
-                if (file.exists()) {
+                if (file.exists() && file.isFile) {
                     BitmapFactory.decodeFile(path)?.asImageBitmap()
-                } else null
+                } else {
+                    context.assets.open(path).use { stream ->
+                        BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                    }
+                }
             } catch (e: Exception) {
                 null
             }
@@ -167,7 +232,7 @@ fun PandaKeyboardLayout(
     val rowHeightDp = baseHeightDp / 4
     val keyRowsCount = if (rows.isEmpty()) 4 else rows.size
     val keyRowsHeightDp = rowHeightDp * keyRowsCount
-    val suggestionBarHeightDp = if (settings.autoCorrectionEnabled && keyboardState.mode != KeyboardMode.EMOJI && keyboardState.mode != KeyboardMode.CLIPBOARD) 36.dp else 0.dp
+    val suggestionBarHeightDp = if (keyboardState.mode == KeyboardMode.EMOJI || keyboardState.mode == KeyboardMode.CLIPBOARD || keyboardState.mode == KeyboardMode.VOICE) 36.dp else if (settings.autoCorrectionEnabled) 36.dp else 0.dp
     val totalHeightDp = keyRowsHeightDp + 44.dp + suggestionBarHeightDp
 
 
@@ -197,6 +262,7 @@ fun PandaKeyboardLayout(
                 EmojiPanel(
                     recentEmojis = recentEmojis,
                     onEmojiSelected = { emojiStr ->
+                        dismissCurrentClip()
                         actionHandler?.onTextInput(emojiStr)
                         onEmojiUsed(emojiStr)
                     },
@@ -213,6 +279,7 @@ fun PandaKeyboardLayout(
                 ClipboardPanel(
                     history = clipboardHistory,
                     onItemClick = { text ->
+                        dismissCurrentClip()
                         actionHandler?.onTextInput(text)
                         keyboardState = keyboardState.copy(mode = KeyboardMode.LOWERCASE)
                     },
@@ -224,18 +291,43 @@ fun PandaKeyboardLayout(
                     resolvedTheme = resolvedTheme,
                     modifier = Modifier.fillMaxSize()
                 )
+            } else if (keyboardState.mode == KeyboardMode.VOICE) {
+                // ── Full Voice Recording Panel View ─────────────────────────
+                VoicePanel(
+                    statusText = voiceStatusText,
+                    partialText = voicePartialText,
+                    rmsDb = voiceRmsDb,
+                    isRecording = isVoiceRecording,
+                    hasPermission = hasAudioPermission,
+                    isOfflineUnavailable = isVoiceOfflineUnavailable,
+                    onStartRecording = onStartVoiceRecording,
+                    onStopRecording = {
+                        onStopVoiceRecording()
+                        keyboardState = keyboardState.copy(mode = KeyboardMode.LOWERCASE)
+                    },
+                    onCancelRecording = {
+                        onCancelVoiceRecording()
+                        keyboardState = keyboardState.copy(mode = KeyboardMode.LOWERCASE)
+                    },
+                    onRequestPermission = onRequestAudioPermission,
+                    onOpenSettings = onOpenVoiceSettings,
+                    resolvedTheme = resolvedTheme,
+                    modifier = Modifier.fillMaxSize()
+                )
             } else {
-                // ── Live Suggestion Strip (when Auto Correction toggle is enabled) ──
+                // ── Live Suggestion Strip (always reserved when Auto Correction is enabled) ──
                 if (settings.autoCorrectionEnabled) {
                     SuggestionBar(
                         suggestions = suggestions,
                         onSuggestionClick = { suggestion ->
+                            dismissCurrentClip()
                             actionHandler?.onSuggestionSelected(suggestion)
                             refreshSuggestions()
                         },
-                        quickPasteText = clipboardHistory.firstOrNull()?.text,
+                        quickPasteText = activeQuickPasteText,
                         onQuickPasteClick = { text ->
                             actionHandler?.onTextInput(text)
+                            dismissCurrentClip()
                         },
                         resolvedTheme = resolvedTheme
                     )
@@ -248,7 +340,11 @@ fun PandaKeyboardLayout(
                             onThemeClick = { currentTopPanel = TopToolbarPanel.THEME_SWITCHER },
                             onClipboardClick = { keyboardState = keyboardState.copy(mode = KeyboardMode.CLIPBOARD) },
                             onSettingsClick = onOpenSettings,
-                            onVoiceClick = onTriggerVoiceInput,
+                            onVoiceClick = {
+                                keyboardState = keyboardState.copy(mode = KeyboardMode.VOICE)
+                                onTriggerVoiceInput()
+                                onStartVoiceRecording()
+                            },
                             onFontsClick = { currentTopPanel = TopToolbarPanel.FONT_STRIP },
                             resolvedTheme = resolvedTheme
                         )
@@ -275,59 +371,75 @@ fun PandaKeyboardLayout(
                     }
                 }
 
-                rows.forEach { row ->
-                    val isMiddleRow = (row.size == 9 && row.firstOrNull()?.type == KeyType.CHARACTER)
+                val glowBrush = resolvedTheme.glassmorphicGlowBrush
+                val keyMatrixUnderlayModifier = if (glowBrush != null) {
+                    Modifier.background(glowBrush)
+                } else {
+                    Modifier
+                }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(rowHeightDp)
-                            .padding(vertical = 1.dp)
-                    ) {
-                        if (isMiddleRow) {
-                            androidx.compose.foundation.layout.Spacer(
-                                modifier = Modifier.weight(0.5f)
-                            )
-                        }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(keyMatrixUnderlayModifier)
+                ) {
+                    Column {
+                        rows.forEach { row ->
+                            val isMiddleRow = (row.size == 9 && row.firstOrNull()?.type == KeyType.CHARACTER)
 
-                        row.forEach { key ->
-                            Box(
+                            Row(
                                 modifier = Modifier
-                                    .weight(key.widthWeight)
-                                    .fillMaxHeight()
+                                    .fillMaxWidth()
+                                    .height(rowHeightDp)
+                                    .padding(vertical = 1.dp)
                             ) {
-                                KeyView(
-                                    key = key,
-                                    isShifted = keyboardState.isShifted,
-                                    isCapsLock = keyboardState.isCapsLock,
-                                    imeAction = keyboardState.imeAction,
-                                    theme = resolvedTheme,
-                                    activeFontStyle = activeFontStyle,
-                                    showNumberHints = !settings.numberRowEnabled,
-                                    onKeyPress = { pressedKey ->
-                                        handleKeyPress(
-                                            key = pressedKey,
-                                            state = keyboardState,
-                                            actionHandler = actionHandler,
-                                            lastShiftTapTime = lastShiftTapTime,
-                                            onStateChange = { newState ->
-                                                keyboardState = newState
-                                            },
-                                            onShiftTap = { time ->
-                                                lastShiftTapTime = time
-                                            }
-                                        )
-                                        refreshSuggestions()
-                                    },
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-                        }
+                                if (isMiddleRow) {
+                                    androidx.compose.foundation.layout.Spacer(
+                                        modifier = Modifier.weight(0.5f)
+                                    )
+                                }
 
-                        if (isMiddleRow) {
-                            androidx.compose.foundation.layout.Spacer(
-                                modifier = Modifier.weight(0.5f)
-                            )
+                                row.forEach { key ->
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(key.widthWeight)
+                                            .fillMaxHeight()
+                                    ) {
+                                        KeyView(
+                                            key = key,
+                                            isShifted = keyboardState.isShifted,
+                                            isCapsLock = keyboardState.isCapsLock,
+                                            imeAction = keyboardState.imeAction,
+                                            theme = resolvedTheme,
+                                            activeFontStyle = activeFontStyle,
+                                            showNumberHints = !settings.numberRowEnabled,
+                                            onKeyPress = { pressedKey ->
+                                                dismissCurrentClip()
+                                                handleKeyPress(
+                                                    key = pressedKey,
+                                                    state = keyboardState,
+                                                    actionHandler = actionHandler,
+                                                    lastShiftTapTime = lastShiftTapTime,
+                                                    onStateChange = { newState ->
+                                                        keyboardState = newState
+                                                    },
+                                                    onShiftTap = { time ->
+                                                        lastShiftTapTime = time
+                                                    }
+                                                )
+                                                refreshSuggestions()
+                                            },
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                }
+
+                                if (isMiddleRow) {
+                                    androidx.compose.foundation.layout.Spacer(
+                                        modifier = Modifier.weight(0.5f)
+                                    )
+                                }
+                            }
                         }
                     }
                 }

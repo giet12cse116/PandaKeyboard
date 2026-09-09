@@ -26,17 +26,8 @@ class KeyboardsViewModel @Inject constructor(
     private val imeStatusChecker: ImeStatusChecker
 ) : ViewModel() {
 
-    companion object {
-        const val INITIAL_PAGE_SIZE = 6
-        const val PAGE_INCREMENT = 6
-    }
-
     /** Live IME status flow. */
     val imeStatus: StateFlow<ImeStatus> = imeStatusChecker.imeStatus
-
-    /** Number of themes currently loaded and visible. */
-    private val _visibleCount = MutableStateFlow(INITIAL_PAGE_SIZE)
-    val visibleCount: StateFlow<Int> = _visibleCount
 
     /** Currently selected theme for bottom sheet detail view (null = sheet closed). */
     private val _selectedThemeForSheet = MutableStateFlow<KeyboardTheme?>(null)
@@ -46,6 +37,10 @@ class KeyboardsViewModel @Inject constructor(
     private val _unlockedThemeIds = MutableStateFlow<Set<String>>(emptySet())
     val unlockedThemeIds: StateFlow<Set<String>> = _unlockedThemeIds.asStateFlow()
 
+    /** Selected category filter ("All", "Abstract", "Classic", "Gradient", "Solid", "Custom"). */
+    private val _selectedCategory = MutableStateFlow("All")
+    val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
+
     /** All available themes flow collected into state. */
     val allThemes: StateFlow<List<KeyboardTheme>> = themeRepository.themes
         .stateIn(
@@ -54,29 +49,41 @@ class KeyboardsViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    /** Paginated themes exposed to the UI (loads initial batch visible on screen, expands on scroll). */
+    /** All themes filtered by currently active category tab (exposed directly to UI). */
     val themes: StateFlow<List<KeyboardTheme>> = combine(
         allThemes,
-        _visibleCount
-    ) { catalog, count ->
-        catalog.take(count)
+        _selectedCategory
+    ) { catalog, category ->
+        when (category.lowercase()) {
+            "all" -> {
+                val categoryOrder = listOf("modern ui", "abstract", "hd background", "hd_background", "nature", "gradient", "solid", "custom", "classic")
+                catalog.sortedWith(compareBy { theme ->
+                    if (theme.isCustom) {
+                        categoryOrder.indexOf("custom")
+                    } else {
+                        val idx = categoryOrder.indexOf(theme.category.lowercase())
+                        if (idx >= 0) idx else categoryOrder.size
+                    }
+                })
+            }
+            "custom" -> catalog.filter { it.isCustom }
+            "hd background" -> catalog.filter { it.category.equals("hd background", ignoreCase = true) || it.category.equals("hd_background", ignoreCase = true) }
+            "solid" -> catalog.filter { it.category.equals("solid", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.SolidColor) }
+            "gradient" -> catalog.filter { it.category.equals("gradient", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.Gradient) }
+            else -> catalog.filter { it.category.equals(category, ignoreCase = true) }
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
-    /** Indicates if more themes exist in the catalog to load on scroll. */
-    val hasMoreThemes: StateFlow<Boolean> = combine(
-        allThemes,
-        _visibleCount
-    ) { catalog, count ->
-        count < catalog.size
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = false
-    )
+    /**
+     * Switch current category filter.
+     */
+    fun selectCategory(category: String) {
+        _selectedCategory.value = category
+    }
 
     /** Currently selected active theme ID (null on fresh install until user explicitly applies one). */
     val selectedThemeId: StateFlow<String?> = themeRepository.selectedThemeId
@@ -177,17 +184,6 @@ class KeyboardsViewModel @Inject constructor(
     fun selectTheme(themeId: String) {
         applyTheme(themeId)
     }
-
-    /**
-     * Load the next batch of themes when the user scrolls near the bottom of the visible list.
-     */
-    fun loadMoreThemes() {
-        val totalCount = allThemes.value.size
-        if (_visibleCount.value < totalCount) {
-            _visibleCount.value = (_visibleCount.value + PAGE_INCREMENT).coerceAtMost(totalCount)
-        }
-    }
-
 
     /**
      * Force re-evaluation of current IME status.

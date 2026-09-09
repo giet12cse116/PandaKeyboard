@@ -419,13 +419,6 @@ class FontTransformerTest {
     }
 
     @Test
-    fun `JOKERMAN transforms correctly`() {
-        val result = FontTransformer.transform("abc ABC", FontStyle.JOKERMAN)
-        assertTrue(result.contains("ⓐ"))
-        assertTrue(result.contains("Ⓐ"))
-    }
-
-    @Test
     fun `FRENCH_SCRIPT transforms correctly`() {
         val result = FontTransformer.transform("abc", FontStyle.FRENCH_SCRIPT)
         assertNotEquals("abc", result)

@@ -12,7 +12,8 @@ enum class KeyboardMode {
     SYMBOLS_1,
     SYMBOLS_2,
     EMOJI,
-    CLIPBOARD
+    CLIPBOARD,
+    VOICE
 }
 
 /**

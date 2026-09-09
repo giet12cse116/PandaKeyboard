@@ -6,14 +6,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -52,12 +55,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.panda.keyboards.ime.keyboard.PandaKeyboardLayout
 import com.panda.keyboards.theme.KeyShape
+import com.panda.keyboards.ui.keyboards.KeyboardThemePreviewImage
 
 /**
  * Screen providing interactive color pickers, key shape selection, and live
- * real-time [PandaKeyboardLayout] preview for building custom themes.
+ * real-time [KeyboardThemePreviewImage] static image preview for building custom themes.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,11 +73,26 @@ fun CustomThemeEditorScreen(
     val context = LocalContext.current
     val draftTheme = viewModel.currentDraftTheme
 
-    val keyBgPresets = listOf("#2D2D44", "#121212", "#1B4D3E", "#0F172A", "#4A0E17", "#3B2D54")
-    val keyTextPresets = listOf("#FFFFFF", "#A7F3D0", "#FDE047", "#38BDF8", "#FB7185", "#E2E8F0")
-    val bgStartPresets = listOf("#1A1A2E", "#0B0C10", "#0B2B22", "#0F172A", "#2E0810", "#1E1B4B")
-    val bgEndPresets = listOf("#16213E", "#1F2833", "#1B4D3E", "#1E293B", "#581825", "#312E81")
-    val accentPresets = listOf("#7C4DFF", "#10B981", "#F97316", "#EC4899", "#06B6D4", "#F59E0B")
+    val keyBgPresets = listOf(
+        "#2D2D44", "#121212", "#1B4D3E", "#0F172A", "#4A0E17", "#3B2D54",
+        "#2C3E50", "#1E272C", "#FFFFFF", "#F3F4F6", "#FEF3C7", "#E0E7FF"
+    )
+    val keyTextPresets = listOf(
+        "#FFFFFF", "#000000", "#1E293B", "#312E81", "#A7F3D0", "#FDE047",
+        "#38BDF8", "#FB7185", "#E2E8F0", "#FED7AA", "#C7D2FE", "#FBCFE8"
+    )
+    val bgStartPresets = listOf(
+        "#1A1A2E", "#0B0C10", "#0B2B22", "#0F172A", "#2E0810", "#1E1B4B",
+        "#0F2027", "#141E30", "#FFF0F5", "#E0F2F1", "#F5F7FA", "#F3E8FF"
+    )
+    val bgEndPresets = listOf(
+        "#16213E", "#1F2833", "#1B4D3E", "#1E293B", "#581825", "#312E81",
+        "#203A43", "#243B55", "#FFD1DC", "#B2DFDB", "#E4E7EB", "#E9D5FF"
+    )
+    val accentPresets = listOf(
+        "#7C4DFF", "#10B981", "#F97316", "#EC4899", "#06B6D4", "#F59E0B",
+        "#3B82F6", "#8B5CF6", "#EF4444", "#14B8A6", "#6366F1", "#D946EF"
+    )
 
     Scaffold(
         modifier = modifier,
@@ -94,29 +112,61 @@ fun CustomThemeEditorScreen(
                         )
                     }
                 },
-                actions = {
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        },
+        bottomBar = {
+            Surface(
+                tonalElevation = 8.dp,
+                shadowElevation = 8.dp,
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Button(
                         onClick = {
                             viewModel.saveTheme(context, onThemeSaved)
                         },
                         enabled = !viewModel.isSaving,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         if (viewModel.isSaving) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(20.dp),
                                 color = Color.White,
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Text(text = "Save", fontWeight = FontWeight.Bold)
+                            val buttonText = if (viewModel.themeName.isBlank()) {
+                                "Save Theme"
+                            } else {
+                                "Save as \"${viewModel.themeName}\""
+                            }
+                            Text(
+                                text = buttonText,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            )
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "You can find the theme in Keyboard section",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         Column(
@@ -144,7 +194,7 @@ fun CustomThemeEditorScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Upload Image (Sprint 8b)")
+                            Text("Upload Image")
                         }
                     }
                 )
@@ -168,7 +218,7 @@ fun CustomThemeEditorScreen(
                     onConfirmCrop = { cropped -> viewModel.onCropConfirmed(context, cropped) }
                 )
             } else if (viewModel.selectedTab == 1) {
-                // ── Upload Image Tab (Sprint 8b) ─────────────────────────────
+                // ── Upload Image Tab ─────────────────────────────────────────
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -176,20 +226,23 @@ fun CustomThemeEditorScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // ── Real-Time Live Preview Card ──────────────────────────
+                    // ── Real-Time Live Preview Card (Static Image Canvas) ────
                     EditorSectionHeader(title = "Live Preview")
 
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f),
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp)
+                                .fillMaxSize()
+                                .padding(4.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            PandaKeyboardLayout(
+                            KeyboardThemePreviewImage(
                                 theme = draftTheme
                             )
                         }
@@ -245,6 +298,7 @@ fun CustomThemeEditorScreen(
                         value = viewModel.themeName,
                         onValueChange = { viewModel.themeName = it },
                         label = { Text("Theme Name") },
+                        placeholder = { Text("e.g. My Custom Theme") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -281,7 +335,7 @@ fun CustomThemeEditorScreen(
                     )
 
                     // ── Accent Color Swatches ────────────────────────────────
-                    EditorSectionHeader(title = "Accent Color (Shift & Enter)")
+                    EditorSectionHeader(title = "Shift & Enter")
                     ColorSwatchRow(
                         presets = accentPresets,
                         selectedColorHex = viewModel.accentColor,
@@ -299,7 +353,7 @@ fun CustomThemeEditorScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // ── Real-Time Live Preview Card ──────────────────────────
+                    // ── Real-Time Live Preview Card (Static Image Canvas) ────
                     Text(
                         text = "Live Preview",
                         style = MaterialTheme.typography.titleSmall,
@@ -308,16 +362,19 @@ fun CustomThemeEditorScreen(
                     )
 
                     Card(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f),
                         shape = RoundedCornerShape(16.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp)
+                                .fillMaxSize()
+                                .padding(4.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            PandaKeyboardLayout(
+                            KeyboardThemePreviewImage(
                                 theme = draftTheme
                             )
                         }
@@ -328,6 +385,7 @@ fun CustomThemeEditorScreen(
                         value = viewModel.themeName,
                         onValueChange = { viewModel.themeName = it },
                         label = { Text("Theme Name") },
+                        placeholder = { Text("e.g. My Custom Theme") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -363,8 +421,8 @@ fun CustomThemeEditorScreen(
                         onColorSelected = { viewModel.keyTextColor = it }
                     )
 
-                    // ── Keyboard Surface Background Swatches ─────────────────
-                    EditorSectionHeader(title = "Keyboard Surface Background")
+                    // ── Keyboard Background Swatches ─────────────────
+                    EditorSectionHeader(title = "Keyboard Background Color")
                     ColorSwatchRow(
                         presets = bgStartPresets,
                         selectedColorHex = viewModel.keyboardBackgroundStartHex,
@@ -378,7 +436,7 @@ fun CustomThemeEditorScreen(
                     )
 
                     // ── Accent Color Swatches ────────────────────────────────
-                    EditorSectionHeader(title = "Accent Color (Shift & Enter)")
+                    EditorSectionHeader(title = "Shift & Enter")
                     ColorSwatchRow(
                         presets = accentPresets,
                         selectedColorHex = viewModel.accentColor,
@@ -409,7 +467,9 @@ private fun ColorSwatchRow(
     onColorSelected: (String) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         presets.forEach { hex ->

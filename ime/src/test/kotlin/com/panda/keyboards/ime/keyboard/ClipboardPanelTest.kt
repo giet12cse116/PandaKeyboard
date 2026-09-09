@@ -113,4 +113,65 @@ class ClipboardPanelTest {
         assertEquals("1d ago", formatRelativeTimestamp(now - 24 * 3600_000L, nowMs = now))
         assertEquals("3d ago", formatRelativeTimestamp(now - 3 * 24 * 3600_000L, nowMs = now))
     }
+
+    @Test
+    fun `quick paste visibility logic displays only once per distinct text copy and ignores session reopens`() = runBlocking {
+        fun resolveQuickPasteText(
+            history: List<ClipboardItem>,
+            currentClipId: String?,
+            dismissedClipId: String?,
+            persistedLastShownClipText: String?,
+            hasKeyPressed: Boolean
+        ): String? {
+            val latestClip = history.firstOrNull()
+            val latestClipId = latestClip?.id
+            val latestClipText = latestClip?.text
+            val activeHasKeyPressed = if (latestClipId != currentClipId) false else hasKeyPressed
+            val showQuickPaste = latestClipText != null &&
+                    latestClipText.isNotBlank() &&
+                    !activeHasKeyPressed &&
+                    latestClipId != dismissedClipId &&
+                    latestClipText != persistedLastShownClipText
+            return if (showQuickPaste) latestClipText else null
+        }
+
+        val repo = ClipboardHistoryRepository(context = null)
+        val clip1 = ClipboardItem(id = "1", text = "Hello")
+        val clip2 = ClipboardItem(id = "2", text = "World")
+
+        // 1. Initial state with clip1 -> shows "Hello"
+        var currentClipId: String? = clip1.id
+        var dismissedClipId: String? = null
+        var persistedLastShownClipText: String? = null
+        var hasKeyPressed = false
+        var result = resolveQuickPasteText(listOf(clip1), currentClipId, dismissedClipId, persistedLastShownClipText, hasKeyPressed)
+        assertEquals("Hello", result)
+
+        // 2. User presses a key or pastes -> clip text "Hello" marked as shown
+        repo.markClipAsShown("Hello")
+        persistedLastShownClipText = repo.lastShownClipText.first()
+        hasKeyPressed = true
+        result = resolveQuickPasteText(listOf(clip1), currentClipId, dismissedClipId, persistedLastShownClipText, hasKeyPressed)
+        assertEquals(null, result)
+
+        // 3. Keyboard reopens with same clipboard text "Hello" (even with new UUID item) -> does NOT show "Hello" again
+        val clip1Reopen = ClipboardItem(id = "1_new", text = "Hello")
+        currentClipId = clip1Reopen.id
+        hasKeyPressed = false
+        result = resolveQuickPasteText(listOf(clip1Reopen), currentClipId, dismissedClipId, persistedLastShownClipText, hasKeyPressed)
+        assertEquals("Same content must not re-trigger quick paste on keyboard reopen", null, result)
+
+        // 4. Genuine new copy event ("World") -> triggers quick paste for "World"
+        currentClipId = clip2.id
+        hasKeyPressed = false
+        result = resolveQuickPasteText(listOf(clip2, clip1Reopen), currentClipId, dismissedClipId, persistedLastShownClipText, hasKeyPressed)
+        assertEquals("World", result)
+
+        // 5. User pastes "World" -> dismisses and marks "World" as shown
+        repo.markClipAsShown("World")
+        persistedLastShownClipText = repo.lastShownClipText.first()
+        result = resolveQuickPasteText(listOf(clip2, clip1Reopen), currentClipId, dismissedClipId, persistedLastShownClipText, hasKeyPressed)
+        assertEquals(null, result)
+    }
 }
+

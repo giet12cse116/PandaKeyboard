@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -202,7 +203,7 @@ fun EmojiPanel(
 
         // ── Single Continuous Emoji Grid ────────────────────────────────────
         LazyVerticalGrid(
-            columns = GridCells.Fixed(7),
+            columns = GridCells.Fixed(8),
             state = gridState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp),
@@ -211,7 +212,7 @@ fun EmojiPanel(
         ) {
             // Pinned Recently Used Section
             if (recentEmojis.isNotEmpty()) {
-                item(span = { GridItemSpan(7) }) {
+                item(span = { GridItemSpan(8) }) {
                     Text(
                         text = "Recently Used",
                         fontWeight = FontWeight.Bold,
@@ -221,7 +222,7 @@ fun EmojiPanel(
                     )
                 }
 
-                items(items = recentEmojis, key = { emoji -> "recent_$emoji" }) { emojiStr ->
+                itemsIndexed(items = recentEmojis, key = { index, emoji -> "recent_${index}_$emoji" }) { _, emojiStr ->
                     EmojiCell(
                         emojiStr = emojiStr,
                         resolvedTheme = resolvedTheme,
@@ -232,7 +233,7 @@ fun EmojiPanel(
 
             // All Standard Categories Sequentially
             for (category in EmojiCategory.standardCategories) {
-                item(span = { GridItemSpan(7) }, key = "header_${category.name}") {
+                item(span = { GridItemSpan(8) }, key = "header_${category.name}") {
                     Text(
                         text = category.displayName,
                         fontWeight = FontWeight.Bold,
@@ -242,7 +243,7 @@ fun EmojiPanel(
                     )
                 }
 
-                items(items = category.emojis, key = { emoji -> "${category.name}_$emoji" }) { emojiStr ->
+                itemsIndexed(items = category.emojis, key = { index, emoji -> "${category.name}_${index}_$emoji" }) { _, emojiStr ->
                     EmojiCell(
                         emojiStr = emojiStr,
                         resolvedTheme = resolvedTheme,
@@ -268,7 +269,7 @@ private fun EmojiCell(
             .clickable { onEmojiSelected(emojiStr) },
         contentAlignment = Alignment.Center
     ) {
-        Text(emojiStr, fontSize = 22.sp)
+        Text(emojiStr, fontSize = 19.sp)
     }
 }
 

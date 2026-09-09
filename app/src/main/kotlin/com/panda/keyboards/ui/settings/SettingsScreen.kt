@@ -172,11 +172,19 @@ fun SettingsScreen(
             SettingsGroupHeader(title = "Smart Typing")
             SettingsCard {
                 SettingsSwitchItem(
-                    title = "Auto-Capitalization",
-                    subtitle = "Capitalize the first letter after sentence punctuation (. ! ?)",
+                    title = "Auto-Correct",
+                    subtitle = "Automatically show word completion suggestions while typing",
                     icon = Icons.Default.Spellcheck,
                     checked = settings.autoCorrectionEnabled,
                     onCheckedChange = { viewModel.setAutoCorrectionEnabled(it) }
+                )
+                SettingsDivider()
+                SettingsSwitchItem(
+                    title = "Auto-Capitalization",
+                    subtitle = "Capitalize the first letter after sentence punctuation (. ! ?)",
+                    icon = Icons.Default.Spellcheck,
+                    checked = settings.autoCapitalizationEnabled,
+                    onCheckedChange = { viewModel.setAutoCapitalizationEnabled(it) }
                 )
             }
 

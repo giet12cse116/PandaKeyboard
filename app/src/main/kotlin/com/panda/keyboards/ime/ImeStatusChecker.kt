@@ -117,16 +117,16 @@ open class ImeStatusChecker @Inject constructor(
         // 1. Check if our IME is in the system enabled input method list (framework API)
         val isEnabledByImm = try {
             imm?.enabledInputMethodList?.any { imi ->
-                imi.packageName == pkgName
+                imi.packageName.equals(pkgName, ignoreCase = true) || imi.id.contains(pkgName, ignoreCase = true)
             } ?: false
         } catch (e: Exception) {
             false
         }
 
         // 2. Check Settings.Secure.ENABLED_INPUT_METHODS string (handles full & short component formats)
-        val resolver = ctx.contentResolver
+        val resolver = try { ctx.contentResolver } catch (e: Exception) { null }
         val enabledMethodsSetting = try {
-            Settings.Secure.getString(resolver, Settings.Secure.ENABLED_INPUT_METHODS) ?: ""
+            if (resolver != null) Settings.Secure.getString(resolver, Settings.Secure.ENABLED_INPUT_METHODS) ?: "" else ""
         } catch (e: Exception) {
             ""
         }
@@ -134,26 +134,31 @@ open class ImeStatusChecker @Inject constructor(
         val enabledComponents = enabledMethodsSetting.split(":")
         val isEnabledInSettings = enabledComponents.any { component ->
             val trimmed = component.trim()
-            trimmed.equals(targetShort, ignoreCase = true) ||
-                    trimmed.equals(targetFull, ignoreCase = true) ||
-                    (trimmed.startsWith("$pkgName/") && trimmed.contains("PandaInputMethodService", ignoreCase = true))
+            trimmed.isNotEmpty() && (
+                trimmed.equals(targetShort, ignoreCase = true) ||
+                trimmed.equals(targetFull, ignoreCase = true) ||
+                trimmed.contains(pkgName, ignoreCase = true) ||
+                trimmed.contains("PandaInputMethodService", ignoreCase = true)
+            )
         }
-
-        val isEnabled = isEnabledByImm || isEnabledInSettings
 
         // 3. Check Settings.Secure.DEFAULT_INPUT_METHOD string for active default IME
         val defaultMethodSetting = try {
-            Settings.Secure.getString(resolver, Settings.Secure.DEFAULT_INPUT_METHOD) ?: ""
+            if (resolver != null) Settings.Secure.getString(resolver, Settings.Secure.DEFAULT_INPUT_METHOD) ?: "" else ""
         } catch (e: Exception) {
             ""
         }
 
         val trimmedDefault = defaultMethodSetting.trim()
-        val isDefaultInSettings = trimmedDefault.equals(targetShort, ignoreCase = true) ||
-                trimmedDefault.equals(targetFull, ignoreCase = true) ||
-                (trimmedDefault.startsWith("$pkgName/") && trimmedDefault.contains("PandaInputMethodService", ignoreCase = true))
+        val isDefaultInSettings = trimmedDefault.isNotEmpty() && (
+            trimmedDefault.equals(targetShort, ignoreCase = true) ||
+            trimmedDefault.equals(targetFull, ignoreCase = true) ||
+            trimmedDefault.contains(pkgName, ignoreCase = true) ||
+            trimmedDefault.contains("PandaInputMethodService", ignoreCase = true)
+        )
 
         // Ensure BOTH conditions are evaluated: cannot be default unless enabled
+        val isEnabled = isEnabledByImm || isEnabledInSettings || isDefaultInSettings
         val isDefault = isEnabled && isDefaultInSettings
 
         logDebug(

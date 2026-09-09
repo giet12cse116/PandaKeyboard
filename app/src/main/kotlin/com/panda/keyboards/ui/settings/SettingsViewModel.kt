@@ -46,6 +46,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setAutoCapitalizationEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setAutoCapitalizationEnabled(enabled)
+        }
+    }
+
     fun setOfflineModeEnabled(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setOfflineModeEnabled(enabled)

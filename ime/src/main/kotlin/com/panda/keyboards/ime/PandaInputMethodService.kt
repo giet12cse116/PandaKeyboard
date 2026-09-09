@@ -57,6 +57,9 @@ class PandaInputMethodService : InputMethodService() {
     /** Current IME action from the active editor — drives enter key appearance. */
     private var currentImeAction by mutableIntStateOf(EditorInfo.IME_ACTION_UNSPECIFIED)
 
+    /** Incremented on each new input session to reset keyboard to default alphabet mode. */
+    private var inputSessionId by mutableIntStateOf(0)
+
     /** Current keyboard theme — updated from ThemeRepository on input view creation. */
     private var currentTheme by mutableStateOf<KeyboardTheme?>(null)
 
@@ -78,6 +81,23 @@ class PandaInputMethodService : InputMethodService() {
     /** Clipboard history list from ClipboardHistoryRepository. */
     private var clipboardHistory by mutableStateOf<List<ClipboardItem>>(emptyList())
 
+    /** Persisted dismissed clip ID from ClipboardHistoryRepository. */
+    private var persistedDismissedClipId by mutableStateOf<String?>(null)
+
+    /** Persisted last shown / dismissed clip text from ClipboardHistoryRepository. */
+    private var persistedLastShownClipText by mutableStateOf<String?>(null)
+
+    /** Voice Input Reactive States */
+    private var voiceStatusText by mutableStateOf("")
+    private var voicePartialText by mutableStateOf("")
+    private var voiceRmsDb by androidx.compose.runtime.mutableFloatStateOf(0f)
+    private var isVoiceRecording by mutableStateOf(false)
+    private var isVoiceOfflineUnavailable by mutableStateOf(false)
+    private var hasAudioPermission by mutableStateOf(true)
+
+    /** Android SpeechRecognizer instance for voice input button. */
+    private var speechRecognizer: android.speech.SpeechRecognizer? = null
+
     /** Manually constructed repositories — no Hilt in the IME process. */
     private lateinit var themeRepository: ThemeRepository
     private lateinit var settingsRepository: SettingsRepository
@@ -92,7 +112,7 @@ class PandaInputMethodService : InputMethodService() {
     private val actionHandler = DefaultKeyboardActionHandler(
         inputConnectionProvider = { currentInputConnection },
         editorInfoProvider = { currentInputEditorInfo },
-        isAutoCapEnabled = { currentSettings.autoCorrectionEnabled },
+        isAutoCapEnabled = { currentSettings.autoCapitalizationEnabled },
         activeFontStyleProvider = { currentActiveStyle },
         onGlobeKeyAction = {
             try {
@@ -166,6 +186,20 @@ class PandaInputMethodService : InputMethodService() {
                         availableThemes = availableThemes,
                         recentEmojis = recentEmojis,
                         clipboardHistory = clipboardHistory,
+                        persistedDismissedClipId = persistedDismissedClipId,
+                        persistedLastShownClipText = persistedLastShownClipText,
+                        voiceStatusText = voiceStatusText,
+                        voicePartialText = voicePartialText,
+                        voiceRmsDb = voiceRmsDb,
+                        isVoiceRecording = isVoiceRecording,
+                        hasAudioPermission = hasAudioPermission,
+                        isVoiceOfflineUnavailable = isVoiceOfflineUnavailable,
+                        onStartVoiceRecording = { startVoiceInput() },
+                        onStopVoiceRecording = { stopVoiceInput(commit = true) },
+                        onCancelVoiceRecording = { stopVoiceInput(commit = false) },
+                        onRequestAudioPermission = { checkAudioPermission(); startVoiceInput() },
+                        onOpenVoiceSettings = { VoicePermissionActivity.launchAppSettings(applicationContext) },
+                        inputSessionId = inputSessionId,
                         onFontStyleSelected = { style ->
                             currentActiveStyle = style
                             saveSelectedStyle(style.id)
@@ -202,14 +236,12 @@ class PandaInputMethodService : InputMethodService() {
                             }
                         },
                         onTriggerVoiceInput = {
-                            try {
-                                val intent = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                                    addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-                                }
-                                startActivity(intent)
-                            } catch (e: Exception) {
-                                android.widget.Toast.makeText(applicationContext, "Voice input speech recognizer is not available on this device.", android.widget.Toast.LENGTH_SHORT).show()
+                            startVoiceInput()
+                        },
+                        onDismissClip = { clipIdOrText ->
+                            serviceScope.launch {
+                                clipboardHistoryRepository.dismissClip(clipIdOrText)
+                                clipboardHistoryRepository.markClipAsShown(clipIdOrText)
                             }
                         }
                     )
@@ -234,6 +266,7 @@ class PandaInputMethodService : InputMethodService() {
         Log.d(TAG, "onStartInputView() called: info=$info, restarting=$restarting")
         try {
             super.onStartInputView(info, restarting)
+            inputSessionId++
             window?.window?.decorView?.let { decorView ->
                 lifecycleOwner.attachToDecorView(decorView)
             }
@@ -277,8 +310,157 @@ class PandaInputMethodService : InputMethodService() {
         } catch (e: Exception) {
             Log.e(TAG, "Error unregistering clip listener: ${e.message}", e)
         }
+        try {
+            speechRecognizer?.destroy()
+            speechRecognizer = null
+        } catch (e: Exception) {
+            Log.e(TAG, "Error destroying speech recognizer: ${e.message}", e)
+        }
         serviceScope.cancel()
         lifecycleOwner.onDestroy()
+    }
+
+    private fun checkAudioPermission(): Boolean {
+        val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.RECORD_AUDIO
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        hasAudioPermission = granted
+        return granted
+    }
+
+    private fun startVoiceInput() {
+        if (!checkAudioPermission()) {
+            voiceStatusText = "Microphone access needed"
+            try {
+                val intent = android.content.Intent(this, VoicePermissionActivity::class.java).apply {
+                    addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error launching VoicePermissionActivity: ${e.message}", e)
+            }
+            return
+        }
+
+        // Offline mode & On-device recognition check
+        val isOfflineMode = currentSettings.offlineModeEnabled
+        val isOnDeviceAvailable = if (android.os.Build.VERSION.SDK_INT >= 31) {
+            try {
+                android.speech.SpeechRecognizer.isOnDeviceRecognitionAvailable(applicationContext)
+            } catch (e: Exception) {
+                false
+            }
+        } else {
+            false
+        }
+
+        if (isOfflineMode && !isOnDeviceAvailable) {
+            isVoiceOfflineUnavailable = true
+            voiceStatusText = "Offline mode is active and on-device speech recognition is unavailable"
+            isVoiceRecording = false
+            return
+        } else {
+            isVoiceOfflineUnavailable = false
+        }
+
+        try {
+            stopVoiceInput(commit = false)
+
+            speechRecognizer = if (isOfflineMode && isOnDeviceAvailable && android.os.Build.VERSION.SDK_INT >= 31) {
+                android.speech.SpeechRecognizer.createOnDeviceSpeechRecognizer(applicationContext)
+            } else {
+                android.speech.SpeechRecognizer.createSpeechRecognizer(applicationContext)
+            }
+
+            speechRecognizer?.setRecognitionListener(object : android.speech.RecognitionListener {
+                override fun onReadyForSpeech(params: android.os.Bundle?) {
+                    voiceStatusText = "Listening..."
+                    isVoiceRecording = true
+                }
+
+                override fun onBeginningOfSpeech() {
+                    voiceStatusText = "Listening..."
+                    isVoiceRecording = true
+                }
+
+                override fun onRmsChanged(rmsdB: Float) {
+                    voiceRmsDb = rmsdB
+                }
+
+                override fun onBufferReceived(buffer: ByteArray?) {}
+
+                override fun onEndOfSpeech() {
+                    voiceStatusText = "Processing..."
+                }
+
+                override fun onError(error: Int) {
+                    isVoiceRecording = false
+                    voiceRmsDb = 0f
+                    voiceStatusText = when (error) {
+                        android.speech.SpeechRecognizer.ERROR_NO_MATCH -> "No speech heard — tap mic to retry"
+                        android.speech.SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech heard — tap mic to retry"
+                        android.speech.SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+                        android.speech.SpeechRecognizer.ERROR_NETWORK -> "Network error — check connection"
+                        android.speech.SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission required"
+                        else -> "Voice recognition error ($error)"
+                    }
+                }
+
+                override fun onResults(results: android.os.Bundle?) {
+                    isVoiceRecording = false
+                    voiceRmsDb = 0f
+                    val matches = results?.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION)
+                    val textToCommit = if (!matches.isNullOrEmpty()) matches[0] else voicePartialText
+                    if (!textToCommit.isNullOrBlank()) {
+                        currentInputConnection?.commitText(textToCommit, 1)
+                    }
+                    voiceStatusText = ""
+                    voicePartialText = ""
+                }
+
+                override fun onPartialResults(partialResults: android.os.Bundle?) {
+                    val matches = partialResults?.getStringArrayList(android.speech.SpeechRecognizer.RESULTS_RECOGNITION)
+                    if (!matches.isNullOrEmpty()) {
+                        voicePartialText = matches[0]
+                    }
+                }
+
+                override fun onEvent(eventType: Int, params: android.os.Bundle?) {}
+            })
+
+            val intent = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(android.speech.RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+            }
+
+            speechRecognizer?.startListening(intent)
+            isVoiceRecording = true
+            voiceStatusText = "Listening..."
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting SpeechRecognizer: ${e.message}", e)
+            voiceStatusText = "Unable to start voice recognition"
+            isVoiceRecording = false
+        }
+    }
+
+    private fun stopVoiceInput(commit: Boolean) {
+        try {
+            if (speechRecognizer != null) {
+                speechRecognizer?.stopListening()
+                speechRecognizer?.destroy()
+                speechRecognizer = null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error stopping SpeechRecognizer: ${e.message}", e)
+        }
+        if (commit && voicePartialText.isNotBlank()) {
+            currentInputConnection?.commitText(voicePartialText, 1)
+        }
+        isVoiceRecording = false
+        voiceRmsDb = 0f
+        voicePartialText = ""
+        voiceStatusText = ""
     }
 
     private fun loadCurrentTheme() {
@@ -358,8 +540,20 @@ class PandaInputMethodService : InputMethodService() {
         if (clipJob != null) return
         clipJob = serviceScope.launch {
             try {
-                clipboardHistoryRepository.history.collect { list ->
-                    clipboardHistory = list
+                launch {
+                    clipboardHistoryRepository.history.collect { list ->
+                        clipboardHistory = list
+                    }
+                }
+                launch {
+                    clipboardHistoryRepository.dismissedClipId.collect { id ->
+                        persistedDismissedClipId = id
+                    }
+                }
+                launch {
+                    clipboardHistoryRepository.lastShownClipText.collect { text ->
+                        persistedLastShownClipText = text
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading clipboard history: ${e.message}", e)

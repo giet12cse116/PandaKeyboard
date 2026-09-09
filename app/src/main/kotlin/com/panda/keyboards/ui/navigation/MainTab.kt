@@ -1,11 +1,9 @@
 package com.panda.keyboards.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Widgets
-import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.TextFields
 import androidx.compose.material.icons.outlined.Widgets
@@ -28,11 +26,6 @@ enum class MainTab(
         title = "Fonts",
         selectedIcon = Icons.Filled.TextFields,
         unselectedIcon = Icons.Outlined.TextFields
-    ),
-    AI_HUB(
-        title = "AI Hub",
-        selectedIcon = Icons.Filled.AutoAwesome,
-        unselectedIcon = Icons.Outlined.AutoAwesome
     ),
     WIDGETS(
         title = "Widgets",

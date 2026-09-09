@@ -143,6 +143,49 @@ To add a new theme to Panda Keyboards, simply edit `core-theme/src/main/assets/t
   3. **Modular Extensibility**: `KeyboardTheme` model now includes `previewImage: String?` in `:core-theme` and `themes.json`, enabling future static PNG/Vector asset binding without architectural refactoring.
 - **Live IME Guarantee**: `PandaKeyboardLayout` in `:ime` remains untouched for live typing inside `PandaInputMethodService`.
 
+### Extending Key Visual Styles (Data-Driven Architecture)
+
+The theme system uses a polymorphic `KeyVisualStyle` hierarchy (`@Serializable sealed class KeyVisualStyle`) in `:core-theme`:
+
+```kotlin
+@Serializable
+sealed class KeyVisualStyle {
+
+    @Serializable
+    @SerialName("flat")
+    data object Flat : KeyVisualStyle()
+
+    @Serializable
+    @SerialName("glassmorphic")
+    data class Glassmorphic(
+        val blurRadiusDp: Float = 14f,
+        val translucencyAlpha: Float = 0.35f,
+        val borderColorHex: String = "#60FFFFFF",
+        val glowGradientColors: List<String> = listOf("#9000E5FF", "#608A2BE2", "#00000000")
+    ) : KeyVisualStyle()
+
+    @Serializable
+    @SerialName("semi_flat")
+    data class SemiFlat(
+        val elevationDp: Float = 3f,
+        val shadowColorHex: String = "#40000000",
+        val lightSourceAngle: Float = 90f,
+        val pressedElevationDp: Float = 0.5f
+    ) : KeyVisualStyle()
+}
+```
+
+#### Universal Key Elevation & Tactile Press Feedback:
+- **Universal Elevation**: Every theme (`Flat`, `Glassmorphic`, `SemiFlat`, `Solid`, `Gradient`, `Image`, `Custom`) renders elevation depth with soft drop shadows beneath key surfaces.
+- **Physical Key Depression**: On tap-down (`isPressed == true`), key surfaces across all themes dynamically translate downward by ~2.0dp while shadow offsets compress to 0.5dp, providing responsive tactile feedback with 0ms input latency.
+- **`SemiFlat` (Flat 2.0)**: Modern Material 3 / iOS semi-flat aesthetic with configurable tonal drop shadow elevation (`elevationDp`). Shipped as permanent bundled themes **"Studio Dark"** (Rank 2) and **"Studio Light"** (Rank 3).
+
+#### How to add a new Key Style (e.g. Neubrutalism, Claymorphism, Neumorphism):
+1. **Extend data model**: Add a new subclass in `ThemeModel.kt` (e.g., `@Serializable @SerialName("neubrutalist") data class Neubrutalist(...) : KeyVisualStyle()`).
+2. **Update theme resolution**: Map parameters in `ResolvedTheme.from(...)` (in `KeyboardThemeMapper.kt`).
+3. **Add rendering branch**: Handle visual effects in `KeyView.kt` and static preview generator `KeyboardThemePreviewImage`.
+4. **Declare in JSON**: Define themes in `themes.json` using `"keyStyle": { "type": "neubrutalist", ... }`. Existing bundled themes continue defaulting to `KeyVisualStyle.Flat` with zero code modifications.
+
 ## Sprint 4: Settings & Live IME Integration
 
 Sprint 4 introduces a full Settings screen in `:app` backed by `SettingsRepository` (using Jetpack DataStore Preferences) and live preference application in `PandaInputMethodService`.
@@ -520,6 +563,60 @@ Added 12 new systematic, Unicode-mappable styles to `FontStyle`:
 2. **4 Suggestions Displayed**: Upgraded default suggestion limit from 3 to **4 suggestions**.
 3. **Trigger Threshold**: Enforced strict `currentWord.length >= 2` threshold (1-char typed prefix returns 0 suggestions, 2+ chars returns up to 4 suggestions).
 4. **Responsive Suggestion Bar**: Updated `SuggestionBar.kt` to render up to 4 chips in an uncrowded layout with text truncation (`TextOverflow.Ellipsis`).
+
+---
+
+## Sprint 15: Always-Attached Suggestion Strip, Quick-Paste Single-Trigger Audit & Typography Consistency
+
+Sprint 15 delivers three UI/behavior polish enhancements to the autocomplete suggestion strip, clipboard quick-paste indicator, and key typography styling.
+
+### 1. Always-Attached Suggestion Strip — Branded Empty State
+- **Permanent Layout Reservation**: `PandaKeyboardLayout` permanently reserves `36.dp` height for `SuggestionBar` whenever `settings.autoCorrectionEnabled` is `true`. The top strip area no longer collapses or jumps when there are 0 suggestions to show, maintaining a consistent height budget across `COMPACT` (220dp), `DEFAULT` (260dp), and `TALL` (300dp) modes.
+- **Branded Placeholder ("Panda Keyboards")**: When 0 suggestions exist (empty input or no dictionary matches) and no quick-paste clip is active, `SuggestionBar` renders **"Panda Keyboards"** as a centered, subtle branded placeholder (`13.sp`, `FontWeight.Medium`, `FontFamily.Default`, with alpha transparency).
+- **Dynamic Transition**: The branded placeholder automatically yields the moment 2+ characters are typed (displaying up to 4 suggestion chips), and reappears instantly when the input is cleared or completed.
+
+### 2. Paste Quick-Action Single-Trigger Fix & Audit
+- **Audit & Root Causes**:
+  1. **Unconditional Re-capture on Input View Launch**: `PandaInputMethodService.onStartInputView()` calls `capturePrimaryClip()` on every keyboard open or focus change.
+  2. **ID Mutation on Identical Text**: `ClipboardHistoryRepository.addClip(text)` previously created a brand-new `ClipboardItem` with a newly generated `UUID` every time `addClip()` was invoked, even when `text` was identical to the top clip item.
+  3. **ID-Based State Tracking**: `PandaKeyboardLayout` compared `latestClip.id` against `currentClipId` and `persistedDismissedClipId`. Because a new UUID `id` was generated on every input view launch or repeated `OnPrimaryClipChangedListener` callback, `latestClipId != currentClipId` evaluated to `true`. This reset `hasKeyPressed` to `false` and bypassed `persistedDismissedClipId`, causing the quick-paste chip for the same copied text to reappear endlessly on keyboard reopens and recompositions.
+- **Single-Trigger Fix**:
+  - `ClipboardHistoryRepository` tracks `lastShownClipText` (persisted in DataStore as `last_shown_clip_text`).
+  - `ClipboardHistoryRepository.addClip(text)` preserves existing items when the top item has identical text, preventing ID mutation.
+  - `PandaKeyboardLayout` validates that `latestClip.text` differs from `persistedLastShownClipText`. Once shown, dismissed, or acting upon a keypress, `lastShownClipText` is marked so the indicator shows **exactly ONCE per distinct new copy event** and never reappears for identical clipboard text across session reopens or recompositions.
+
+### 3. Font Consistency — Suggestion Words Match Symbol/Number Key Typography
+- **Typography Alignment Design Decision**: Suggestion-strip word chips, quick-paste text, and branded placeholder text explicitly specify `fontFamily = FontFamily.Default` and `fontWeight = FontWeight.SemiBold`, visually matching symbol and number key typography (`?123` layer, number row, special keys).
+- **Intentional Scope**: Suggestion words are functional keyboard UI text rather than typed output; therefore, suggestion chips intentionally retain the clean, neutral default system typeface regardless of the user's active `FontStyle` unicode transformation.
+
+---
+
+## Sprint 16: Voice Input Feature with Custom In-Keyboard Recording UI
+
+Sprint 16 replaces the stub Voice toolbar button with a full in-keyboard voice recognition system in `:ime`.
+
+### 1. Transparent Permission Trampoline (`VoicePermissionActivity.kt`)
+- Standard `InputMethodService` cannot directly host runtime permission dialogs.
+- `VoicePermissionActivity` is a transparent `Theme.Translucent.NoTitleBar` proxy activity launched via `startActivity` with `FLAG_ACTIVITY_NEW_TASK`.
+- Prompts standard runtime `RECORD_AUDIO` permission dialog and finishes immediately, returning focus to the active text field and IME.
+- When permission is denied, `VoicePanel` displays inline fallback messaging (*"Microphone access needed — enable it in system settings"*) with buttons to grant permission or open system app settings (`Settings.ACTION_APPLICATION_DETAILS_SETTINGS`).
+
+### 2. Custom In-Keyboard Recording UI (`VoicePanel.kt`)
+- Replaces letter/number keys entirely when `keyboardState.mode == KeyboardMode.VOICE` (matching Emoji and Clipboard panel switching patterns).
+- **Amplitude Waveform Visualizer**: 7 dynamic vertical bars animated via `animateDpAsState` driven directly by `SpeechRecognizer`'s `onRmsChanged(rmsdB: Float)` callback (reflecting real microphone input volume).
+- **Live Partial Speech Feedback**: Real-time text container rendering partial recognition text as the user speaks.
+- **Cancel & Done Controls**: Top Cancel `(X)` button and bottom Cancel / Done `(✓)` checkmark buttons to finalize recording, commit recognized text, or discard without committing.
+
+### 3. Speech Recognition Integration & Offline Mode Respect
+- **Inline `SpeechRecognizer` Engine**: Binds `RecognitionListener` directly within `:ime` without leaving the keyboard or opening external activities.
+- **Offline Mode Interaction**: Checks `settings.offlineModeEnabled`. On supported devices (Android 12+ / API 31+), uses `SpeechRecognizer.createOnDeviceSpeechRecognizer()`. If Offline Mode is enabled but on-device recognition is unavailable, displays a clear inline message (*"Offline mode is active and on-device speech recognition is unavailable..."*) to prevent un-consented network calls.
+
+### 4. Manual Test Steps
+1. **Fresh Install Permission Flow**: Tap **Voice** 🎙️ in top toolbar → `VoicePermissionActivity` prompts system `RECORD_AUDIO` permission → tap **Allow** → returns to keyboard into `VoicePanel` listening mode.
+2. **Recording & Waveform**: Speak into microphone → observe 7 waveform bars pulsating in real-time response to mic volume, and partial text rendering → tap **Done (✓)** → text commits to text field and returns to standard QWERTY keyboard.
+3. **Cancel Mid-Recording**: Tap **Voice** 🎙️ → speak → tap **Cancel (X)** → recording stops, nothing commits, returns to QWERTY keyboard.
+4. **Permission Denied Fallback**: Permanently deny permission → tap Voice 🎙️ → verify inline fallback message and **Open Settings** button.
+5. **Offline Mode Respect**: Enable Offline Mode in Settings → tap Voice 🎙️ on device without on-device recognizer → verify inline offline fallback message.
 
 ---
 

@@ -98,43 +98,34 @@ class KeyboardsViewModelTest {
     }
 
     @Test
-    fun themes_initiallyLoadsOnlyFirstPage() = runTest {
+    fun themes_returnsAllThemesInSelectedCategory() = runTest {
         val viewModel = KeyboardsViewModel(fakeRepository, fakeImeChecker)
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.themes.collect {}
-        }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.hasMoreThemes.collect {}
         }
         testDispatcher.scheduler.advanceUntilIdle()
 
         val initialResult = viewModel.themes.value
-        assertEquals(KeyboardsViewModel.INITIAL_PAGE_SIZE, initialResult.size)
+        assertEquals(10, initialResult.size)
         assertEquals("Theme 1", initialResult[0].name)
-        assertTrue(viewModel.hasMoreThemes.value)
     }
 
     @Test
-    fun loadMoreThemes_appendsNextBatchOnDemand() = runTest {
+    fun selectCategory_filtersThemesCorrectly() = runTest {
         val viewModel = KeyboardsViewModel(fakeRepository, fakeImeChecker)
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.themes.collect {}
         }
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.hasMoreThemes.collect {}
-        }
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(6, viewModel.themes.value.size)
-        assertTrue(viewModel.hasMoreThemes.value)
-
-        viewModel.loadMoreThemes()
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(10, viewModel.themes.value.size)
-        assertFalse(viewModel.hasMoreThemes.value)
+
+        viewModel.selectCategory("solid")
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(10, viewModel.themes.value.size)
     }
 
     @Test

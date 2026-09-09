@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,10 +18,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 /**
- * Placeholder screen for features planned for future sprints (AI Hub, Widgets).
+ * Placeholder screen for features planned for future sprints.
  */
 @Composable
 fun FeatureStubScreen(
@@ -79,14 +76,4 @@ fun FeatureStubScreen(
             }
         }
     }
-}
-
-@Composable
-fun AiHubScreen(modifier: Modifier = Modifier) {
-    FeatureStubScreen(
-        title = "Panda AI Hub",
-        subtitle = "AI-powered writing assistant, auto-completion, and smart replies built directly into your keyboard",
-        icon = Icons.Default.AutoAwesome,
-        modifier = modifier
-    )
 }

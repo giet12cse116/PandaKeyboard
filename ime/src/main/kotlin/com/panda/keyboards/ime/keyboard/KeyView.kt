@@ -3,6 +3,7 @@ package com.panda.keyboards.ime.keyboard
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +41,9 @@ import com.panda.keyboards.fonts.FontTransformer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
 
+import androidx.compose.ui.graphics.asComposeRenderEffect
+import androidx.compose.ui.graphics.graphicsLayer
+
 /**
  * Individual keyboard key composable.
  *
@@ -46,6 +51,9 @@ import kotlinx.coroutines.withTimeoutOrNull
  * Handles tap events with haptic feedback. Backspace supports
  * press-and-hold for continuous deletion.
  * Top-row letter keys support long-press shortcuts for number insertion.
+ *
+ * Supports polymorphic [KeyVisualStyle] variants (e.g. Glassmorphic backdrop blur,
+ * Neubrutalist drop shadows, etc.).
  *
  * @param key The key data (label, type, width weight).
  * @param isShifted Whether shift is currently active (to uppercase labels).
@@ -125,97 +133,178 @@ fun KeyView(
         else -> theme.specialKeyText
     }
 
+    val semiFlatStyle = theme.keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SemiFlat
+    val glassStyle = theme.keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Glassmorphic
+    val neobrutalistStyle = theme.keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Neobrutalist
+    val claymorphicStyle = theme.keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Claymorphic
+    val density = androidx.compose.ui.platform.LocalDensity.current
+
+    val unpressedElevationDp = when {
+        semiFlatStyle != null -> semiFlatStyle.elevationDp
+        neobrutalistStyle != null -> neobrutalistStyle.shadowOffsetDp
+        claymorphicStyle != null -> claymorphicStyle.elevationDp
+        theme.keyShadowOffsetDp > 0f -> theme.keyShadowOffsetDp
+        else -> 2.5f
+    }
+
+    val pressedElevationDp = when {
+        semiFlatStyle != null -> semiFlatStyle.pressedElevationDp
+        neobrutalistStyle != null -> 1.0f
+        claymorphicStyle != null -> claymorphicStyle.pressedElevationDp
+        else -> 0.5f
+    }
+
+    val currentShadowOffsetDp = if (isPressed) pressedElevationDp else unpressedElevationDp
+
+    val currentSurfaceOffsetYDp = if (isPressed) {
+        (unpressedElevationDp - pressedElevationDp).coerceAtLeast(0f).dp
+    } else {
+        0.dp
+    }
+
+    val hasShadow = currentShadowOffsetDp > 0f && theme.keyShadowColor != null
+    val hasBorder = theme.keyBorderWidthDp > 0f && theme.keyBorderColor != null
+
+    val blurModifier = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && glassStyle != null && glassStyle.blurRadiusDp > 0f) {
+        val blurRadiusPx = with(density) { glassStyle.blurRadiusDp.dp.toPx() }
+        Modifier.graphicsLayer {
+            renderEffect = android.graphics.RenderEffect.createBlurEffect(
+                blurRadiusPx,
+                blurRadiusPx,
+                android.graphics.Shader.TileMode.CLAMP
+            ).asComposeRenderEffect()
+        }
+    } else {
+        // Pre-API 31 Fallback: Gracefully degrade to a semi-transparent solid overlay WITHOUT real blur.
+        // Real-time backdrop blur requires RenderEffect (API 31+). On API < 31, graphicsLayer blur is unavailable.
+        Modifier
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 2.5.dp, vertical = 3.dp)
-            .clip(theme.keyShape)
-            .background(backgroundColor)
-            .pointerInput(key) {
-                detectTapGestures(
-                    onPress = {
-                        isPressed = true
-                        wasLongPressed = false
-                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
-
-                        if (key.type == KeyType.BACKSPACE) {
-                            // Immediately delete 1 char on touch down for responsive single click
-                            onKeyPress(key)
-                            isLongPressing = true
-                        }
-
-                        val hasLongPressShortcut = (showNumberHints && key.numberHint != null)
-                        val released = if (hasLongPressShortcut) {
-                            val releaseResult = withTimeoutOrNull(400) {
-                                tryAwaitRelease()
-                            }
-                            if (releaseResult == null) {
-                                // Long-press threshold reached while still pressed
-                                wasLongPressed = true
-                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                                onKeyPress(KeyData(label = key.numberHint!!, output = key.numberHint!!, type = KeyType.CHARACTER))
-                                tryAwaitRelease()
-                                true
-                            } else {
-                                releaseResult
-                            }
-                        } else {
-                            tryAwaitRelease()
-                        }
-
-                        isPressed = false
-                        isLongPressing = false
-
-                        if (released && key.type != KeyType.BACKSPACE && !wasLongPressed) {
-                            onKeyPress(key)
-                        }
-                    }
-                )
-            },
-        contentAlignment = Alignment.Center
     ) {
-        // Corner hint badge for long-press number shortcut on top letter row
-        if (showNumberHints && key.numberHint != null) {
-            Text(
-                text = key.numberHint,
-                color = textColor.copy(alpha = 0.5f),
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Bold,
+        if (hasShadow) {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 2.dp, end = 4.dp)
+                    .fillMaxSize()
+                    .offset(x = 0.dp, y = currentShadowOffsetDp.dp)
+                    .clip(theme.keyShape)
+                    .background(theme.keyShadowColor!!)
             )
         }
 
-        // Pressed Key Highlight Bubble (Message Logo Popup)
-        val bubbleSymbol = if (wasLongPressed && showNumberHints && key.numberHint != null) key.numberHint else displayLabel
-        if (isPressed && bubbleSymbol.isNotEmpty() && key.type != KeyType.SPACE) {
-            Popup(
-                alignment = Alignment.TopCenter,
-                offset = IntOffset(0, -170),
-                properties = PopupProperties(
-                    focusable = false,
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                    clippingEnabled = false
+        // ── Key Surface (Shifted down on press for SemiFlat, blurred for Glassmorphic) ──
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = currentSurfaceOffsetYDp)
+                .clip(theme.keyShape)
+                .then(blurModifier)
+                .background(backgroundColor)
+                .then(
+                    if (hasBorder) {
+                        Modifier.border(
+                            width = theme.keyBorderWidthDp.dp,
+                            color = theme.keyBorderColor!!,
+                            shape = theme.keyShape
+                        )
+                    } else Modifier
                 )
-            ) {
-                MessageBubblePopup(
-                    symbol = bubbleSymbol,
-                    theme = theme
+        )
+
+        // ── Sharp & Unblurred Key Label & Interaction Layer ────────────────
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = currentSurfaceOffsetYDp)
+                .pointerInput(key) {
+                    detectTapGestures(
+                        onPress = {
+                            isPressed = true
+                            wasLongPressed = false
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+
+                            if (key.type == KeyType.BACKSPACE) {
+                                // Immediately delete 1 char on touch down for responsive single click
+                                onKeyPress(key)
+                                isLongPressing = true
+                            }
+
+                            val hasLongPressShortcut = (showNumberHints && key.numberHint != null)
+                            val released = if (hasLongPressShortcut) {
+                                val releaseResult = withTimeoutOrNull(400) {
+                                    tryAwaitRelease()
+                                }
+                                if (releaseResult == null) {
+                                    // Long-press threshold reached while still pressed
+                                    wasLongPressed = true
+                                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                    onKeyPress(KeyData(label = key.numberHint!!, output = key.numberHint!!, type = KeyType.CHARACTER))
+                                    tryAwaitRelease()
+                                    true
+                                } else {
+                                    releaseResult
+                                }
+                            } else {
+                                tryAwaitRelease()
+                            }
+
+                            isPressed = false
+                            isLongPressing = false
+
+                            if (released && key.type != KeyType.BACKSPACE && !wasLongPressed) {
+                                onKeyPress(key)
+                            }
+                        }
+                    )
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            // Corner hint badge for long-press number shortcut on top letter row
+            if (showNumberHints && key.numberHint != null) {
+                Text(
+                    text = key.numberHint,
+                    color = textColor.copy(alpha = 0.6f),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 2.dp, end = 4.dp)
                 )
             }
-        }
 
-        Text(
-            text = displayLabel,
-            color = textColor,
-            fontSize = fontSize,
-            fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
-            fontWeight = if (key.type == KeyType.CHARACTER) FontWeight.Normal else FontWeight.SemiBold,
-            textAlign = TextAlign.Center,
-            maxLines = 1
-        )
+            // Pressed Key Highlight Bubble (Message Logo Popup)
+            val bubbleSymbol = if (wasLongPressed && showNumberHints && key.numberHint != null) key.numberHint else displayLabel
+            if (isPressed && bubbleSymbol.isNotEmpty() && key.type != KeyType.SPACE) {
+                Popup(
+                    alignment = Alignment.TopCenter,
+                    offset = IntOffset(0, -170),
+                    properties = PopupProperties(
+                        focusable = false,
+                        dismissOnBackPress = false,
+                        dismissOnClickOutside = false,
+                        clippingEnabled = false
+                    )
+                ) {
+                    MessageBubblePopup(
+                        symbol = bubbleSymbol,
+                        theme = theme
+                    )
+                }
+            }
+
+            Text(
+                text = displayLabel,
+                color = textColor,
+                fontSize = fontSize,
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                fontWeight = if (key.type == KeyType.CHARACTER) FontWeight.Normal else FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                maxLines = 1
+            )
+        }
     }
 }
 

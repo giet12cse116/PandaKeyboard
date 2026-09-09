@@ -26,7 +26,7 @@ class CustomThemeEditorViewModel @Inject constructor(
 ) : ViewModel() {
 
     var selectedTab by mutableIntStateOf(0) // 0 = Choose Colors, 1 = Upload Image
-    var themeName by mutableStateOf("My Custom Theme")
+    var themeName by mutableStateOf("")
 
     var keyBackgroundColor by mutableStateOf("#2D2D44")
     var keyTextColor by mutableStateOf("#FFFFFF")
@@ -84,6 +84,21 @@ class CustomThemeEditorViewModel @Inject constructor(
         imageCropSourceBitmap = null
     }
 
+    fun resetScreen() {
+        selectedTab = 0
+        themeName = ""
+        keyBackgroundColor = "#2D2D44"
+        keyTextColor = "#FFFFFF"
+        keyboardBackgroundStartHex = "#1A1A2E"
+        keyboardBackgroundEndHex = "#16213E"
+        isGradientBackground = true
+        accentColor = "#7C4DFF"
+        keyShape = KeyShape.ROUNDED
+        imageCropSourceBitmap = null
+        croppedImagePath = null
+        isSaving = false
+    }
+
     fun saveTheme(context: Context, onSaved: (String) -> Unit) {
         if (isSaving) return
         isSaving = true
@@ -115,10 +130,10 @@ class CustomThemeEditorViewModel @Inject constructor(
                 themeRepository.customThemeRepository.saveCustomTheme(customTheme)
                 themeRepository.setSelectedThemeId(themeId)
 
-                isSaving = false
+                resetScreen()
                 onSaved(themeId)
             } catch (e: Exception) {
-                isSaving = false
+                resetScreen()
                 onSaved(KeyboardTheme.DEFAULT_THEME_ID)
             }
         }

@@ -148,10 +148,17 @@ private fun ThemeSwatchItem(
                 Box(modifier = Modifier.fillMaxSize().background(brush))
             }
             is ThemeBackground.Image -> {
+                val context = androidx.compose.ui.platform.LocalContext.current
                 val imageBitmap = remember(bg.assetPath) {
                     try {
                         val file = File(bg.assetPath)
-                        if (file.exists()) BitmapFactory.decodeFile(bg.assetPath)?.asImageBitmap() else null
+                        if (file.exists() && file.isFile) {
+                            BitmapFactory.decodeFile(bg.assetPath)?.asImageBitmap()
+                        } else {
+                            context.assets.open(bg.assetPath).use { stream ->
+                                BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                            }
+                        }
                     } catch (e: Exception) {
                         null
                     }

@@ -45,7 +45,6 @@ import com.panda.keyboards.ui.keyboards.KeyboardsScreen
 import com.panda.keyboards.ui.keyboards.KeyboardsViewModel
 import com.panda.keyboards.ui.navigation.MainTab
 import com.panda.keyboards.ui.setup.ImeSetupDialog
-import com.panda.keyboards.ui.stubs.AiHubScreen
 import com.panda.keyboards.ui.widgets.WidgetsScreen
 import com.panda.keyboards.theme.KeyboardTheme
 import com.panda.keyboards.ui.theme.PandaKeyboardsTheme
@@ -55,7 +54,7 @@ import javax.inject.Inject
 /**
  * Main entry point activity for Panda Keyboards.
  *
- * Provides a 4-tab navigation shell (Keyboards Gallery, Fonts, AI Hub, Widgets)
+ * Provides a 3-tab navigation shell (Keyboards Gallery, Fonts, Widgets)
  * and hosts the interactive IME setup dialog.
  */
 @AndroidEntryPoint
@@ -246,10 +245,6 @@ class MainActivity : ComponentActivity() {
                                     onSettingsClick = openSettings,
                                     modifier = contentModifier
                                 )
-                            }
-
-                            MainTab.AI_HUB -> {
-                                AiHubScreen(modifier = contentModifier)
                             }
 
                             MainTab.WIDGETS -> {

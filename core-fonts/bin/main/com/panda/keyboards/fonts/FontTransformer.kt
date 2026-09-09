@@ -89,7 +89,6 @@ object FontTransformer {
             FontStyle.COPPERPLATE_GOTHIC -> mapSmallCaps(char)
             FontStyle.COMIC_SANS         -> mapOffset(char, 0x1D5A0, 0x1D5BA, 0x1D7E2)
             FontStyle.ELEPHANT           -> mapOffset(char, 0x1D400, 0x1D41A, 0x1D7CE)
-            FontStyle.JOKERMAN           -> mapBubble(char)
             FontStyle.FRENCH_SCRIPT      -> mapScript(char)
             FontStyle.FREESTYLE_SCRIPT   -> mapScript(char)
             FontStyle.TIMES_NEW_ROMAN    -> mapOffset(char, 0x1D400, 0x1D41A, 0x1D7CE)

@@ -42,6 +42,8 @@ open class ClipboardHistoryRepository(private val context: Context?) {
 
     companion object {
         internal val CLIPBOARD_HISTORY_KEY = stringPreferencesKey("clipboard_history_json")
+        internal val DISMISSED_CLIP_ID_KEY = stringPreferencesKey("dismissed_clip_id")
+        internal val LAST_SHOWN_CLIP_TEXT_KEY = stringPreferencesKey("last_shown_clip_text")
         const val MAX_ITEMS = 10
 
         val json = Json {
@@ -51,6 +53,8 @@ open class ClipboardHistoryRepository(private val context: Context?) {
     }
 
     private val _inMemoryHistory = MutableStateFlow<List<ClipboardItem>>(emptyList())
+    private val _inMemoryDismissedClipId = MutableStateFlow<String?>(null)
+    private val _inMemoryLastShownClipText = MutableStateFlow<String?>(null)
 
     /**
      * Flow of copied clipboard history items, most recent first, capped at 10 items.
@@ -73,12 +77,77 @@ open class ClipboardHistoryRepository(private val context: Context?) {
     }
 
     /**
+     * Flow emitting the ID of the last dismissed quick paste clip item.
+     */
+    open val dismissedClipId: Flow<String?> = if (context != null) {
+        context.clipboardDataStore.data.map { prefs ->
+            prefs[DISMISSED_CLIP_ID_KEY]
+        }
+    } else {
+        _inMemoryDismissedClipId
+    }
+
+    /**
+     * Flow emitting the raw text of the last shown / dismissed quick paste clip item.
+     */
+    open val lastShownClipText: Flow<String?> = if (context != null) {
+        context.clipboardDataStore.data.map { prefs ->
+            prefs[LAST_SHOWN_CLIP_TEXT_KEY]
+        }
+    } else {
+        _inMemoryLastShownClipText
+    }
+
+    /**
+     * Permanently mark a clip ID as dismissed so quick paste never shows again for it.
+     */
+    open suspend fun dismissClip(id: String) {
+        if (context != null) {
+            context.clipboardDataStore.edit { prefs ->
+                prefs[DISMISSED_CLIP_ID_KEY] = id
+                // Also look up text for this clip ID if present, to mark text as shown
+                val jsonString = prefs[CLIPBOARD_HISTORY_KEY]
+                if (!jsonString.isNullOrEmpty()) {
+                    try {
+                        val current = json.decodeFromString<List<ClipboardItem>>(jsonString)
+                        val item = current.firstOrNull { it.id == id }
+                        if (item != null) {
+                            prefs[LAST_SHOWN_CLIP_TEXT_KEY] = item.text
+                        }
+                    } catch (e: Exception) {
+                        // ignore
+                    }
+                }
+            }
+        } else {
+            _inMemoryDismissedClipId.value = id
+            val item = _inMemoryHistory.value.firstOrNull { it.id == id }
+            if (item != null) {
+                _inMemoryLastShownClipText.value = item.text
+            }
+        }
+    }
+
+    /**
+     * Mark a specific text snippet as shown / dismissed for quick paste.
+     */
+    open suspend fun markClipAsShown(text: String) {
+        if (text.isBlank()) return
+        if (context != null) {
+            context.clipboardDataStore.edit { prefs ->
+                prefs[LAST_SHOWN_CLIP_TEXT_KEY] = text
+            }
+        } else {
+            _inMemoryLastShownClipText.value = text
+        }
+    }
+
+    /**
      * Add a newly copied text snippet to clipboard history.
      * Deduplicates exact text matches, places entry at top, and caps history at 10 items.
      */
     open suspend fun addClip(text: String) {
         if (text.isBlank()) return
-        val newItem = ClipboardItem(text = text, timestamp = System.currentTimeMillis())
 
         if (context != null) {
             context.clipboardDataStore.edit { prefs ->
@@ -90,12 +159,22 @@ open class ClipboardHistoryRepository(private val context: Context?) {
                     emptyList()
                 }
 
+                // If the top item already has identical text, preserve it to prevent ID mutation
+                if (current.firstOrNull()?.text == text) {
+                    return@edit
+                }
+
+                val newItem = ClipboardItem(text = text, timestamp = System.currentTimeMillis())
                 val filtered = current.filter { it.text != text }
                 val updated = (listOf(newItem) + filtered).take(MAX_ITEMS)
                 prefs[CLIPBOARD_HISTORY_KEY] = json.encodeToString(updated)
             }
         } else {
             val current = _inMemoryHistory.value
+            if (current.firstOrNull()?.text == text) {
+                return
+            }
+            val newItem = ClipboardItem(text = text, timestamp = System.currentTimeMillis())
             val filtered = current.filter { it.text != text }
             _inMemoryHistory.value = (listOf(newItem) + filtered).take(MAX_ITEMS)
         }

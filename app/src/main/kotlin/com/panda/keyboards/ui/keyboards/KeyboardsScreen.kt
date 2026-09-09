@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -61,6 +63,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -75,6 +78,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.panda.keyboards.ime.keyboard.ResolvedTheme
 import com.panda.keyboards.theme.KeyboardTheme
+import com.panda.keyboards.ui.theme.ProGold
 
 import androidx.compose.material.icons.filled.Delete
 
@@ -110,31 +114,16 @@ fun KeyboardsScreen(
     modifier: Modifier = Modifier
 ) {
     val themes by viewModel.themes.collectAsStateWithLifecycle()
-    val hasMoreThemes by viewModel.hasMoreThemes.collectAsStateWithLifecycle()
     val selectedThemeId by viewModel.selectedThemeId.collectAsStateWithLifecycle()
     val imeStatus by viewModel.imeStatus.collectAsStateWithLifecycle()
 
+    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
     val selectedThemeForSheet by viewModel.selectedThemeForSheet.collectAsStateWithLifecycle()
     val unlockedThemeIds by viewModel.unlockedThemeIds.collectAsStateWithLifecycle()
     val freeApplyCredits by viewModel.freeApplyCredits.collectAsStateWithLifecycle()
 
     val effectiveIsFullyConfigured = imeStatus.isFullyConfigured
     val gridState = rememberLazyGridState()
-
-    // Load more items dynamically when user scrolls near the bottom of the currently visible list
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val totalItems = gridState.layoutInfo.totalItemsCount
-            val lastVisibleIndex = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            totalItems > 0 && lastVisibleIndex >= totalItems - 2
-        }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) {
-            viewModel.loadMoreThemes()
-        }
-    }
 
     // Re-evaluate IME status whenever the screen is resumed (e.g. user returns from settings or dialog)
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -213,6 +202,15 @@ fun KeyboardsScreen(
                 )
             }
 
+            // ── Category Filter Bar ─────────────────────────────────────────
+            item(span = { GridItemSpan(2) }) {
+                ThemeCategoryFilterBar(
+                    categories = listOf("All", "Modern UI", "Abstract", "HD Background", "Nature", "Gradient", "Solid", "Custom"),
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = { category -> viewModel.selectCategory(category) }
+                )
+            }
+
             // ── Theme Grid Items (Loaded incrementally on demand) ────────────
             items(
                 items = themes,
@@ -230,35 +228,6 @@ fun KeyboardsScreen(
                         { themeToDelete = theme }
                     } else null
                 )
-            }
-
-            // ── Loading Footer when more themes are waiting to be revealed ───
-            if (hasMoreThemes) {
-                item(span = { GridItemSpan(2) }) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Loading more themes...",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                            )
-                        }
-                    }
-                }
             }
         }
     }
@@ -395,15 +364,29 @@ fun KeyboardsScreen(
                         }
                     }
                 } else {
-                    // Option 1: Unlock Forever (PRO) (All features no limits)
+                    // Option 1: Unlock Forever (PRO) (All Feature No Limit)
                     androidx.compose.material3.Button(
                         onClick = { showProPurchaseDialog = true },
                         modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = ProGold,
+                            contentColor = Color.Black
+                        )
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Unlock Forever (PRO)", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(text = "All features, no limits", fontSize = 12.sp, color = Color.White.copy(alpha = 0.8f))
+                            Text(
+                                text = "Unlock Forever (PRO)",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = Color.Black
+                            )
+                            Text(
+                                text = "All Feature No Limit",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.Black
+                            )
                         }
                     }
 
@@ -605,7 +588,7 @@ private fun KeyboardThemeItem(
                     }
                 }
 
-                // Selected Checkmark Badge
+                // Selected Checkmark Badge or PRO Gold Crown Badge
                 if (isSelected) {
                     Surface(
                         shape = CircleShape,
@@ -622,6 +605,23 @@ private fun KeyboardThemeItem(
                                 contentDescription = "Selected",
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                } else if (theme.isPro) {
+                    Surface(
+                        shape = RoundedCornerShape(topStart = 0.dp, bottomStart = 8.dp, topEnd = 16.dp, bottomEnd = 0.dp),
+                        color = Color(0xFFF5C518),
+                        shadowElevation = 2.dp,
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "👑",
+                                fontSize = 12.sp
                             )
                         }
                     }
@@ -681,13 +681,18 @@ internal fun KeyboardThemePreviewImage(
     val resolvedTheme = remember(theme) { ResolvedTheme.from(theme) }
     val textMeasurer = rememberTextMeasurer()
 
+    val context = androidx.compose.ui.platform.LocalContext.current
     val bgImageBitmap = remember(resolvedTheme.imagePath) {
         resolvedTheme.imagePath?.let { path ->
             try {
                 val file = java.io.File(path)
-                if (file.exists()) {
+                if (file.exists() && file.isFile) {
                     BitmapFactory.decodeFile(path)?.asImageBitmap()
-                } else null
+                } else {
+                    context.assets.open(path).use { stream ->
+                        BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                    }
+                }
             } catch (e: Exception) {
                 null
             }
@@ -700,9 +705,6 @@ internal fun KeyboardThemePreviewImage(
             .drawWithCache {
                 val padding = 6.dp.toPx()
                 val drawWidth = size.width - (padding * 2)
-
-                val cornerRadiusPx = 5.dp.toPx()
-                val cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx)
 
                 val bgBrush = resolvedTheme.keyboardBackgroundBrush
                 val bgColor = resolvedTheme.keyboardBackground
@@ -724,6 +726,14 @@ internal fun KeyboardThemePreviewImage(
                 val rowHeight = (targetKeyWidth * 1.05f).coerceAtMost((availableRowsHeight - (rowSpacing * 3)) / 4f)
                 val totalRowsHeight = (rowHeight * 4) + (rowSpacing * 3)
                 val startY = rowsTop + ((availableRowsHeight - totalRowsHeight) / 2f).coerceAtLeast(0f)
+
+                val keyCornerRadiusPx = when (theme.keyShape) {
+                    com.panda.keyboards.theme.KeyShape.SQUARE -> 2.dp.toPx()
+                    com.panda.keyboards.theme.KeyShape.ROUNDED -> 7.dp.toPx()
+                    com.panda.keyboards.theme.KeyShape.PILL -> (rowHeight / 2f)
+                }
+                val keyCornerRadius = CornerRadius(keyCornerRadiusPx, keyCornerRadiusPx)
+                val headerCornerRadius = CornerRadius(5.dp.toPx(), 5.dp.toPx())
 
                 val fontSpNormal = (rowHeight * 0.45f).toSp()
                 val fontSpSmall = (rowHeight * 0.32f).toSp()
@@ -822,12 +832,22 @@ internal fun KeyboardThemePreviewImage(
                         drawRect(color = bgColor)
                     }
 
+                    // 1b. Draw glowing underlay for Glassmorphic themes
+                    val glassGlowBrush = resolvedTheme.glassmorphicGlowBrush
+                    if (glassGlowBrush != null) {
+                        drawRect(
+                            brush = glassGlowBrush,
+                            topLeft = Offset(padding, startY - rowSpacing),
+                            size = Size(drawWidth, totalRowsHeight + (rowSpacing * 2))
+                        )
+                    }
+
                     // 2. Header Strip
                     drawRoundRect(
                         color = specialKeyColor.copy(alpha = 0.5f),
                         topLeft = Offset(padding, headerTop),
                         size = Size(drawWidth, headerHeight),
-                        cornerRadius = cornerRadius
+                        cornerRadius = headerCornerRadius
                     )
                     drawRoundRect(
                         color = accentColor,
@@ -843,13 +863,36 @@ internal fun KeyboardThemePreviewImage(
                     )
 
                     // 3. Draw pre-calculated keys & text layouts (Zero allocations per draw frame!)
+                    val shadowColor = resolvedTheme.keyShadowColor
+                    val rawShadowOffsetPx = resolvedTheme.keyShadowOffsetDp.dp.toPx()
+                    // Intentional Thumbnail Legibility Enhancement: Ensure shadow offset is at least 1.8dp in small scale previews
+                    val previewShadowOffsetPx = if (rawShadowOffsetPx > 0f) rawShadowOffsetPx.coerceAtLeast(1.8.dp.toPx()) else 0f
+                    val previewBorderWidthPx = resolvedTheme.keyBorderWidthDp.dp.toPx()
+
                     for (key in allPreparedKeys) {
+                        if (previewShadowOffsetPx > 0f && shadowColor != null) {
+                            drawRoundRect(
+                                color = shadowColor,
+                                topLeft = key.rectTopLeft + Offset(0f, previewShadowOffsetPx),
+                                size = key.rectSize,
+                                cornerRadius = keyCornerRadius
+                            )
+                        }
                         drawRoundRect(
                             color = key.color,
                             topLeft = key.rectTopLeft,
                             size = key.rectSize,
-                            cornerRadius = cornerRadius
+                            cornerRadius = keyCornerRadius
                         )
+                        if (previewBorderWidthPx > 0f && resolvedTheme.keyBorderColor != null) {
+                            drawRoundRect(
+                                color = resolvedTheme.keyBorderColor!!,
+                                topLeft = key.rectTopLeft,
+                                size = key.rectSize,
+                                cornerRadius = keyCornerRadius,
+                                style = Stroke(width = previewBorderWidthPx)
+                            )
+                        }
                         if (key.textLayout != null) {
                             drawText(
                                 textLayoutResult = key.textLayout,
@@ -860,4 +903,43 @@ internal fun KeyboardThemePreviewImage(
                 }
             }
     )
+}
+
+/**
+ * Category filter chips strip for filtering themes in the Theme Gallery.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ThemeCategoryFilterBar(
+    categories: List<String>,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(vertical = 4.dp)
+    ) {
+        items(categories) { cat ->
+            val isSelected = cat.equals(selectedCategory, ignoreCase = true)
+
+            androidx.compose.material3.FilterChip(
+                selected = isSelected,
+                onClick = { onCategorySelected(cat) },
+                label = {
+                    Text(
+                        text = cat,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        fontSize = 13.sp
+                    )
+                },
+                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp)
+            )
+        }
+    }
 }

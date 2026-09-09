@@ -26,6 +26,7 @@ open class SettingsRepository(private val context: Context?) {
         internal val QWERTY_ORDER_KEY = stringPreferencesKey("setting_qwerty_order")
         internal val KEYBOARD_HEIGHT_KEY = stringPreferencesKey("setting_keyboard_height")
         internal val AUTO_CORRECTION_KEY = booleanPreferencesKey("setting_auto_correction")
+        internal val AUTO_CAPITALIZATION_KEY = booleanPreferencesKey("setting_auto_capitalization")
         internal val OFFLINE_MODE_KEY = booleanPreferencesKey("setting_offline_mode")
         internal val NUMBER_ROW_KEY = booleanPreferencesKey("setting_number_row")
     }
@@ -52,6 +53,7 @@ open class SettingsRepository(private val context: Context?) {
             qwertyOrder = qwertyOrder,
             keyboardHeight = keyboardHeight,
             autoCorrectionEnabled = prefs[AUTO_CORRECTION_KEY] ?: true,
+            autoCapitalizationEnabled = prefs[AUTO_CAPITALIZATION_KEY] ?: true,
             offlineModeEnabled = prefs[OFFLINE_MODE_KEY] ?: false,
             numberRowEnabled = prefs[NUMBER_ROW_KEY] ?: false
         )
@@ -72,6 +74,12 @@ open class SettingsRepository(private val context: Context?) {
     open suspend fun setAutoCorrectionEnabled(enabled: Boolean) {
         context?.settingsDataStore?.edit { prefs ->
             prefs[AUTO_CORRECTION_KEY] = enabled
+        }
+    }
+
+    open suspend fun setAutoCapitalizationEnabled(enabled: Boolean) {
+        context?.settingsDataStore?.edit { prefs ->
+            prefs[AUTO_CAPITALIZATION_KEY] = enabled
         }
     }
 

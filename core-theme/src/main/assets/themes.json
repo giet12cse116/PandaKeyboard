@@ -1,298 +1,1271 @@
 {
-  "themes": [
-    {
-      "id": "default_dark",
-      "name": "Default Dark",
-      "isPro": false,
-      "previewImage": "preview_default_dark",
-      "keyBackgroundColor": "#3A3A3C",
-      "keyTextColor": "#FFFFFF",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#1C1C1E"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#7C4DFF"
-    },
-    {
-      "id": "midnight",
-      "name": "Midnight",
-      "isPro": false,
-      "previewImage": "preview_midnight",
-      "keyBackgroundColor": "#1A1A2E",
-      "keyTextColor": "#E0E0FF",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#0F0F23", "#1A1A2E", "#16213E"],
-        "angle": 0
-      },
-      "keyShape": "rounded",
-      "accentColor": "#5C6BC0"
-    },
-    {
-      "id": "pastel_dream",
-      "name": "Pastel Dream",
-      "isPro": false,
-      "previewImage": "preview_pastel_dream",
-      "keyBackgroundColor": "#F5E6F0",
-      "keyTextColor": "#4A4A4A",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#FFECD2", "#FCB69F", "#FF9A9E"],
-        "angle": 45
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF6B9D"
-    },
-    {
-      "id": "forest",
-      "name": "Forest",
-      "isPro": false,
-      "previewImage": "preview_forest",
-      "keyBackgroundColor": "#2D4A3E",
-      "keyTextColor": "#E8F5E9",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#1B2A21", "#2D4A3E"],
-        "angle": 0
-      },
-      "keyShape": "rounded",
-      "accentColor": "#66BB6A"
-    },
-    {
-      "id": "sunset_glow",
-      "name": "Sunset Glow",
-      "isPro": false,
-      "previewImage": "preview_sunset_glow",
-      "keyBackgroundColor": "#3D2040",
-      "keyTextColor": "#FFE0B2",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#1A0A2E", "#3D1053", "#6D2077"],
-        "angle": 135
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF7043"
-    },
-    {
-      "id": "panda",
-      "name": "Panda",
-      "isPro": false,
-      "previewImage": "preview_panda",
-      "keyBackgroundColor": "#FAFAFA",
-      "keyTextColor": "#212121",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#EEEEEE"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#7C4DFF"
-    },
-    {
-      "id": "neon_cyberpunk",
-      "name": "Neon Cyberpunk",
-      "isPro": false,
-      "previewImage": "preview_neon_cyberpunk",
-      "keyBackgroundColor": "#120826",
-      "keyTextColor": "#00F5FF",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#05021A", "#2A093D"],
-        "angle": 45
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF007F"
-    },
-    {
-      "id": "ocean_breeze",
-      "name": "Ocean Breeze",
-      "isPro": false,
-      "previewImage": "preview_ocean_breeze",
-      "keyBackgroundColor": "#162A38",
-      "keyTextColor": "#E0F7FA",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#0D1B2A", "#1B263B", "#62B6CB"],
-        "angle": 90
-      },
-      "keyShape": "rounded",
-      "accentColor": "#00E5FF"
-    },
-    {
-      "id": "rose_gold",
-      "name": "Rose Gold",
-      "isPro": false,
-      "previewImage": "preview_rose_gold",
-      "keyBackgroundColor": "#3E272A",
-      "keyTextColor": "#FCE4EC",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#2B1B1D", "#4A2E33", "#784B50"],
-        "angle": 135
-      },
-      "keyShape": "rounded",
-      "accentColor": "#F48FB1"
-    },
-    {
-      "id": "amoled_black",
-      "name": "AMOLED Black",
-      "isPro": false,
-      "previewImage": "preview_amoled_black",
-      "keyBackgroundColor": "#121212",
-      "keyTextColor": "#FFFFFF",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#000000"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#BB86FC"
-    },
-    {
-      "id": "cherry_blossom",
-      "name": "Cherry Blossom",
-      "isPro": false,
-      "previewImage": "preview_cherry_blossom",
-      "keyBackgroundColor": "#FFF0F5",
-      "keyTextColor": "#4A2E35",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#FFE4E1", "#FFC0CB", "#FFB6C1"],
-        "angle": 45
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF69B4"
-    },
-    {
-      "id": "golden_luxury",
-      "name": "Golden Luxury",
-      "isPro": false,
-      "previewImage": "preview_golden_luxury",
-      "keyBackgroundColor": "#261F10",
-      "keyTextColor": "#FFECB3",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#12100A", "#292211", "#42371C"],
-        "angle": 90
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FFD700"
-    },
-    {
-      "id": "nordic_snow",
-      "name": "Nordic Snow",
-      "isPro": false,
-      "previewImage": "preview_nordic_snow",
-      "keyBackgroundColor": "#ECEFF1",
-      "keyTextColor": "#263238",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#CFD8DC"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#0288D1"
-    },
-    {
-      "id": "lavender_mist",
-      "name": "Lavender Mist",
-      "isPro": false,
-      "previewImage": "preview_lavender_mist",
-      "keyBackgroundColor": "#2B213A",
-      "keyTextColor": "#EDE7F6",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#181424", "#302644", "#45385C"],
-        "angle": 45
-      },
-      "keyShape": "rounded",
-      "accentColor": "#B388FF"
-    },
-    {
-      "id": "emerald_velvet",
-      "name": "Emerald Velvet",
-      "isPro": false,
-      "previewImage": "preview_emerald_velvet",
-      "keyBackgroundColor": "#0E291E",
-      "keyTextColor": "#E0F2F1",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#051710", "#103828", "#1B523D"],
-        "angle": 135
-      },
-      "keyShape": "rounded",
-      "accentColor": "#00E676"
-    },
-    {
-      "id": "solar_fire",
-      "name": "Solar Fire",
-      "isPro": false,
-      "previewImage": "preview_solar_fire",
-      "keyBackgroundColor": "#3D1308",
-      "keyTextColor": "#FFF3E0",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#210702", "#4D170A", "#78220A"],
-        "angle": 45
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF3D00"
-    },
-    {
-      "id": "matcha_latte",
-      "name": "Matcha Latte",
-      "isPro": false,
-      "previewImage": "preview_matcha_latte",
-      "keyBackgroundColor": "#E8F5E9",
-      "keyTextColor": "#2D3B2D",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#C8E6C9"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#4CAF50"
-    },
-    {
-      "id": "nebula",
-      "name": "Deep Space Nebula",
-      "isPro": false,
-      "previewImage": "preview_nebula",
-      "keyBackgroundColor": "#1B0F33",
-      "keyTextColor": "#E1BEE7",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#080417", "#210B3B", "#3B1254"],
-        "angle": 135
-      },
-      "keyShape": "rounded",
-      "accentColor": "#E040FB"
-    },
-    {
-      "id": "retrowave",
-      "name": "Retro Wave 80s",
-      "isPro": false,
-      "previewImage": "preview_retrowave",
-      "keyBackgroundColor": "#240038",
-      "keyTextColor": "#00FFFF",
-      "keyboardBackground": {
-        "type": "gradient",
-        "colors": ["#0D001A", "#33004D", "#590080"],
-        "angle": 90
-      },
-      "keyShape": "rounded",
-      "accentColor": "#FF00AA"
-    },
-    {
-      "id": "minimalist_white",
-      "name": "Minimalist White",
-      "isPro": false,
-      "previewImage": "preview_minimalist_white",
-      "keyBackgroundColor": "#F5F5F5",
-      "keyTextColor": "#000000",
-      "keyboardBackground": {
-        "type": "solid",
-        "color": "#FFFFFF"
-      },
-      "keyShape": "rounded",
-      "accentColor": "#212121"
-    }
-  ]
+    "themes":  [
+                   {
+                       "id":  "abstract_cyber_waves",
+                       "name":  "Cyber Waves",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299774_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299774_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299774_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299774_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E5FF",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_cosmic_flow",
+                       "name":  "Cosmic Flow",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299775_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299775_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299775_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299775_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF007F",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_liquid_gold",
+                       "name":  "Liquid Gold",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299776_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299776_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299776_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299776_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FFD700",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_neon_prism",
+                       "name":  "Neon Prism",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299779_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299779_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299779_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299779_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#7C4DFF",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_dark_velvet",
+                       "name":  "Dark Velvet",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299780_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299780_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299780_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299780_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF5722",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_sunset_blur",
+                       "name":  "Sunset Blur",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299781_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299781_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299781_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299781_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#E91E63",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "test_typographic_maximalism",
+                       "name":  "Typographic Maximalism",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                       "keyBackgroundColor":  "#111111",
+                       "keyTextColor":  "#FFFF00",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#000000"
+                                              },
+                       "keyShape":  "square",
+                       "accentColor":  "#FFFF00",
+                       "keyBorderColor":  "#FFFF00",
+                       "keyBorderWidthDp":  1.5,
+                       "keyStyle":  {
+                                        "type":  "semi_flat",
+                                        "elevationDp":  3.0,
+                                        "shadowColorHex":  "#60FFFF00"
+                                    }
+                   },
+                   {
+                       "id":  "test_futuristic_terminal",
+                       "name":  "Dark Futuristic Terminal",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                       "keyBackgroundColor":  "#1A0F2E",
+                       "keyTextColor":  "#00FF66",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#0A0E14",
+                                                                 "#0D1B2A",
+                                                                 "#1A0F2E"
+                                                             ],
+                                                  "angle":  180.0
+                                              },
+                       "keyShape":  "square",
+                       "accentColor":  "#00FF66",
+                       "keyStyle":  {
+                                        "type":  "glassmorphic",
+                                        "blurRadiusDp":  12.0,
+                                        "translucencyAlpha":  0.40,
+                                        "borderColorHex":  "#6000FF66",
+                                        "glowGradientColors":  [
+                                                                   "#9000FF66",
+                                                                   "#4000E5FF",
+                                                                   "#00000000"
+                                                               ]
+                                    }
+                   },
+                   {
+                       "id":  "test_y2k_cyber_chic",
+                       "name":  "Y2K Cyber-Chic",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                       "keyBackgroundColor":  "#50FF007F",
+                       "keyTextColor":  "#00F5FF",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#0D001A",
+                                                                 "#33004D",
+                                                                 "#590080"
+                                                             ],
+                                                  "angle":  135.0
+                                              },
+                       "keyShape":  "square",
+                       "accentColor":  "#FF00AA",
+                       "keyBorderColor":  "#00F5FF",
+                       "keyBorderWidthDp":  1.5,
+                       "keyStyle":  {
+                                        "type":  "glassmorphic",
+                                        "blurRadiusDp":  16.0,
+                                        "translucencyAlpha":  0.45,
+                                        "borderColorHex":  "#00F5FF",
+                                        "glowGradientColors":  [
+                                                                   "#A0FF00AA",
+                                                                   "#6000F5FF",
+                                                                   "#00000000"
+                                                               ]
+                                    }
+                   },
+                   {
+                       "id":  "test_neobrutalism",
+                       "name":  "Neo-Brutalism",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                       "keyBackgroundColor":  "#FF5353",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#FFD027"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#4D88FF",
+                       "keyStyle":  {
+                                        "type":  "neobrutalist",
+                                        "borderWidthDp":  2.5,
+                                        "borderColorHex":  "#000000",
+                                        "shadowOffsetDp":  4.0,
+                                        "shadowColorHex":  "#000000"
+                                    }
+                   },
+                   {
+                       "id":  "test_claymorphism_3d",
+                       "name":  "Claymorphism 3D",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                       "keyBackgroundColor":  "#EEF2FF",
+                       "keyTextColor":  "#312E81",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#C7D2FE",
+                                                                 "#E0E7FF",
+                                                                 "#EEF2FF"
+                                                             ],
+                                                  "angle":  135.0
+                                              },
+                       "keyShape":  "pill",
+                       "accentColor":  "#6366F1",
+                       "keyStyle":  {
+                                        "type":  "claymorphic",
+                                        "elevationDp":  4.5,
+                                        "shadowColorHex":  "#403730A3",
+                                        "pressedElevationDp":  1.0
+                                    }
+                   },
+                   {
+                       "id":  "test_generative_adaptive",
+                       "name":  "Generative Adaptive UI",
+                       "isPro":  false,
+                       "isExperimental":  true,
+                       "category":  "Modern UI",
+                        "keyBackgroundColor":  "#507C4DFF",
+                        "keyTextColor":  "#FFFFFF",
+                        "keyboardBackground":  {
+                                                   "type":  "gradient",
+                                                   "colors":  [
+                                                                  "#120826",
+                                                                  "#2A093D",
+                                                                  "#00F5FF"
+                                                              ],
+                                                   "angle":  45.0
+                                               },
+                        "keyShape":  "rounded",
+                        "accentColor":  "#00F5FF",
+                        "keyBorderColor":  "#8000F5FF",
+                        "keyBorderWidthDp":  1.2,
+                        "keyStyle":  {
+                                         "type":  "glassmorphic",
+                                         "blurRadiusDp":  18.0,
+                                         "translucencyAlpha":  0.30,
+                                         "borderColorHex":  "#8000F5FF",
+                                         "glowGradientColors":  [
+                                                                    "#B000F5FF",
+                                                                    "#707C4DFF",
+                                                                    "#00000000"
+                                                                ]
+                                     }
+                    },
+                   {
+                       "id":  "abstract_ocean_vortex",
+                       "name":  "Ocean Vortex",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299782_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299782_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299782_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299782_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E676",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_pastel_aura",
+                       "name":  "Pastel Aura",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299783_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299783_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299783_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299783_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#B388FF",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_golden_spark",
+                       "name":  "Golden Spark",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299608_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299608_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299608_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299608_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FFC107",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_cyber_grid",
+                       "name":  "Cyber Grid",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299609_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299609_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299609_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299609_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E5FF",
+                       "category":  "Abstract"
+                   },
+                   {
+                       "id":  "abstract_coral_reef",
+                       "name":  "Coral Reef",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299639_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299639_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299639_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299639_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF6E40",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299967",
+                       "name":  "Sunset Pulse 67",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299967_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299967_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299967_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299967_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF3D00",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299966",
+                       "name":  "Ocean Surge 66",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299966_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299966_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299966_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299966_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E5FF",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299965",
+                       "name":  "Neon Glow 65",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299965_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299965_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299965_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299965_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF007F",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299964",
+                       "name":  "Cosmic Aura 64",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299964_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299964_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299964_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299964_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#7C4DFF",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_candy_dream",
+                       "name":  "Candy Dream",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299623_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299623_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299623_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299623_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF4081",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_neon_pulse",
+                       "name":  "Neon Pulse",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299605_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299605_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299605_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299605_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF007F",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_deep_ocean",
+                       "name":  "Deep Ocean",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299613_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299613_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299613_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299613_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00B0FF",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_purple_nebula",
+                       "name":  "Purple Nebula",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299606_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299606_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299606_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299606_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#9C27B0",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_sunset_flame",
+                       "name":  "Sunset Flame",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299612_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299612_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299612_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299612_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF3D00",
+                       "category":  "HD Background"
+                   },
+                   {
+                       "id":  "abstract_amethyst_haze",
+                       "name":  "Amethyst Haze",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299635_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299635_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299635_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299635_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#AA00FF",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_shadow_realm",
+                       "name":  "Shadow Realm",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299644_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299644_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299644_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299644_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#78909C",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_frost_crystal",
+                       "name":  "Frost Crystal",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299643_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299643_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299643_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299643_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#40C4FF",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_obsidian_night",
+                       "name":  "Obsidian Night",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299640_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299640_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299640_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299640_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#B0BEC5",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_electric_violet",
+                       "name":  "Sunset Flame",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299624_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299624_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299624_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299624_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#7C4DFF",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_solar_flare",
+                       "name":  "Solar Flare",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299629_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299629_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299629_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299629_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF9100",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299971",
+                       "name":  "Sapphire Haze",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299971_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299971_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299971_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299971_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#29B6F6",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_sapphire_mist",
+                       "name":  "Sapphire Mist",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299627_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299627_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299627_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299627_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#448AFF",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_mint_breeze",
+                       "name":  "Mint Breeze",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299632_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299632_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299632_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299632_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#1DE9B6",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_aurora_borealis",
+                       "name":  "Aurora Borealis",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299625_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299625_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299625_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299625_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#69F0AE",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_golden_sunset",
+                       "name":  "Golden Sunset",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299636_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299636_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299636_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299636_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FFD700",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299970",
+                       "name":  "Flower Dream",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299970_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299970_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299970_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299970_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF80AB",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_pkbg_1000299969",
+                       "name":  "Emerald Mist",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299969_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299969_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299969_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299969_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E676",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_crimson_wave",
+                       "name":  "Crimson Wave",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299633_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299633_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299633_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299633_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#D50000",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_cosmic_dust",
+                       "name":  "Cosmic Dust",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299631_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299631_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299631_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299631_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#E040FB",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "abstract_aqua_vortex",
+                       "name":  "Aqua Vortex",
+                       "isPro":  false,
+                       "keyBackgroundColor":  "#B3FFFFFF",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "image",
+                                                  "assetPath":  "themes/abstract/1000299637_Default.jpg",
+                                                  "compactAssetPath":  "themes/abstract/1000299637_Compact.jpg",
+                                                  "defaultAssetPath":  "themes/abstract/1000299637_Default.jpg",
+                                                  "tallAssetPath":  "themes/abstract/1000299637_Tall.jpg"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#18FFFF",
+                       "category":  "Nature"
+                   },
+                   {
+                       "id":  "rose_gold",
+                       "name":  "Rose Gold",
+                       "isPro":  false,
+                       "previewImage":  "preview_rose_gold",
+                       "keyBackgroundColor":  "#3E272A",
+                       "keyTextColor":  "#FCE4EC",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#2B1B1D",
+                                                                 "#4A2E33",
+                                                                 "#784B50"
+                                                             ],
+                                                  "angle":  135
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#F48FB1",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "sunset_glow",
+                       "name":  "Sunset Glow",
+                       "isPro":  false,
+                       "previewImage":  "preview_sunset_glow",
+                       "keyBackgroundColor":  "#3D2040",
+                       "keyTextColor":  "#FFE0B2",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#1A0A2E",
+                                                                 "#3D1053",
+                                                                 "#6D2077"
+                                                             ],
+                                                  "angle":  135
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF7043",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "ocean_breeze",
+                       "name":  "Ocean Breeze",
+                       "isPro":  false,
+                       "previewImage":  "preview_ocean_breeze",
+                       "keyBackgroundColor":  "#162A38",
+                       "keyTextColor":  "#E0F7FA",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#0D1B2A",
+                                                                 "#1B263B",
+                                                                 "#62B6CB"
+                                                             ],
+                                                  "angle":  90
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E5FF",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "purple_sparkle",
+                       "name":  "Purple Cosmic Sparkle",
+                       "isPro":  true,
+                       "previewImage":  "preview_purple_sparkle",
+                       "keyBackgroundColor":  "#40FFFFFF",
+                       "keyTextColor":  "#FFFFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#412080",
+                                                                 "#7B1FA2",
+                                                                 "#A770EF"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#BA68C8",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "coral_neon_glow",
+                       "name":  "Coral Neon Glow",
+                       "isPro":  true,
+                       "previewImage":  "preview_coral_neon_glow",
+                       "keyBackgroundColor":  "#60FFFFFF",
+                       "keyTextColor":  "#880E4F",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#FF9A9E",
+                                                                 "#FECFEF",
+                                                                 "#FEC0CE"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "pill",
+                       "accentColor":  "#FF2A6D",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "cherry_blossom",
+                       "name":  "Cherry Blossom",
+                       "isPro":  false,
+                       "previewImage":  "preview_cherry_blossom",
+                       "keyBackgroundColor":  "#FFF0F5",
+                       "keyTextColor":  "#4A2E35",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#FFE4E1",
+                                                                 "#FFC0CB",
+                                                                 "#FFB6C1"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF69B4",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "golden_luxury",
+                       "name":  "Golden Luxury",
+                       "isPro":  false,
+                       "previewImage":  "preview_golden_luxury",
+                       "keyBackgroundColor":  "#261F10",
+                       "keyTextColor":  "#FFECB3",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#12100A",
+                                                                 "#292211",
+                                                                 "#42371C"
+                                                             ],
+                                                  "angle":  90
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FFD700",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "emerald_velvet",
+                       "name":  "Emerald Velvet",
+                       "isPro":  false,
+                       "previewImage":  "preview_emerald_velvet",
+                       "keyBackgroundColor":  "#0E291E",
+                       "keyTextColor":  "#E0F2F1",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#051710",
+                                                                 "#103828",
+                                                                 "#1B523D"
+                                                             ],
+                                                  "angle":  135
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00E676",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "neon_cyberpunk",
+                       "name":  "Neon Cyberpunk",
+                       "isPro":  false,
+                       "previewImage":  "preview_neon_cyberpunk",
+                       "keyBackgroundColor":  "#120826",
+                       "keyTextColor":  "#00F5FF",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#05021A",
+                                                                 "#2A093D"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF007F",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "lavender_mist",
+                       "name":  "Lavender Mist",
+                       "isPro":  false,
+                       "previewImage":  "preview_lavender_mist",
+                       "keyBackgroundColor":  "#2B213A",
+                       "keyTextColor":  "#EDE7F6",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#181424",
+                                                                 "#302644",
+                                                                 "#45385C"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#B388FF",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "crescent_moon_starry",
+                       "name":  "Crescent Moon Night",
+                       "isPro":  true,
+                       "previewImage":  "preview_crescent_moon_starry",
+                       "keyBackgroundColor":  "#355C768D",
+                       "keyTextColor":  "#E0E1DD",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#0B132B",
+                                                                 "#1C2541",
+                                                                 "#3A506B"
+                                                             ],
+                                                  "angle":  135
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FFD54F",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "winter_mist_forest",
+                       "name":  "Winter Pine Mist",
+                       "isPro":  true,
+                       "previewImage":  "preview_winter_mist_forest",
+                       "keyBackgroundColor":  "#45FFFFFF",
+                       "keyTextColor":  "#1A237E",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#E2E8F0",
+                                                                 "#94A3B8",
+                                                                 "#64748B"
+                                                             ],
+                                                  "angle":  0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#29B6F6",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "forest",
+                       "name":  "Forest",
+                       "isPro":  false,
+                       "previewImage":  "preview_forest",
+                       "keyBackgroundColor":  "#2D4A3E",
+                       "keyTextColor":  "#E8F5E9",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#1B2A21",
+                                                                 "#2D4A3E"
+                                                             ],
+                                                  "angle":  0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#66BB6A",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "pastel_dream",
+                       "name":  "Pastel Dream",
+                       "isPro":  false,
+                       "previewImage":  "preview_pastel_dream",
+                       "keyBackgroundColor":  "#F5E6F0",
+                       "keyTextColor":  "#4A4A4A",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#FFECD2",
+                                                                 "#FCB69F",
+                                                                 "#FF9A9E"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF6B9D",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "solar_fire",
+                       "name":  "Solar Fire",
+                       "isPro":  false,
+                       "previewImage":  "preview_solar_fire",
+                       "keyBackgroundColor":  "#3D1308",
+                       "keyTextColor":  "#FFF3E0",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#210702",
+                                                                 "#4D170A",
+                                                                 "#78220A"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF3D00",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "nebula",
+                       "name":  "Deep Space Nebula",
+                       "isPro":  false,
+                       "previewImage":  "preview_nebula",
+                       "keyBackgroundColor":  "#1B0F33",
+                       "keyTextColor":  "#E1BEE7",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#080417",
+                                                                 "#210B3B",
+                                                                 "#3B1254"
+                                                             ],
+                                                  "angle":  135
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#E040FB",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "pink_cloud_bubble",
+                       "name":  "Pink Cute Cloud",
+                       "isPro":  true,
+                       "previewImage":  "preview_pink_cloud_bubble",
+                       "keyBackgroundColor":  "#60FFFFFF",
+                       "keyTextColor":  "#6A1B4D",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#FFE5EC",
+                                                                 "#FFC2D1",
+                                                                 "#FFB3C6"
+                                                             ],
+                                                  "angle":  0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF4081",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "retrowave",
+                       "name":  "Retro Wave 80s",
+                       "isPro":  false,
+                       "previewImage":  "preview_retrowave",
+                       "keyBackgroundColor":  "#240038",
+                       "keyTextColor":  "#00FFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#0D001A",
+                                                                 "#33004D",
+                                                                 "#590080"
+                                                             ],
+                                                  "angle":  90
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF00AA",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "pink_butterfly_glow",
+                       "name":  "Pink Butterfly Glow",
+                       "isPro":  true,
+                       "previewImage":  "preview_pink_butterfly_glow",
+                       "keyBackgroundColor":  "#60FFFFFF",
+                       "keyTextColor":  "#4A148C",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#FFDEE9",
+                                                                 "#B5FFFC",
+                                                                 "#FFB6C1"
+                                                             ],
+                                                  "angle":  45
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF1744",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "winter_wonderland_snow",
+                       "name":  "Winter Wonderland",
+                       "isPro":  true,
+                       "previewImage":  "preview_winter_wonderland_snow",
+                       "keyBackgroundColor":  "#60FFFFFF",
+                       "keyTextColor":  "#0D47A1",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#D0E1F9",
+                                                                 "#B4D2BA",
+                                                                 "#90AFC5"
+                                                             ],
+                                                  "angle":  90
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#26C6DA",
+                       "category":  "Gradient"
+                   },
+                   {
+                       "id":  "panda",
+                       "name":  "Panda",
+                       "isPro":  false,
+                       "previewImage":  "preview_panda",
+                       "keyBackgroundColor":  "#FAFAFA",
+                       "keyTextColor":  "#212121",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#EEEEEE"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#7C4DFF",
+                       "category":  "Solid"
+                   },
+                   {
+                       "id":  "default_dark",
+                       "name":  "Default Dark",
+                       "isPro":  false,
+                       "previewImage":  "preview_default_dark",
+                       "keyBackgroundColor":  "#3A3A3C",
+                       "keyTextColor":  "#FFFFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#1C1C1E"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#7C4DFF",
+                       "category":  "Solid"
+                   },
+                   {
+                       "id":  "amoled_black",
+                       "name":  "AMOLED Black",
+                       "isPro":  false,
+                       "previewImage":  "preview_amoled_black",
+                       "keyBackgroundColor":  "#121212",
+                       "keyTextColor":  "#FFFFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#000000"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#BB86FC",
+                       "category":  "Solid"
+                   },
+                   {
+                       "id":  "nordic_snow",
+                       "name":  "Nordic Snow",
+                       "isPro":  false,
+                       "previewImage":  "preview_nordic_snow",
+                       "keyBackgroundColor":  "#ECEFF1",
+                       "keyTextColor":  "#263238",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#CFD8DC"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#0288D1",
+                       "category":  "Solid"
+                   },
+                   {
+                       "id":  "matcha_latte",
+                       "name":  "Matcha Latte",
+                       "isPro":  false,
+                       "previewImage":  "preview_matcha_latte",
+                       "keyBackgroundColor":  "#E8F5E9",
+                       "keyTextColor":  "#2D3B2D",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#C8E6C9"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#4CAF50",
+                       "category":  "Solid"
+                   },
+                   {
+                       "id":  "minimalist_white",
+                       "name":  "Minimalist White",
+                       "isPro":  false,
+                       "previewImage":  "preview_minimalist_white",
+                       "keyBackgroundColor":  "#F5F5F5",
+                       "keyTextColor":  "#000000",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#FFFFFF"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#212121",
+                       "category":  "Solid"
+                   }
+               ]
 }

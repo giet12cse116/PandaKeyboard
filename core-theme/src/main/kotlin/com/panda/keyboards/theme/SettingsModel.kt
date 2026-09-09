@@ -30,6 +30,7 @@ data class KeyboardSettings(
     val qwertyOrder: QwertyOrder = QwertyOrder.QWERTY,
     val keyboardHeight: KeyboardHeight = KeyboardHeight.DEFAULT,
     val autoCorrectionEnabled: Boolean = true,
+    val autoCapitalizationEnabled: Boolean = true,
     val offlineModeEnabled: Boolean = false,
     val numberRowEnabled: Boolean = false
 )

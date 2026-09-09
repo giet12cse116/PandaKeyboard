@@ -216,15 +216,15 @@ object EmojiData {
 
     fun getCategoryEmojis(category: EmojiCategory, recents: List<String>): List<String> {
         return when (category) {
-            EmojiCategory.RECENTS -> recents
-            EmojiCategory.SMILEYS -> smileys
-            EmojiCategory.ANIMALS -> animals
-            EmojiCategory.FOOD -> food
-            EmojiCategory.ACTIVITIES -> activities
-            EmojiCategory.TRAVEL -> travel
-            EmojiCategory.OBJECTS -> objects
-            EmojiCategory.SYMBOLS -> symbols
-            EmojiCategory.FLAGS -> flags
+            EmojiCategory.RECENTS -> recents.distinct()
+            EmojiCategory.SMILEYS -> smileys.distinct()
+            EmojiCategory.ANIMALS -> animals.distinct()
+            EmojiCategory.FOOD -> food.distinct()
+            EmojiCategory.ACTIVITIES -> activities.distinct()
+            EmojiCategory.TRAVEL -> travel.distinct()
+            EmojiCategory.OBJECTS -> objects.distinct()
+            EmojiCategory.SYMBOLS -> symbols.distinct()
+            EmojiCategory.FLAGS -> flags.distinct()
         }
     }
 }

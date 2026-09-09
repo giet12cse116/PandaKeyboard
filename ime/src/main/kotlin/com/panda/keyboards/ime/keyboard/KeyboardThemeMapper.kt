@@ -27,8 +27,11 @@ object KeyboardThemeMapper {
         }
     }
 
-    fun resolveTheme(theme: KeyboardTheme?): ResolvedTheme {
-        return if (theme != null) ResolvedTheme.from(theme) else ResolvedTheme.DEFAULT
+    fun resolveTheme(
+        theme: KeyboardTheme?,
+        height: com.panda.keyboards.theme.KeyboardHeight = com.panda.keyboards.theme.KeyboardHeight.DEFAULT
+    ): ResolvedTheme {
+        return if (theme != null) ResolvedTheme.from(theme, height) else ResolvedTheme.DEFAULT
     }
 }
 
@@ -66,7 +69,19 @@ data class ResolvedTheme(
     /** Optional local file path for image background (null = use color/gradient). */
     val imagePath: String? = null,
     /** Compose shape for individual keys. */
-    val keyShape: Shape
+    val keyShape: Shape,
+    /** Optional border outline color for keys. */
+    val keyBorderColor: Color? = null,
+    /** Key border stroke width in DP. */
+    val keyBorderWidthDp: Float = 0f,
+    /** Optional hard drop shadow / highlight color for keys. */
+    val keyShadowColor: Color? = null,
+    /** Key shadow offset distance in DP. */
+    val keyShadowOffsetDp: Float = 0f,
+    /** Polymorphic key visual style (Flat, Glassmorphic, etc.). */
+    val keyStyle: com.panda.keyboards.theme.KeyVisualStyle = com.panda.keyboards.theme.KeyVisualStyle.Flat,
+    /** Radial or linear glow brush for glassmorphism underlay (null for flat themes). */
+    val glassmorphicGlowBrush: Brush? = null
 ) {
     companion object {
         /** Default dark theme — matches the Sprint 2 hardcoded appearance. */
@@ -83,28 +98,81 @@ data class ResolvedTheme(
         )
 
         /**
-         * Convert a [KeyboardTheme] into a [ResolvedTheme] ready for rendering.
+         * Convert a [KeyboardTheme] into a [ResolvedTheme] ready for rendering,
+         * taking [KeyboardHeight] into account for height-aware image backgrounds.
          */
-        fun from(theme: KeyboardTheme): ResolvedTheme {
-            val keyBg = parseColor(theme.keyBackgroundColor)
+        fun from(
+            theme: KeyboardTheme,
+            height: com.panda.keyboards.theme.KeyboardHeight = com.panda.keyboards.theme.KeyboardHeight.DEFAULT
+        ): ResolvedTheme {
+            val keyStyle = theme.keyStyle
+            val glassStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Glassmorphic
+            val semiFlatStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SemiFlat
+            val neobrutalistStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Neobrutalist
+            val claymorphicStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Claymorphic
+
+            val rawKeyBg = parseColor(theme.keyBackgroundColor)
+            val keyBg = if (glassStyle != null) {
+                rawKeyBg.copy(alpha = glassStyle.translucencyAlpha)
+            } else {
+                rawKeyBg
+            }
             val keyTxt = parseColor(theme.keyTextColor)
             val accent = parseColor(theme.accentColor)
 
+            val parsedBorderColor = theme.keyBorderColor?.let { parseColor(it) }
+            val parsedShadowColor = theme.keyShadowColor?.let { parseColor(it) }
+
+            val finalBorderColor = when {
+                glassStyle != null -> parsedBorderColor ?: parseColor(glassStyle.borderColorHex)
+                neobrutalistStyle != null -> parsedBorderColor ?: parseColor(neobrutalistStyle.borderColorHex)
+                else -> parsedBorderColor
+            }
+
+            val finalBorderWidthDp = when {
+                glassStyle != null -> if (theme.keyBorderWidthDp > 0f) theme.keyBorderWidthDp else 1f
+                neobrutalistStyle != null -> if (theme.keyBorderWidthDp > 0f) theme.keyBorderWidthDp else neobrutalistStyle.borderWidthDp
+                else -> theme.keyBorderWidthDp
+            }
+
+            val defaultShadowColor = Color.Black.copy(alpha = 0.25f)
+
+            val finalShadowColor = when {
+                semiFlatStyle != null -> parsedShadowColor ?: parseColor(semiFlatStyle.shadowColorHex)
+                neobrutalistStyle != null -> parsedShadowColor ?: parseColor(neobrutalistStyle.shadowColorHex)
+                claymorphicStyle != null -> parsedShadowColor ?: parseColor(claymorphicStyle.shadowColorHex)
+                else -> parsedShadowColor ?: defaultShadowColor
+            }
+
+            val finalShadowOffsetDp = when {
+                semiFlatStyle != null -> if (theme.keyShadowOffsetDp > 0f) theme.keyShadowOffsetDp else semiFlatStyle.elevationDp
+                neobrutalistStyle != null -> if (theme.keyShadowOffsetDp > 0f) theme.keyShadowOffsetDp else neobrutalistStyle.shadowOffsetDp
+                claymorphicStyle != null -> if (theme.keyShadowOffsetDp > 0f) theme.keyShadowOffsetDp else claymorphicStyle.elevationDp
+                else -> if (theme.keyShadowOffsetDp > 0f) theme.keyShadowOffsetDp else 2.5f
+            }
+
+            val glassmorphicGlowBrush = if (glassStyle != null && glassStyle.glowGradientColors.isNotEmpty()) {
+                val glowColors = glassStyle.glowGradientColors.map { parseColor(it) }
+                Brush.radialGradient(colors = glowColors)
+            } else {
+                null
+            }
+
             // Derive pressed/special variants by lightening/darkening
             val keyBgPressed = keyBg.lighten(0.15f)
-            val specialBg = keyBg.lighten(0.10f)
-            val specialBgPressed = keyBg.lighten(0.25f)
+            val specialBg = if (glassStyle != null) rawKeyBg.copy(alpha = (glassStyle.translucencyAlpha + 0.15f).coerceAtMost(1f)) else keyBg.lighten(0.10f)
+            val specialBgPressed = specialBg.lighten(0.15f)
             val accentLight = accent.lighten(0.20f)
 
             // Resolve keyboard background
             val (bgColor, bgBrush) = resolveBackground(theme.keyboardBackground)
-            val imagePath = (theme.keyboardBackground as? ThemeBackground.Image)?.assetPath
+            val imagePath = (theme.keyboardBackground as? ThemeBackground.Image)?.getAssetPathForHeight(height)
 
-            // Resolve key shape — square rounded corner background across all keyboard themes
+            // Resolve key shape
             val shape = when (theme.keyShape) {
                 KeyShape.ROUNDED -> RoundedCornerShape(8.dp)
-                KeyShape.SQUARE -> RoundedCornerShape(8.dp)
-                KeyShape.PILL -> RoundedCornerShape(8.dp)
+                KeyShape.SQUARE -> RoundedCornerShape(2.dp)
+                KeyShape.PILL -> RoundedCornerShape(24.dp)
             }
 
             return ResolvedTheme(
@@ -119,7 +187,13 @@ data class ResolvedTheme(
                 keyboardBackground = bgColor,
                 keyboardBackgroundBrush = bgBrush,
                 imagePath = imagePath,
-                keyShape = shape
+                keyShape = shape,
+                keyBorderColor = finalBorderColor,
+                keyBorderWidthDp = finalBorderWidthDp,
+                keyShadowColor = finalShadowColor,
+                keyShadowOffsetDp = finalShadowOffsetDp,
+                keyStyle = keyStyle,
+                glassmorphicGlowBrush = glassmorphicGlowBrush
             )
         }
 

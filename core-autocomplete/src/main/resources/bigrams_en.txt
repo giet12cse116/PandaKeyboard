@@ -1,0 +1,336 @@
+# English Bigram Frequency Dataset for Panda Keyboards Next-Word Engine
+# Source: Derived from Google Web/Ngram 20k word corpus & SUBTLEX-US subtitle word frequency datasets
+# License: Permissive MIT / Public Domain open data
+# Format per line: prev_word next_word frequency
+
+could you 1000
+could be 900
+could have 800
+could i 700
+could do 600
+could get 500
+could see 400
+could make 300
+
+thank you 1500
+thanks for 1200
+thanks again 800
+thanks buddy 400
+thanks so 350
+thanks a 300
+
+how are 1400
+how is 1200
+how to 1100
+how do 1000
+how about 900
+how was 800
+how can 700
+how much 600
+
+what are 1350
+what is 1300
+what do 1200
+what about 1100
+what time 950
+what happens 800
+what did 750
+what can 700
+
+where are 1300
+where is 1200
+where do 1000
+where can 800
+where were 700
+where did 600
+
+when are 1200
+when is 1100
+when you 1000
+when will 900
+when it 800
+when can 700
+
+why do 1200
+why is 1100
+why not 1000
+why did 900
+why are 800
+
+nice to 1400
+nice meeting 1000
+nice job 900
+nice work 800
+nice seeing 700
+
+good morning 1500
+good night 1300
+good luck 1200
+good day 1000
+good idea 900
+good job 850
+good to 800
+good afternoon 750
+
+have a 1600
+have to 1400
+have been 1200
+have you 1100
+have any 900
+have some 800
+have fun 700
+
+are you 1600
+are we 1200
+are there 1000
+are they 900
+are coming 700
+
+is a 1500
+is it 1400
+is the 1300
+is there 1200
+is target 900
+is going 850
+is coming 800
+
+i am 1600
+i have 1500
+i will 1400
+i would 1300
+i think 1200
+i hope 1100
+i know 1000
+i can 950
+i need 900
+i want 850
+i love 800
+i feel 750
+
+you are 1600
+you have 1400
+you can 1300
+you know 1200
+you want 1100
+you need 1000
+you do 900
+you mean 800
+you think 750
+you see 700
+
+see you 1500
+see what 1100
+see how 1000
+see if 900
+see that 800
+see the 700
+
+let me 1500
+let us 1200
+let know 1000
+let user 800
+
+please let 1400
+please help 1200
+please send 1100
+please check 1000
+please reply 900
+please call 800
+please find 700
+
+call me 1400
+call back 1200
+call you 1000
+call him 800
+
+text me 1300
+text you 1000
+text back 900
+
+send me 1400
+send the 1200
+send email 1000
+send photo 800
+
+talk to 1400
+talk later 1200
+talk soon 1000
+
+going to 1600
+going home 1200
+going out 1000
+going well 900
+
+want to 1600
+want some 1100
+want more 1000
+
+need to 1600
+need a 1400
+need help 1200
+need user 1000
+need some 900
+
+love you 1500
+love it 1300
+love to 1100
+love this 1000
+
+happy birthday 1600
+happy to 1300
+happy for 1100
+happy new 1000
+
+great to 1400
+great job 1300
+great idea 1200
+great work 1100
+great time 1000
+
+best regards 1500
+best wishes 1400
+best way 1200
+best of 1000
+
+looking forward 1500
+looking for 1400
+looking good 1200
+
+feel free 1500
+feel like 1400
+feel better 1200
+
+make sure 1500
+make it 1300
+make sense 1200
+make a 1100
+
+take care 1500
+take a 1300
+take time 1100
+take it 1000
+
+sounds good 1500
+sounds great 1300
+sounds like 1200
+
+would be 1500
+would love 1300
+would like 1200
+would you 1100
+
+should be 1400
+should have 1200
+should do 1000
+
+will be 1600
+will call 1300
+will do 1200
+will send 1100
+will try 1000
+
+can i 1500
+can you 1400
+can we 1300
+can be 1100
+can do 1000
+
+do you 1600
+do not 1400
+do it 1200
+do that 1000
+
+did you 1500
+did not 1300
+did it 1100
+
+does not 1400
+does it 1200
+does that 1000
+
+about to 1300
+about the 1200
+about it 1100
+
+at home 1400
+at work 1300
+at night 1100
+at the 1000
+
+on my 1400
+on the 1300
+on time 1200
+on way 1000
+
+in the 1600
+in a 1400
+in my 1200
+
+for the 1500
+for you 1400
+for me 1300
+for your 1200
+
+with you 1500
+with me 1300
+with the 1200
+with my 1100
+
+to the 1600
+to be 1500
+to do 1400
+to get 1300
+to go 1200
+to see 1100
+to make 1000
+to have 900
+
+from the 1400
+from home 1200
+from work 1000
+
+by the 1300
+by tomorrow 1100
+
+all good 1400
+all right 1300
+all the 1200
+all of 1100
+
+so much 1500
+so good 1300
+so great 1100
+
+very good 1400
+very nice 1300
+very happy 1100
+very well 1000
+
+too much 1400
+too late 1200
+too good 1000
+
+right now 1600
+right now 1500
+right away 1200
+right here 1100
+
+no problem 1500
+no worries 1400
+no idea 1200
+
+yes please 1400
+yes i 1200
+yes we 1000
+
+definitely recommend 1300
+definitely will 1100
+
+let's go 1500
+let's do 1300
+let's meet 1200
+let's talk 1100
+
+lets go 1400
+lets do 1200
+lets meet 1100

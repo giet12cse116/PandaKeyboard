@@ -69,6 +69,148 @@ class ThemeModelTest {
         assertEquals("#FFFFFF", theme.keyTextColor)
         assertEquals(KeyShape.ROUNDED, theme.keyShape)
         assertEquals("#7C4DFF", theme.accentColor)
+        assertEquals(KeyVisualStyle.Flat, theme.keyStyle)
+        assertFalse(theme.isExperimental)
+    }
+
+    // ── KeyVisualStyle polymorphic serialization ────────────────────────
+
+    @Test
+    fun `default themes parse keyStyle as Flat when omitted`() {
+        val catalog = json.decodeFromString<ThemeCatalog>(SAMPLE_CATALOG_JSON)
+        for (theme in catalog.themes) {
+            assertEquals(KeyVisualStyle.Flat, theme.keyStyle)
+        }
+    }
+
+    @Test
+    fun `glassmorphic keyStyle parses correctly with parameters`() {
+        val glassJson = """
+            {
+              "id": "glass_test_experimental",
+              "name": "Glass Test",
+              "isPro": false,
+              "isExperimental": true,
+              "category": "Test",
+              "keyBackgroundColor": "#40FFFFFF",
+              "keyTextColor": "#FFFFFF",
+              "keyboardBackground": {"type": "solid", "color": "#0F172A"},
+              "keyShape": "rounded",
+              "accentColor": "#00E5FF",
+              "keyStyle": {
+                "type": "glassmorphic",
+                "blurRadiusDp": 14.0,
+                "translucencyAlpha": 0.35,
+                "borderColorHex": "#60FFFFFF",
+                "glowGradientColors": ["#9000E5FF", "#608A2BE2", "#00000000"]
+              }
+            }
+        """.trimIndent()
+
+        val theme = json.decodeFromString<KeyboardTheme>(glassJson)
+        assertEquals("Glass Test", theme.name)
+        assertTrue(theme.isExperimental)
+        assertEquals("Test", theme.category)
+        assertIs<KeyVisualStyle.Glassmorphic>(theme.keyStyle)
+
+        val glass = theme.keyStyle as KeyVisualStyle.Glassmorphic
+        assertEquals(14.0f, glass.blurRadiusDp)
+        assertEquals(0.35f, glass.translucencyAlpha)
+        assertEquals("#60FFFFFF", glass.borderColorHex)
+        assertEquals(3, glass.glowGradientColors.size)
+    }
+
+    @Test
+    fun `semi_flat keyStyle parses correctly with parameters`() {
+        val semiFlatJson = """
+            {
+              "id": "studio_dark",
+              "name": "Studio Dark",
+              "isPro": false,
+              "isExperimental": false,
+              "category": "Solid",
+              "keyBackgroundColor": "#2A2B2E",
+              "keyTextColor": "#F0F0F2",
+              "keyboardBackground": {"type": "solid", "color": "#18191B"},
+              "keyShape": "rounded",
+              "accentColor": "#00E5FF",
+              "keyStyle": {
+                "type": "semi_flat",
+                "elevationDp": 3.5,
+                "shadowColorHex": "#55000000",
+                "lightSourceAngle": 90.0,
+                "pressedElevationDp": 0.5
+              }
+            }
+        """.trimIndent()
+
+        val theme = json.decodeFromString<KeyboardTheme>(semiFlatJson)
+        assertEquals("Studio Dark", theme.name)
+        assertFalse(theme.isExperimental)
+        assertIs<KeyVisualStyle.SemiFlat>(theme.keyStyle)
+
+        val semiFlat = theme.keyStyle as KeyVisualStyle.SemiFlat
+        assertEquals(3.5f, semiFlat.elevationDp)
+        assertEquals("#55000000", semiFlat.shadowColorHex)
+        assertEquals(0.5f, semiFlat.pressedElevationDp)
+    }
+
+    @Test
+    fun `neobrutalist keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "test_neobrutalism",
+              "name": "Neo-Brutalism",
+              "isPro": false,
+              "isExperimental": true,
+              "category": "Test",
+              "keyBackgroundColor": "#FF5353",
+              "keyTextColor": "#000000",
+              "keyboardBackground": {"type": "solid", "color": "#FFD027"},
+              "keyShape": "rounded",
+              "accentColor": "#4D88FF",
+              "keyStyle": {
+                "type": "neobrutalist",
+                "borderWidthDp": 2.5,
+                "borderColorHex": "#000000",
+                "shadowOffsetDp": 4.0,
+                "shadowColorHex": "#000000"
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.Neobrutalist>(theme.keyStyle)
+        val neo = theme.keyStyle as KeyVisualStyle.Neobrutalist
+        assertEquals(2.5f, neo.borderWidthDp)
+        assertEquals(4.0f, neo.shadowOffsetDp)
+    }
+
+    @Test
+    fun `claymorphic keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "test_claymorphism_3d",
+              "name": "Claymorphism 3D",
+              "isPro": false,
+              "isExperimental": true,
+              "category": "Test",
+              "keyBackgroundColor": "#EEF2FF",
+              "keyTextColor": "#312E81",
+              "keyboardBackground": {"type": "solid", "color": "#C7D2FE"},
+              "keyShape": "pill",
+              "accentColor": "#6366F1",
+              "keyStyle": {
+                "type": "claymorphic",
+                "elevationDp": 4.5,
+                "shadowColorHex": "#403730A3",
+                "pressedElevationDp": 1.0
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.Claymorphic>(theme.keyStyle)
+        val clay = theme.keyStyle as KeyVisualStyle.Claymorphic
+        assertEquals(4.5f, clay.elevationDp)
     }
 
     // ── ThemeBackground sealed hierarchy ────────────────────────────────
