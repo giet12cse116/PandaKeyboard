@@ -120,4 +120,47 @@ class SuggestionEngineTest {
         assertTrue("Should contain People", peSuggestions.contains("People"))
         assertTrue("Should contain Person", peSuggestions.contains("Person"))
     }
+
+    @Test
+    fun suggestionsFor_properNoun_overridesTypedCasingWithCanonicalForm() {
+        trie.insert("London", 2400, isProperNoun = true)
+        trie.insert("Nike", 2000, isProperNoun = true)
+        trie.insert("Sarah", 2200, isProperNoun = true)
+        trie.insert("McDonald's", 1900, isProperNoun = true)
+
+        assertEquals("London", engine.suggestionsFor("lon", limit = 1)[0])
+        assertEquals("Nike", engine.suggestionsFor("nik", limit = 1)[0])
+        assertEquals("Sarah", engine.suggestionsFor("sar", limit = 1)[0])
+        assertEquals("McDonald's", engine.suggestionsFor("mcd", limit = 1)[0])
+    }
+
+    @Test
+    fun suggestionsFor_sharedPrefix_commonWordsRankBeforeProperNounsWhenHigherFrequency() {
+        trie.insert("make", 7450)
+        trie.insert("many", 7450)
+        trie.insert("may", 7450)
+        trie.insert("Mark", 2000, isProperNoun = true)
+        trie.insert("Madrid", 350, isProperNoun = true)
+
+        val suggestions = engine.suggestionsFor("ma", limit = 4)
+        assertTrue("make should rank in top 3", suggestions.contains("make"))
+        assertTrue("many should rank in top 3", suggestions.contains("many"))
+        assertTrue("may should rank in top 3", suggestions.contains("may"))
+        assertEquals("make", suggestions[0])
+    }
+
+    @Test
+    fun suggestionsFor_fullBundledResource_surfacesProperNounsWithCanonicalCasing() {
+        val loadedTrie = DictionaryLoader.loadFromResource("/dictionary_en.txt", "/dictionary_proper_nouns.txt")
+        val loadedEngine = SuggestionEngine(loadedTrie)
+
+        val lonSugs = loadedEngine.suggestionsFor("lon", limit = 4)
+        assertTrue("Prefix 'lon' should surface canonical 'London'", lonSugs.contains("London"))
+
+        val gooSugs = loadedEngine.suggestionsFor("goo", limit = 4)
+        assertTrue("Prefix 'goo' should surface canonical 'Google'", gooSugs.contains("Google"))
+
+        val sarSugs = loadedEngine.suggestionsFor("sar", limit = 4)
+        assertTrue("Prefix 'sar' should surface canonical 'Sarah'", sarSugs.contains("Sarah"))
+    }
 }

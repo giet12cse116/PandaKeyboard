@@ -81,21 +81,53 @@ data class ResolvedTheme(
     /** Polymorphic key visual style (Flat, Glassmorphic, etc.). */
     val keyStyle: com.panda.keyboards.theme.KeyVisualStyle = com.panda.keyboards.theme.KeyVisualStyle.Flat,
     /** Radial or linear glow brush for glassmorphism underlay (null for flat themes). */
-    val glassmorphicGlowBrush: Brush? = null
+    val glassmorphicGlowBrush: Brush? = null,
+    /** Key opacity alpha factor (0.0f to 1.0f). */
+    val keyOpacityAlpha: Float = 1.0f,
+    /** Optional popular key background emblem (e.g. "panda", "heart", "puppy"). */
+    val decorativeIcon: String? = null,
+    /** Font size in SP for key labels. */
+    val fontSizeSp: Int = 16,
+    /** Font style name (Default, Bold, Rounded, Modern, Playful). */
+    val fontStyleName: String = "rounded",
+    /** Whether text shadow is enabled. */
+    val hasTextShadow: Boolean = false
 ) {
+    /** Helper property to retrieve [KeyVisualStyle.AssetSkin] if active. */
+    val assetSkinStyle: com.panda.keyboards.theme.KeyVisualStyle.AssetSkin?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.AssetSkin
+
+    /** Helper property to retrieve [KeyVisualStyle.OrigamiPaperCraft] if active. */
+    val origamiPaperCraftStyle: com.panda.keyboards.theme.KeyVisualStyle.OrigamiPaperCraft?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.OrigamiPaperCraft
+
+    /** Helper property to retrieve [KeyVisualStyle.PizzaSlice] if active. */
+    val pizzaSliceStyle: com.panda.keyboards.theme.KeyVisualStyle.PizzaSlice?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.PizzaSlice
+
+    /** Helper property to retrieve [KeyVisualStyle.SteampunkIndustrial] if active. */
+    val steampunkIndustrialStyle: com.panda.keyboards.theme.KeyVisualStyle.SteampunkIndustrial?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SteampunkIndustrial
+
+    /** Helper property to retrieve [KeyVisualStyle.SynthwaveCyberpunkNeon] if active. */
+    val synthwaveCyberpunkNeonStyle: com.panda.keyboards.theme.KeyVisualStyle.SynthwaveCyberpunkNeon?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SynthwaveCyberpunkNeon
+
     companion object {
+
         /** Default dark theme — matches the Sprint 2 hardcoded appearance. */
-        val DEFAULT = from(
-            KeyboardTheme(
-                id = "default_dark",
-                name = "Default Dark",
-                keyBackgroundColor = "#3A3A3C",
-                keyTextColor = "#FFFFFF",
-                keyboardBackground = ThemeBackground.SolidColor("#1C1C1E"),
-                keyShape = KeyShape.ROUNDED,
-                accentColor = "#7C4DFF"
+        val DEFAULT: ResolvedTheme
+            get() = from(
+                KeyboardTheme(
+                    id = "default_dark",
+                    name = "Default Dark",
+                    keyBackgroundColor = "#3A3A3C",
+                    keyTextColor = "#FFFFFF",
+                    keyboardBackground = ThemeBackground.SolidColor("#1C1C1E"),
+                    keyShape = KeyShape.ROUNDED,
+                    accentColor = "#7C4DFF"
+                )
             )
-        )
 
         /**
          * Convert a [KeyboardTheme] into a [ResolvedTheme] ready for rendering,
@@ -112,10 +144,11 @@ data class ResolvedTheme(
             val claymorphicStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Claymorphic
 
             val rawKeyBg = parseColor(theme.keyBackgroundColor)
-            val keyBg = if (glassStyle != null) {
-                rawKeyBg.copy(alpha = glassStyle.translucencyAlpha)
-            } else {
-                rawKeyBg
+            val opacityAlpha = theme.keyOpacityAlpha.coerceIn(0f, 1f)
+            val keyBg = when {
+                theme.keyShape == KeyShape.NONE -> Color.Transparent
+                glassStyle != null -> rawKeyBg.copy(alpha = (glassStyle.translucencyAlpha * opacityAlpha).coerceIn(0f, 1f))
+                else -> rawKeyBg.copy(alpha = opacityAlpha)
             }
             val keyTxt = parseColor(theme.keyTextColor)
             val accent = parseColor(theme.accentColor)
@@ -170,9 +203,11 @@ data class ResolvedTheme(
 
             // Resolve key shape
             val shape = when (theme.keyShape) {
-                KeyShape.ROUNDED -> RoundedCornerShape(8.dp)
+                KeyShape.NONE -> RoundedCornerShape(0.dp)
                 KeyShape.SQUARE -> RoundedCornerShape(2.dp)
-                KeyShape.PILL -> RoundedCornerShape(24.dp)
+                KeyShape.SQUARE_ROUNDED -> RoundedCornerShape(8.dp)
+                KeyShape.OVAL -> RoundedCornerShape(24.dp)
+                KeyShape.OVAL_ROUNDED -> RoundedCornerShape(16.dp)
             }
 
             return ResolvedTheme(
@@ -193,7 +228,12 @@ data class ResolvedTheme(
                 keyShadowColor = finalShadowColor,
                 keyShadowOffsetDp = finalShadowOffsetDp,
                 keyStyle = keyStyle,
-                glassmorphicGlowBrush = glassmorphicGlowBrush
+                glassmorphicGlowBrush = glassmorphicGlowBrush,
+                keyOpacityAlpha = opacityAlpha,
+                decorativeIcon = theme.decorativeIcon,
+                fontSizeSp = theme.fontSizeSp,
+                fontStyleName = theme.fontStyleName,
+                hasTextShadow = theme.hasTextShadow
             )
         }
 

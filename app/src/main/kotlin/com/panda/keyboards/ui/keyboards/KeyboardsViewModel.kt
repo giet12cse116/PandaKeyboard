@@ -37,10 +37,6 @@ class KeyboardsViewModel @Inject constructor(
     private val _unlockedThemeIds = MutableStateFlow<Set<String>>(emptySet())
     val unlockedThemeIds: StateFlow<Set<String>> = _unlockedThemeIds.asStateFlow()
 
-    /** Selected category filter ("All", "Abstract", "Classic", "Gradient", "Solid", "Custom"). */
-    private val _selectedCategory = MutableStateFlow("All")
-    val selectedCategory: StateFlow<String> = _selectedCategory.asStateFlow()
-
     /** All available themes flow collected into state. */
     val allThemes: StateFlow<List<KeyboardTheme>> = themeRepository.themes
         .stateIn(
@@ -49,41 +45,45 @@ class KeyboardsViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    /** All themes filtered by currently active category tab (exposed directly to UI). */
-    val themes: StateFlow<List<KeyboardTheme>> = combine(
-        allThemes,
-        _selectedCategory
-    ) { catalog, category ->
-        when (category.lowercase()) {
-            "all" -> {
-                val categoryOrder = listOf("modern ui", "abstract", "hd background", "hd_background", "nature", "gradient", "solid", "custom", "classic")
-                catalog.sortedWith(compareBy { theme ->
-                    if (theme.isCustom) {
-                        categoryOrder.indexOf("custom")
-                    } else {
-                        val idx = categoryOrder.indexOf(theme.category.lowercase())
-                        if (idx >= 0) idx else categoryOrder.size
-                    }
-                })
-            }
-            "custom" -> catalog.filter { it.isCustom }
-            "hd background" -> catalog.filter { it.category.equals("hd background", ignoreCase = true) || it.category.equals("hd_background", ignoreCase = true) }
-            "solid" -> catalog.filter { it.category.equals("solid", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.SolidColor) }
-            "gradient" -> catalog.filter { it.category.equals("gradient", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.Gradient) }
-            else -> catalog.filter { it.category.equals(category, ignoreCase = true) }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
+    /** Section 1: Premium Keyboards (Modern UI) */
+    val premiumKeyboards: StateFlow<List<KeyboardTheme>> = allThemes
+        .combine(MutableStateFlow(Unit)) { catalog, _ ->
+            catalog.filter { it.category.equals("modern ui", ignoreCase = true) && !it.isCustom }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
-    /**
-     * Switch current category filter.
-     */
-    fun selectCategory(category: String) {
-        _selectedCategory.value = category
-    }
+    /** Section 2: Solid Themes */
+    val solidThemes: StateFlow<List<KeyboardTheme>> = allThemes
+        .combine(MutableStateFlow(Unit)) { catalog, _ ->
+            catalog.filter { !it.isCustom && (it.category.equals("solid", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.SolidColor)) }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    /** Section 3: Gradient Themes */
+    val gradientThemes: StateFlow<List<KeyboardTheme>> = allThemes
+        .combine(MutableStateFlow(Unit)) { catalog, _ ->
+            catalog.filter { !it.isCustom && (it.category.equals("gradient", ignoreCase = true) || (it.category.equals("classic", ignoreCase = true) && it.keyboardBackground is com.panda.keyboards.theme.ThemeBackground.Gradient)) }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    /** Section 4: Custom Themes */
+    val customThemes: StateFlow<List<KeyboardTheme>> = allThemes
+        .combine(MutableStateFlow(Unit)) { catalog, _ ->
+            catalog.filter { it.isCustom }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     /** Currently selected active theme ID (null on fresh install until user explicitly applies one). */
     val selectedThemeId: StateFlow<String?> = themeRepository.selectedThemeId

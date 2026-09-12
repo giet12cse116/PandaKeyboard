@@ -2,6 +2,8 @@ package com.panda.keyboards.ui.keyboards
 
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.nativeCanvas
+import kotlin.math.roundToInt
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +31,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Settings
@@ -64,9 +67,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
@@ -110,14 +115,18 @@ fun KeyboardsScreen(
     onOpenSetupDialog: (String) -> Unit = {},
     onThemeApplied: (String) -> Unit = {},
     onOpenCustomEditor: () -> Unit = {},
+    onOpenMyCustomThemes: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val themes by viewModel.themes.collectAsStateWithLifecycle()
+    val premiumKeyboards by viewModel.premiumKeyboards.collectAsStateWithLifecycle()
+    val solidThemes by viewModel.solidThemes.collectAsStateWithLifecycle()
+    val gradientThemes by viewModel.gradientThemes.collectAsStateWithLifecycle()
+    val customThemes by viewModel.customThemes.collectAsStateWithLifecycle()
+
     val selectedThemeId by viewModel.selectedThemeId.collectAsStateWithLifecycle()
     val imeStatus by viewModel.imeStatus.collectAsStateWithLifecycle()
 
-    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
     val selectedThemeForSheet by viewModel.selectedThemeForSheet.collectAsStateWithLifecycle()
     val unlockedThemeIds by viewModel.unlockedThemeIds.collectAsStateWithLifecycle()
     val freeApplyCredits by viewModel.freeApplyCredits.collectAsStateWithLifecycle()
@@ -141,6 +150,12 @@ fun KeyboardsScreen(
 
     var themeToDelete by remember { mutableStateOf<KeyboardTheme?>(null) }
     var showProPurchaseDialog by remember { mutableStateOf(false) }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val openThemeStudio = {
+        val intent = android.content.Intent(context, com.panda.keyboards.ui.themeeditor.ThemeStudioActivity::class.java)
+        context.startActivity(intent)
+    }
 
     Scaffold(
         modifier = modifier,
@@ -184,50 +199,124 @@ fun KeyboardsScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ── Top CTA Card: Custom Theme ──────────────────────────────────
+            // ── Top Banner: Create Your Own Keyboard ──────────────────────
             item(span = { GridItemSpan(2) }) {
-                CustomThemeCtaCard(
-                    onClick = onOpenCustomEditor
-                )
+                TopCreateYourOwnKeyboardBanner(onClick = openThemeStudio)
             }
 
-            // ── Section Title ───────────────────────────────────────────────
+            // ── My Custom Themes Clickable Row below Upper Banner ─────────
             item(span = { GridItemSpan(2) }) {
-                Text(
-                    text = "Theme Gallery",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
-                )
-            }
-
-            // ── Category Filter Bar ─────────────────────────────────────────
-            item(span = { GridItemSpan(2) }) {
-                ThemeCategoryFilterBar(
-                    categories = listOf("All", "Modern UI", "Abstract", "HD Background", "Nature", "Gradient", "Solid", "Custom"),
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { category -> viewModel.selectCategory(category) }
-                )
-            }
-
-            // ── Theme Grid Items (Loaded incrementally on demand) ────────────
-            items(
-                items = themes,
-                key = { it.id }
-            ) { theme ->
-                val isSelected = selectedThemeId != null && theme.id == selectedThemeId
-                val onClick = remember(theme.id, viewModel) {
-                    { viewModel.openThemeSheet(theme) }
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickable(onClick = onOpenMyCustomThemes)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "🎨", fontSize = 20.sp)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "My custom themes",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            if (customThemes.isNotEmpty()) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Surface(
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.primaryContainer
+                                ) {
+                                    Text(
+                                        text = "${customThemes.size}",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                        }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "View All",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
                 }
-                KeyboardThemeItem(
-                    theme = theme,
-                    isSelected = isSelected,
-                    onClick = onClick,
-                    onDeleteClick = if (theme.isCustom) {
-                        { themeToDelete = theme }
-                    } else null
-                )
+            }
+
+            // ── Section 1: Premium Keyboards (Renamed from Modern UI) ────────
+            if (premiumKeyboards.isNotEmpty()) {
+                item(span = { GridItemSpan(2) }) {
+                    SectionHeader(title = "Premium Keyboards")
+                }
+                items(
+                    items = premiumKeyboards,
+                    key = { it.id }
+                ) { theme ->
+                    val isSelected = selectedThemeId != null && theme.id == selectedThemeId
+                    KeyboardThemeItem(
+                        theme = theme,
+                        isSelected = isSelected,
+                        onClick = { viewModel.openThemeSheet(theme) }
+                    )
+                }
+            }
+
+            // ── Section 2: Solid ───────────────────────────────────────────
+            if (solidThemes.isNotEmpty()) {
+                item(span = { GridItemSpan(2) }) {
+                    SectionHeader(title = "Solid")
+                }
+                items(
+                    items = solidThemes,
+                    key = { it.id }
+                ) { theme ->
+                    val isSelected = selectedThemeId != null && theme.id == selectedThemeId
+                    KeyboardThemeItem(
+                        theme = theme,
+                        isSelected = isSelected,
+                        onClick = { viewModel.openThemeSheet(theme) }
+                    )
+                }
+            }
+
+            // ── Section 3: Gradient ─────────────────────────────────────────
+            if (gradientThemes.isNotEmpty()) {
+                item(span = { GridItemSpan(2) }) {
+                    SectionHeader(title = "Gradient")
+                }
+                items(
+                    items = gradientThemes,
+                    key = { it.id }
+                ) { theme ->
+                    val isSelected = selectedThemeId != null && theme.id == selectedThemeId
+                    KeyboardThemeItem(
+                        theme = theme,
+                        isSelected = isSelected,
+                        onClick = { viewModel.openThemeSheet(theme) }
+                    )
+                }
             }
         }
     }
@@ -462,7 +551,78 @@ fun KeyboardsScreen(
 }
 
 /**
- * Top CTA Banner encouraging users to create custom themes.
+ * Top Banner on Home Screen for "Create your own keyboard".
+ */
+@Composable
+private fun TopCreateYourOwnKeyboardBanner(
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF10B981),
+                            Color(0xFF8B5CF6)
+                        )
+                    )
+                )
+                .padding(20.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.White.copy(alpha = 0.25f),
+                    modifier = Modifier.size(50.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(text = "🎨", fontSize = 26.sp)
+                    }
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Create your own keyboard",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        fontSize = 17.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Design custom background, key style & font",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.9f)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Surface(
+                    shape = CircleShape,
+                    color = Color.White,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(text = "➔", color = Color(0xFF10B981), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Custom Theme CTA Card in Custom section.
  */
 @Composable
 private fun CustomThemeCtaCard(
@@ -682,6 +842,23 @@ internal fun KeyboardThemePreviewImage(
     val textMeasurer = rememberTextMeasurer()
 
     val context = androidx.compose.ui.platform.LocalContext.current
+    val previewBitmap = remember(theme.previewImage) {
+        theme.previewImage?.let { name ->
+            try {
+                val resId = context.resources.getIdentifier(name, "drawable", context.packageName)
+                if (resId != 0) {
+                    BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap()
+                } else {
+                    context.assets.open("themes/modern/$name.png").use { stream ->
+                        BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                    }
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
     val bgImageBitmap = remember(resolvedTheme.imagePath) {
         resolvedTheme.imagePath?.let { path ->
             try {
@@ -698,6 +875,20 @@ internal fun KeyboardThemePreviewImage(
             }
         }
     }
+
+    val decorativeIconBitmap = remember(resolvedTheme.decorativeIcon) {
+        resolvedTheme.decorativeIcon?.let { iconName ->
+            if (iconName.startsWith("ic_")) {
+                try {
+                    val resId = context.resources.getIdentifier(iconName, "drawable", context.packageName)
+                    if (resId != 0) {
+                        BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap()
+                    } else null
+                } catch (e: Exception) { null }
+            } else null
+        }
+    }
+
 
     Spacer(
         modifier = modifier
@@ -728,15 +919,34 @@ internal fun KeyboardThemePreviewImage(
                 val startY = rowsTop + ((availableRowsHeight - totalRowsHeight) / 2f).coerceAtLeast(0f)
 
                 val keyCornerRadiusPx = when (theme.keyShape) {
+                    com.panda.keyboards.theme.KeyShape.NONE -> 0f
                     com.panda.keyboards.theme.KeyShape.SQUARE -> 2.dp.toPx()
-                    com.panda.keyboards.theme.KeyShape.ROUNDED -> 7.dp.toPx()
-                    com.panda.keyboards.theme.KeyShape.PILL -> (rowHeight / 2f)
+                    com.panda.keyboards.theme.KeyShape.SQUARE_ROUNDED -> 7.dp.toPx()
+                    com.panda.keyboards.theme.KeyShape.OVAL -> (rowHeight / 2f)
+                    com.panda.keyboards.theme.KeyShape.OVAL_ROUNDED -> 14.dp.toPx()
                 }
                 val keyCornerRadius = CornerRadius(keyCornerRadiusPx, keyCornerRadiusPx)
                 val headerCornerRadius = CornerRadius(5.dp.toPx(), 5.dp.toPx())
 
-                val fontSpNormal = (rowHeight * 0.45f).toSp()
-                val fontSpSmall = (rowHeight * 0.32f).toSp()
+                val fontScale = (resolvedTheme.fontSizeSp / 16f).coerceIn(0.75f, 1.4f)
+                val fontSpNormal = ((rowHeight * 0.45f) * fontScale).toSp()
+                val fontSpSmall = ((rowHeight * 0.32f) * fontScale).toSp()
+
+                val activeFontFamily = when (resolvedTheme.fontStyleName.lowercase()) {
+                    "bold" -> FontFamily.Serif
+                    "rounded" -> FontFamily.SansSerif
+                    "modern" -> FontFamily.Monospace
+                    "playful" -> FontFamily.Cursive
+                    else -> FontFamily.Default
+                }
+
+                val textShadow = if (resolvedTheme.hasTextShadow) {
+                    Shadow(
+                        color = Color.Black.copy(alpha = 0.65f),
+                        offset = Offset(2f, 3f),
+                        blurRadius = 4f
+                    )
+                } else null
 
                 fun prepareRow(
                     rowY: Float,
@@ -757,11 +967,17 @@ internal fun KeyboardThemePreviewImage(
                         var textTopLeft = Offset.Zero
 
                         if (key.label.isNotEmpty()) {
-                            val fontSp = if (key.label.length > 2) fontSpSmall else fontSpNormal
+                            val fontSp = when {
+                                key.label == "⇧" -> ((rowHeight * 0.68f) * fontScale).toSp()
+                                key.label.length > 2 -> fontSpSmall
+                                else -> fontSpNormal
+                            }
                             val textStyle = TextStyle(
                                 color = key.textColor,
                                 fontSize = fontSp,
-                                fontWeight = FontWeight.Normal
+                                fontFamily = activeFontFamily,
+                                fontWeight = if (key.label == "⇧" || key.label == "⌫" || key.label == "↵") FontWeight.ExtraBold else FontWeight.Bold,
+                                shadow = textShadow
                             )
                             val measured = textMeasurer.measure(
                                 text = key.label,
@@ -807,11 +1023,12 @@ internal fun KeyboardThemePreviewImage(
                 }
                 val preparedR3 = prepareRow(startY + (rowHeight + rowSpacing) * 2, r3Keys)
 
-                // Row 4 (Comma before Space)
+                // Row 4 (Emoji between ?123 and Comma)
                 val r4Keys = listOf(
-                    PreviewKeyData(1.5f, specialKeyColor, keyTextColor, "?123"),
+                    PreviewKeyData(1.25f, specialKeyColor, keyTextColor, "?123"),
+                    PreviewKeyData(1.0f, specialKeyColor, keyTextColor, "😀"),
                     PreviewKeyData(1.0f, keyColor, keyTextColor, ","),
-                    PreviewKeyData(4.0f, keyColor, keyTextColor.copy(alpha = 0.6f), "space"),
+                    PreviewKeyData(3.75f, keyColor, keyTextColor.copy(alpha = 0.6f), "space"),
                     PreviewKeyData(1.0f, keyColor, keyTextColor, "."),
                     PreviewKeyData(1.5f, accentColor, Color.White, "↵")
                 )
@@ -820,6 +1037,14 @@ internal fun KeyboardThemePreviewImage(
                 val allPreparedKeys = preparedR1 + preparedR2 + preparedR3 + preparedR4
 
                 onDrawBehind {
+                    if (previewBitmap != null) {
+                        drawImage(
+                            image = previewBitmap,
+                            dstSize = androidx.compose.ui.unit.IntSize(size.width.toInt(), size.height.toInt())
+                        )
+                        return@onDrawBehind
+                    }
+
                     // 1. Draw keyboard background
                     if (bgImageBitmap != null) {
                         drawImage(
@@ -831,6 +1056,7 @@ internal fun KeyboardThemePreviewImage(
                     } else {
                         drawRect(color = bgColor)
                     }
+
 
                     // 1b. Draw glowing underlay for Glassmorphic themes
                     val glassGlowBrush = resolvedTheme.glassmorphicGlowBrush
@@ -870,28 +1096,131 @@ internal fun KeyboardThemePreviewImage(
                     val previewBorderWidthPx = resolvedTheme.keyBorderWidthDp.dp.toPx()
 
                     for (key in allPreparedKeys) {
-                        if (previewShadowOffsetPx > 0f && shadowColor != null) {
+                        val isNoneShape = theme.keyShape == com.panda.keyboards.theme.KeyShape.NONE
+                        val isSemiTransparent = key.color.alpha < 0.95f
+                        val labelStr = key.textLayout?.layoutInput?.text?.text ?: ""
+                        val isSpaceKey = labelStr == "space"
+                        val isFuncKey = labelStr == "?123" || labelStr == "⌫" || labelStr == "↵" || labelStr == "⇧" || labelStr == "🌐" || labelStr == "😀"
+                        val isCharacterKey = key.textLayout != null && !isSpaceKey && !isFuncKey
+
+                        if (isSpaceKey) {
+                            val spaceCornerRadius = if (!resolvedTheme.decorativeIcon.isNullOrEmpty()) {
+                                CornerRadius(8.dp.toPx(), 8.dp.toPx())
+                            } else {
+                                keyCornerRadius
+                            }
+                            val spaceColor = if (!resolvedTheme.decorativeIcon.isNullOrEmpty()) {
+                                (if (keyColor.alpha > 0f) keyColor else keyTextColor).copy(alpha = 0.85f)
+                            } else if (key.color.alpha > 0f) {
+                                key.color
+                            } else {
+                                keyTextColor.copy(alpha = 0.85f)
+                            }
                             drawRoundRect(
-                                color = shadowColor,
-                                topLeft = key.rectTopLeft + Offset(0f, previewShadowOffsetPx),
+                                color = spaceColor,
+                                topLeft = key.rectTopLeft,
                                 size = key.rectSize,
-                                cornerRadius = keyCornerRadius
+                                cornerRadius = spaceCornerRadius
                             )
+                        } else {
+                            if (previewShadowOffsetPx > 0f && shadowColor != null && !isNoneShape && !isSemiTransparent) {
+                                drawRoundRect(
+                                    color = shadowColor,
+                                    topLeft = key.rectTopLeft + Offset(0f, previewShadowOffsetPx),
+                                    size = key.rectSize,
+                                    cornerRadius = keyCornerRadius
+                                )
+                            }
+                            if (!isNoneShape && key.color.alpha > 0f) {
+                                drawRoundRect(
+                                    color = key.color,
+                                    topLeft = key.rectTopLeft,
+                                    size = key.rectSize,
+                                    cornerRadius = keyCornerRadius
+                                )
+                            }
                         }
-                        drawRoundRect(
-                            color = key.color,
-                            topLeft = key.rectTopLeft,
-                            size = key.rectSize,
-                            cornerRadius = keyCornerRadius
-                        )
                         if (previewBorderWidthPx > 0f && resolvedTheme.keyBorderColor != null) {
                             drawRoundRect(
                                 color = resolvedTheme.keyBorderColor!!,
                                 topLeft = key.rectTopLeft,
                                 size = key.rectSize,
-                                cornerRadius = keyCornerRadius,
+                                cornerRadius = if (isSpaceKey) CornerRadius(3.dp.toPx(), 3.dp.toPx()) else keyCornerRadius,
                                 style = Stroke(width = previewBorderWidthPx)
                             )
+                        }
+                        if (!resolvedTheme.decorativeIcon.isNullOrEmpty() && key.textLayout != null && !isSpaceKey) {
+                            val decorativeAlpha = resolvedTheme.keyOpacityAlpha.coerceIn(0.0f, 1.0f)
+                            if (decorativeAlpha > 0f) {
+                                if (decorativeIconBitmap != null) {
+                                    val maxSide = minOf(key.rectSize.width, key.rectSize.height) * 0.92f
+                                    val aspect = decorativeIconBitmap.width.toFloat() / decorativeIconBitmap.height.toFloat()
+                                    val iconW: Int
+                                    val iconH: Int
+                                    if (aspect > 1f) {
+                                        iconW = maxSide.roundToInt()
+                                        iconH = (maxSide / aspect).roundToInt()
+                                    } else {
+                                        iconH = maxSide.roundToInt()
+                                        iconW = (maxSide * aspect).roundToInt()
+                                    }
+
+                                    val iX = (key.rectTopLeft.x + (key.rectSize.width - iconW) / 2f).roundToInt()
+                                    val iY = (key.rectTopLeft.y + (key.rectSize.height - iconH) / 2f).roundToInt()
+
+                                    val alphaPaint = android.graphics.Paint().apply {
+                                        alpha = (decorativeAlpha * 255).roundToInt()
+                                    }
+                                    val nativeCanvas = drawContext.canvas.nativeCanvas
+                                    val layerId = nativeCanvas.saveLayer(
+                                        key.rectTopLeft.x,
+                                        key.rectTopLeft.y,
+                                        key.rectTopLeft.x + key.rectSize.width,
+                                        key.rectTopLeft.y + key.rectSize.height,
+                                        alphaPaint
+                                    )
+                                    drawImage(
+                                        image = decorativeIconBitmap,
+                                        dstOffset = androidx.compose.ui.unit.IntOffset(iX, iY),
+                                        dstSize = androidx.compose.ui.unit.IntSize(iconW, iconH)
+                                    )
+                                    nativeCanvas.restoreToCount(layerId)
+                                } else {
+                                    val watermarkStyle = TextStyle(
+                                        fontSize = (rowHeight * 0.88f).toSp()
+                                    )
+                                    val watermarkMeasured = textMeasurer.measure(
+                                        text = resolvedTheme.decorativeIcon!!,
+                                        style = watermarkStyle
+                                    )
+                                    val wX = key.rectTopLeft.x + (key.rectSize.width - watermarkMeasured.size.width) / 2f
+                                    val wY = key.rectTopLeft.y + (key.rectSize.height - watermarkMeasured.size.height) / 2f
+
+                                    if (decorativeAlpha < 0.99f) {
+                                        val alphaPaint = android.graphics.Paint().apply {
+                                            alpha = (decorativeAlpha * 255).roundToInt()
+                                        }
+                                        val nativeCanvas = drawContext.canvas.nativeCanvas
+                                        val layerId = nativeCanvas.saveLayer(
+                                            key.rectTopLeft.x,
+                                            key.rectTopLeft.y,
+                                            key.rectTopLeft.x + key.rectSize.width,
+                                            key.rectTopLeft.y + key.rectSize.height,
+                                            alphaPaint
+                                        )
+                                        drawText(
+                                            textLayoutResult = watermarkMeasured,
+                                            topLeft = Offset(wX, wY)
+                                        )
+                                        nativeCanvas.restoreToCount(layerId)
+                                    } else {
+                                        drawText(
+                                            textLayoutResult = watermarkMeasured,
+                                            topLeft = Offset(wX, wY)
+                                        )
+                                    }
+                                }
+                            }
                         }
                         if (key.textLayout != null) {
                             drawText(
@@ -905,41 +1234,16 @@ internal fun KeyboardThemePreviewImage(
     )
 }
 
-/**
- * Category filter chips strip for filtering themes in the Theme Gallery.
- */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ThemeCategoryFilterBar(
-    categories: List<String>,
-    selectedCategory: String,
-    onCategorySelected: (String) -> Unit,
+private fun SectionHeader(
+    title: String,
     modifier: Modifier = Modifier
 ) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 4.dp)
-    ) {
-        items(categories) { cat ->
-            val isSelected = cat.equals(selectedCategory, ignoreCase = true)
-
-            androidx.compose.material3.FilterChip(
-                selected = isSelected,
-                onClick = { onCategorySelected(cat) },
-                label = {
-                    Text(
-                        text = cat,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        fontSize = 13.sp
-                    )
-                },
-                colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                shape = RoundedCornerShape(12.dp)
-            )
-        }
-    }
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier.padding(top = 16.dp, bottom = 4.dp)
+    )
 }

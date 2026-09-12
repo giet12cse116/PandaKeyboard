@@ -14,7 +14,7 @@ PandaKeyboards/
 │       ├── fonts/          # FontsScreen, FontsViewModel, FontsUiState
 │       ├── setup/          # ImeSetupDialog (2-step activation flow)
 │       └── theme/          # Material 3 Color, Typography, Theme
-│
+│ 
 ├── :ime                    # InputMethodService module (Android library)
 │   ├── ime/                # PandaInputMethodService, ImeLifecycleOwner
 │   └── keyboard/           # PandaKeyboardLayout, KeyView, KeyboardKeys

@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
                 var readyAppliedThemeId by rememberSaveable { mutableStateOf<String?>(null) }
                 var autoFocusFontsInput by rememberSaveable { mutableStateOf(false) }
                 var showCustomThemeEditor by rememberSaveable { mutableStateOf(false) }
+                var showMyCustomThemesScreen by rememberSaveable { mutableStateOf(false) }
                 var selectedTab by rememberSaveable { mutableStateOf(MainTab.KEYBOARDS) }
                 var showExitDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -94,6 +95,8 @@ class MainActivity : ComponentActivity() {
                 BackHandler {
                     if (showThemeReadyScreen) {
                         showThemeReadyScreen = false
+                    } else if (showMyCustomThemesScreen) {
+                        showMyCustomThemesScreen = false
                     } else if (showCustomThemeEditor) {
                         showCustomThemeEditor = false
                     } else if (activeSetupThemeId != null) {
@@ -146,6 +149,10 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                val openThemeStudio = {
+                    startActivity(android.content.Intent(this@MainActivity, com.panda.keyboards.ui.themeeditor.ThemeStudioActivity::class.java))
+                }
+
                 if (showThemeReadyScreen) {
                     val themeReadyViewModel: com.panda.keyboards.ui.setup.ThemeReadyViewModel = hiltViewModel()
                     com.panda.keyboards.ui.setup.ThemeReadyScreen(
@@ -158,19 +165,18 @@ class MainActivity : ComponentActivity() {
                         },
                         modifier = Modifier.fillMaxSize()
                     )
-                } else if (showCustomThemeEditor) {
-                    val editorViewModel: com.panda.keyboards.ui.themeeditor.CustomThemeEditorViewModel = hiltViewModel()
-                    com.panda.keyboards.ui.themeeditor.CustomThemeEditorScreen(
-                        viewModel = editorViewModel,
-                        onBackClick = { showCustomThemeEditor = false },
-                        onThemeSaved = { appliedId ->
-                            showCustomThemeEditor = false
-                            if (imeStatusChecker.imeStatus.value.isFullyConfigured) {
-                                readyAppliedThemeId = appliedId
-                                showThemeReadyScreen = true
-                            } else {
-                                activeSetupThemeId = appliedId
-                            }
+                } else if (showMyCustomThemesScreen) {
+                    val keyboardsViewModel: KeyboardsViewModel = hiltViewModel()
+                    com.panda.keyboards.ui.keyboards.MyCustomThemesScreen(
+                        viewModel = keyboardsViewModel,
+                        onBackClick = { showMyCustomThemesScreen = false },
+                        onCreateNewClick = openThemeStudio,
+                        onOpenSetupDialog = { themeId ->
+                            activeSetupThemeId = themeId
+                        },
+                        onThemeApplied = { appliedId ->
+                            readyAppliedThemeId = appliedId
+                            showThemeReadyScreen = true
                         },
                         modifier = Modifier.fillMaxSize()
                     )
@@ -226,7 +232,8 @@ class MainActivity : ComponentActivity() {
                                         readyAppliedThemeId = appliedId
                                         showThemeReadyScreen = true
                                     },
-                                    onOpenCustomEditor = { showCustomThemeEditor = true },
+                                    onOpenCustomEditor = openThemeStudio,
+                                    onOpenMyCustomThemes = { showMyCustomThemesScreen = true },
                                     onSettingsClick = openSettings,
                                     modifier = contentModifier
                                 )

@@ -8,7 +8,7 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Unit tests verifying Abstract theme models and height-dependent background image resolution.
+ * Unit tests verifying Abstract theme models and background image resolution.
  */
 class AbstractThemeHeightTest {
 
@@ -18,48 +18,12 @@ class AbstractThemeHeightTest {
     }
 
     @Test
-    fun `ThemeBackground Image resolves correct path for COMPACT height`() {
+    fun `ThemeBackground Image resolves assetPath correctly`() {
         val imageBg = ThemeBackground.Image(
-            assetPath = "themes/abstract/1000299774_Default.jpg",
-            compactAssetPath = "themes/abstract/1000299774_Compact.jpg",
-            defaultAssetPath = "themes/abstract/1000299774_Default.jpg",
-            tallAssetPath = "themes/abstract/1000299774_Tall.jpg"
-        )
-
-        assertEquals("themes/abstract/1000299774_Compact.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.COMPACT))
-    }
-
-    @Test
-    fun `ThemeBackground Image resolves correct path for DEFAULT height`() {
-        val imageBg = ThemeBackground.Image(
-            assetPath = "themes/abstract/1000299774_Default.jpg",
-            compactAssetPath = "themes/abstract/1000299774_Compact.jpg",
-            defaultAssetPath = "themes/abstract/1000299774_Default.jpg",
-            tallAssetPath = "themes/abstract/1000299774_Tall.jpg"
+            assetPath = "themes/abstract/1000299774_Default.jpg"
         )
 
         assertEquals("themes/abstract/1000299774_Default.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.DEFAULT))
-    }
-
-    @Test
-    fun `ThemeBackground Image resolves correct path for TALL height`() {
-        val imageBg = ThemeBackground.Image(
-            assetPath = "themes/abstract/1000299774_Default.jpg",
-            compactAssetPath = "themes/abstract/1000299774_Compact.jpg",
-            defaultAssetPath = "themes/abstract/1000299774_Default.jpg",
-            tallAssetPath = "themes/abstract/1000299774_Tall.jpg"
-        )
-
-        assertEquals("themes/abstract/1000299774_Tall.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.TALL))
-    }
-
-    @Test
-    fun `ThemeBackground Image falls back to assetPath when height paths missing`() {
-        val imageBg = ThemeBackground.Image(assetPath = "/custom/user/path.jpg")
-
-        assertEquals("/custom/user/path.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.COMPACT))
-        assertEquals("/custom/user/path.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.DEFAULT))
-        assertEquals("/custom/user/path.jpg", imageBg.getAssetPathForHeight(KeyboardHeight.TALL))
     }
 
     @Test
@@ -76,12 +40,7 @@ class AbstractThemeHeightTest {
         val imageThemes = catalog.themes.filter { it.keyboardBackground is ThemeBackground.Image }
         for (theme in imageThemes) {
             val img = theme.keyboardBackground as ThemeBackground.Image
-            assertNotNull("Compact path must be set", img.compactAssetPath)
-            assertNotNull("Default path must be set", img.defaultAssetPath)
-            assertNotNull("Tall path must be set", img.tallAssetPath)
-            assertTrue("Compact image path must end with _Compact.jpg", img.compactAssetPath!!.endsWith("_Compact.jpg"))
-            assertTrue("Default image path must end with _Default.jpg", img.defaultAssetPath!!.endsWith("_Default.jpg"))
-            assertTrue("Tall image path must end with _Tall.jpg", img.tallAssetPath!!.endsWith("_Tall.jpg"))
+            assertNotNull("assetPath must be set", img.assetPath)
         }
     }
 }

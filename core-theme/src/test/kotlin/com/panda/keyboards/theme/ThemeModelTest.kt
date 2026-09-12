@@ -213,6 +213,178 @@ class ThemeModelTest {
         assertEquals(4.5f, clay.elevationDp)
     }
 
+    @Test
+    fun `asset_skin keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "carved_wood_brass",
+              "name": "Carved Wood & Brass",
+              "isPro": true,
+              "isExperimental": false,
+              "category": "Modern UI",
+              "keyBackgroundColor": "#3D2410",
+              "keyTextColor": "#4A2B10",
+              "keyboardBackground": {"type": "solid", "color": "#271913"},
+              "keyShape": "rounded",
+              "accentColor": "#D4AF37",
+              "keyStyle": {
+                "type": "asset_skin",
+                "letterTemplateRes": "skin_wood_brass_letter_template",
+                "functionTemplateRes": "skin_wood_brass_function_template",
+                "functionTemplateBlankRes": "skin_wood_brass_function_template_blank",
+                "spacebarRes": "skin_wood_brass_spacebar",
+                "settingsIconRes": "skin_wood_brass_icon_settings",
+                "embossDarkColorHex": "#4A2B10",
+                "embossLightColorHex": "#FFF8E1",
+                "brassTextColorHex": "#D4AF37"
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.AssetSkin>(theme.keyStyle)
+        val skin = theme.keyStyle as KeyVisualStyle.AssetSkin
+        assertEquals("skin_wood_brass_letter_template", skin.letterTemplateRes)
+        assertEquals("skin_wood_brass_function_template", skin.functionTemplateRes)
+        assertEquals("skin_wood_brass_function_template_blank", skin.functionTemplateBlankRes)
+        assertEquals("skin_wood_brass_spacebar", skin.spacebarRes)
+        assertEquals("skin_wood_brass_icon_settings", skin.settingsIconRes)
+        assertEquals("#4A2B10", skin.embossDarkColorHex)
+        assertEquals("#FFF8E1", skin.embossLightColorHex)
+        assertEquals("#D4AF37", skin.brassTextColorHex)
+    }
+
+    @Test
+    fun `origami_paper_craft keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "origami_paper_craft",
+              "name": "Low-Poly Origami",
+              "isPro": false,
+              "isExperimental": false,
+              "category": "Modern UI",
+              "keyBackgroundColor": "#A8E6C1",
+              "keyTextColor": "#4A3B6B",
+              "keyboardBackground": {"type": "solid", "color": "#E8F5EE"},
+              "keyShape": "rounded",
+              "accentColor": "#79B8CE",
+              "keyStyle": {
+                "type": "origami_paper_craft",
+                "mintKeyRes": "standard_origami_mint",
+                "purpleKeyRes": "standard_origami_purple",
+                "peachKeyRes": "standard_origami_peach",
+                "blueKeyRes": "standard_origami_blue",
+                "shiftKeyRes": "special_origami_shift_peach",
+                "backspaceKeyRes": "special_origami_backspace_pink",
+                "enterKeyRes": "special_origami_enter_blue",
+                "spacebarRes": "special_origami_spacebar_mint",
+                "emojiKeyRes": "special_origami_emoji_purple",
+                "symbolKeyRes": "special_origami_symbol_peach",
+                "topToolbarRes": "origami_top_toolbar",
+                "labelColorHex": "#4A3B6B"
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.OrigamiPaperCraft>(theme.keyStyle)
+        val origami = theme.keyStyle as KeyVisualStyle.OrigamiPaperCraft
+        assertEquals("standard_origami_mint", origami.mintKeyRes)
+        assertEquals("standard_origami_purple", origami.purpleKeyRes)
+        assertEquals("special_origami_shift_peach", origami.shiftKeyRes)
+        assertEquals("#4A3B6B", origami.labelColorHex)
+    }
+
+    @Test
+    fun `pizza_slice keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "slice_pizza_keyboard",
+              "name": "Slice Keyboards",
+              "isPro": false,
+              "isExperimental": false,
+              "category": "Modern UI",
+              "keyBackgroundColor": "#FFF5D8",
+              "keyTextColor": "#931B0D",
+              "keyboardBackground": {"type": "solid", "color": "#C8783E"},
+              "keyShape": "rounded",
+              "accentColor": "#295777",
+              "keyStyle": {
+                "type": "pizza_slice",
+                "standardKeyRes": "pizza_kb_u",
+                "bKeyRes": "pizza_kb_b",
+                "qKeyRes": "pizza_kb_q",
+                "wKeyRes": "pizza_kb_w",
+                "pKeyRes": "pizza_kb_p",
+                "uKeyRes": "pizza_kb_u",
+                "commaKeyRes": "pizza_kb_comma",
+                "enterKeyRes": "pizza_kb_enter",
+                "fullstopKeyRes": "pizza_kb_fullstop",
+                "numberpadKeyRes": "pizza_kb_numberpad",
+                "smileyKeyRes": "pizza_kb_smieley",
+                "spacebarRes": "pizza_kb_space",
+                "saucepanIconRes": "pizza_kb_ic_pizza_saucepan",
+                "pizzaPeelIconRes": "pizza_kb_ic_pizza_peel",
+                "cutterGearIconRes": "pizza_kb_ic_pizza_cutter_gear",
+                "cheeseShakerIconRes": "ic_pizza_cheese_shaker",
+                "stickersStIconRes": "pizza_kb_ic_pizza_stickers_st",
+                "emojiPizzaIconRes": "pizza_kb_ic_pizza_emoji_slice",
+                "sauceTextColorHex": "#931B0D",
+                "gorgonzolaTextColorHex": "#2F1E14",
+                "enterTextColorHex": "#FFFFFF"
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.PizzaSlice>(theme.keyStyle)
+        val pizza = theme.keyStyle as KeyVisualStyle.PizzaSlice
+        assertEquals("pizza_kb_u", pizza.standardKeyRes)
+        assertEquals("pizza_kb_b", pizza.bKeyRes)
+        assertEquals("pizza_kb_ic_pizza_saucepan", pizza.saucepanIconRes)
+        assertEquals("#931B0D", pizza.sauceTextColorHex)
+    }
+
+    @Test
+    fun `steampunk_industrial keyStyle parses correctly with parameters`() {
+        val jsonStr = """
+            {
+              "id": "steampunk_industrial",
+              "name": "Steampunk Industrial",
+              "isPro": false,
+              "isExperimental": false,
+              "category": "Modern UI",
+              "keyBackgroundColor": "#F5EEDC",
+              "keyTextColor": "#1B120C",
+              "keyboardBackground": {"type": "solid", "color": "#88452E"},
+              "keyShape": "rounded",
+              "accentColor": "#FF9326",
+              "keyStyle": {
+                "type": "steampunk_industrial",
+                "enamelKeyRes": "key_base_enamel",
+                "leatherSquareRes": "key_base_leather_square",
+                "leatherWideRes": "key_base_leather_wide",
+                "nixieTubeRes": "base_nixie_tube",
+                "spacebarNixieRes": "spacebar_nixie_tube",
+                "clockworkGearsRes": "bg_clockwork_gears",
+                "dialThemeRes": "ic_dial_theme",
+                "dialClipRes": "ic_dial_clipboard",
+                "dialGearRes": "ic_dial_settings",
+                "dialMicRes": "ic_dial_mic",
+                "dialFontRes": "ic_dial_font",
+                "enamelTextColorHex": "#1B120C",
+                "leatherTextColorHex": "#CFA679",
+                "nixieGlowColorHex": "#FF9326"
+              }
+            }
+        """.trimIndent()
+        val theme = json.decodeFromString<KeyboardTheme>(jsonStr)
+        assertIs<KeyVisualStyle.SteampunkIndustrial>(theme.keyStyle)
+        val steampunk = theme.keyStyle as KeyVisualStyle.SteampunkIndustrial
+        assertEquals("key_base_enamel", steampunk.enamelKeyRes)
+        assertEquals("base_nixie_tube", steampunk.nixieTubeRes)
+        assertEquals("ic_dial_theme", steampunk.dialThemeRes)
+        assertEquals("#FF9326", steampunk.nixieGlowColorHex)
+    }
+
+
     // ── ThemeBackground sealed hierarchy ────────────────────────────────
 
     @Test

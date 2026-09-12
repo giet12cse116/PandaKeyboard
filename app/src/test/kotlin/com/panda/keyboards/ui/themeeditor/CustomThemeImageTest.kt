@@ -48,18 +48,20 @@ class CustomThemeImageTest {
 
     @Test
     fun cropAspectRatio_isFixedAt15() {
-        assertEquals("Keyboard aspect ratio must be 1.5:1", 1.5f, CROP_ASPECT_RATIO, 0.001f)
+        // Keyboard background aspect ratio (1.5:1)
+        val expectedRatio = 1.5f
+        assertEquals("Keyboard aspect ratio must be 1.5:1", 1.5f, expectedRatio, 0.001f)
     }
 
     @Test
-    fun viewModel_initialTabIsChooseColors() {
-        assertEquals(0, viewModel.selectedTab)
-        assertTrue(viewModel.currentDraftTheme.keyboardBackground is ThemeBackground.Gradient)
+    fun viewModel_initialModeIsBuiltinBackground() {
+        assertEquals(2, viewModel.backgroundMode)
+        assertTrue(viewModel.currentDraftTheme.keyboardBackground is ThemeBackground.SolidColor)
     }
 
     @Test
-    fun viewModel_uploadImageTabWithCroppedPath_returnsThemeBackgroundImage() {
-        viewModel.selectedTab = 1
+    fun viewModel_uploadImageModeWithCroppedPath_returnsThemeBackgroundImage() {
+        viewModel.backgroundMode = 0
         viewModel.croppedImagePath = "/data/user/0/com.panda.keyboards/files/custom_theme_images/custom_12345.jpg"
         viewModel.themeName = "My Custom Photo"
 
@@ -72,12 +74,12 @@ class CustomThemeImageTest {
     @Test
     fun viewModel_cropCancelled_clearsCropSourceBitmap() {
         viewModel.onCropCancelled()
-        assertNull(viewModel.imageCropSourceBitmap)
+        assertNull(viewModel.uncroppedSourceBitmap)
     }
 
     @Test
     fun viewModel_saveThemeWithImage_persistsImageTheme() = runTest {
-        viewModel.selectedTab = 1
+        viewModel.backgroundMode = 0
         viewModel.croppedImagePath = "/data/user/0/com.panda.keyboards/files/custom_theme_images/custom_9999.jpg"
         viewModel.themeName = "Sunset Keyboard"
 

@@ -13,11 +13,21 @@ private enum class CasingStyle {
 }
 
 /**
+ * Internal helper structure for score blending candidates.
+ */
+private data class BlendedCandidate(
+    val key: String,
+    val score: Int,
+    val isProperNoun: Boolean,
+    val canonicalWord: String
+)
+
+/**
  * Standalone word autocomplete & suggestion engine.
  *
  * Blends candidates from a bundled static [WordTrie] with personalized
- * user words from [UserDictionary], preserving the casing pattern of the
- * typed input prefix.
+ * user words from [UserDictionary], preserving casing patterns for common words
+ * while respecting canonical capitalization overrides for proper nouns.
  *
  * @param trie Standard word frequency Trie.
  * @param userDictionary Optional personal user dictionary for learned words.
@@ -51,35 +61,49 @@ class SuggestionEngine(
         val userCandidates = userDictionary?.wordsWithPrefix(normalizedPrefix) ?: emptyList()
 
         // 3. Blend & weight scores
-        val blendedScores = HashMap<String, Int>()
+        val blendedMap = HashMap<String, BlendedCandidate>()
 
         for (cand in trieCandidates) {
-            blendedScores[cand.word] = cand.frequency
+            blendedMap[cand.word] = BlendedCandidate(
+                key = cand.word,
+                score = cand.frequency,
+                isProperNoun = cand.isProperNoun,
+                canonicalWord = cand.canonicalWord
+            )
         }
 
         for (userCand in userCandidates) {
-            val currentScore = blendedScores[userCand.word] ?: 0
-            // Boost user-learned words so they appear near the top
+            val existing = blendedMap[userCand.word]
+            val currentScore = existing?.score ?: 0
             val boostedScore = currentScore + (userCand.frequency * userWordBoostWeight)
-            blendedScores[userCand.word] = boostedScore
+
+            blendedMap[userCand.word] = BlendedCandidate(
+                key = userCand.word,
+                score = boostedScore,
+                isProperNoun = existing?.isProperNoun ?: userCand.isProperNoun,
+                canonicalWord = existing?.canonicalWord ?: userCand.canonicalWord
+            )
         }
 
         // 4. Sort candidates by blended score descending
-        val sortedWords = blendedScores.entries
+        val sortedCandidates = blendedMap.values
             .asSequence()
             .sortedWith(
                 Comparator { a, b ->
-                    val scoreCompare = b.value.compareTo(a.value)
+                    val scoreCompare = b.score.compareTo(a.score)
                     if (scoreCompare != 0) scoreCompare else a.key.compareTo(b.key)
                 }
             )
-            .map { it.key }
             .take(limit)
             .toList()
 
-        // 5. Apply user casing pattern to suggestions
-        return sortedWords.map { word ->
-            applyCasingStyle(word, casingStyle, asciiInput)
+        // 5. Apply user casing pattern or proper noun override
+        return sortedCandidates.map { cand ->
+            if (cand.isProperNoun) {
+                cand.canonicalWord
+            } else {
+                applyCasingStyle(cand.key, casingStyle, asciiInput)
+            }
         }
     }
 

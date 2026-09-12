@@ -8,14 +8,25 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 enum class KeyShape {
-    @SerialName("rounded")
-    ROUNDED,
+    @SerialName("none")
+    NONE,
 
     @SerialName("square")
     SQUARE,
 
+    @SerialName("rounded")
+    SQUARE_ROUNDED,
+
     @SerialName("pill")
-    PILL
+    OVAL,
+
+    @SerialName("oval_rounded")
+    OVAL_ROUNDED;
+
+    companion object {
+        val ROUNDED: KeyShape get() = SQUARE_ROUNDED
+        val PILL: KeyShape get() = OVAL
+    }
 }
 
 /**
@@ -99,7 +110,146 @@ sealed class KeyVisualStyle {
         val shadowColorHex: String = "#403730A3",
         val pressedElevationDp: Float = 1f
     ) : KeyVisualStyle()
+
+    /**
+     * Production Asset Skin pipeline utilizing custom bitmap/drawable key templates.
+     *
+     * @property letterTemplateRes Drawable resource name for shared letter/digit key background plaque.
+     * @property functionTemplateRes Drawable resource name for function key background template (backspace).
+     * @property functionTemplateBlankRes Drawable resource name for blank function key background (enter, shift, ?123).
+     * @property spacebarRes Drawable resource name for ornate spacebar plaque.
+     * @property settingsIconRes Drawable resource name for top toolbar settings icon.
+     * @property embossDarkColorHex Hex color string for dark offset shadow on carved wood text.
+     * @property embossLightColorHex Hex color string for light offset highlight on carved wood text.
+     * @property brassTextColorHex Hex color string for metallic brass overlay text/icons.
+     */
+    @Serializable
+    @SerialName("asset_skin")
+    data class AssetSkin(
+        val letterTemplateRes: String = "skin_wood_brass_letter_template",
+        val functionTemplateRes: String = "skin_wood_brass_function_template",
+        val functionTemplateBlankRes: String = "skin_wood_brass_function_template_blank",
+        val spacebarRes: String = "skin_wood_brass_spacebar",
+        val settingsIconRes: String = "skin_wood_brass_icon_settings",
+        val embossDarkColorHex: String = "#4A2B10",
+        val embossLightColorHex: String = "#FFF8E1",
+        val brassTextColorHex: String = "#D4AF37"
+    ) : KeyVisualStyle()
+
+    /**
+     * Low-Poly Origami / Faceted Paper-Craft 3D visual style.
+     *
+     * @property mintKeyRes Drawable resource name for Mint Green standard faceted key.
+     * @property purpleKeyRes Drawable resource name for Lavender Purple standard faceted key.
+     * @property peachKeyRes Drawable resource name for Peach standard faceted key.
+     * @property blueKeyRes Drawable resource name for Sky Blue standard faceted key.
+     * @property shiftKeyRes Drawable resource name for Shift faceted pyramid key.
+     * @property backspaceKeyRes Drawable resource name for Backspace faceted slice key.
+     * @property enterKeyRes Drawable resource name for Enter origami envelope key.
+     * @property spacebarRes Drawable resource name for Spacebar wide faceted key.
+     * @property emojiKeyRes Drawable resource name for Emoji purple faceted key.
+     * @property symbolKeyRes Drawable resource name for Symbol peach faceted key.
+     * @property topToolbarRes Drawable resource name for top toolbar with origami tabs.
+     * @property labelColorHex Hex color string for labels flush on flat top facet (#4A3B6B plum/navy).
+     */
+    @Serializable
+    @SerialName("origami_paper_craft")
+    data class OrigamiPaperCraft(
+        val mintKeyRes: String = "standard_origami_mint",
+        val purpleKeyRes: String = "standard_origami_purple",
+        val peachKeyRes: String = "standard_origami_peach",
+        val blueKeyRes: String = "standard_origami_blue",
+        val shiftKeyRes: String = "special_origami_shift_peach",
+        val backspaceKeyRes: String = "special_origami_backspace_pink",
+        val enterKeyRes: String = "special_origami_enter_blue",
+        val spacebarRes: String = "special_origami_spacebar_mint",
+        val emojiKeyRes: String = "special_origami_emoji_purple",
+        val symbolKeyRes: String = "special_origami_symbol_peach",
+        val topToolbarRes: String = "origami_top_toolbar",
+        val labelColorHex: String = "#4A3B6B"
+    ) : KeyVisualStyle()
+
+    /**
+     * Slice Keyboards Pizza 3D visual style.
+     */
+    @Serializable
+    @SerialName("pizza_slice")
+    data class PizzaSlice(
+        val standardKeyRes: String = "pizza_kb_u",
+        val bKeyRes: String = "pizza_kb_b",
+        val qKeyRes: String = "pizza_kb_q",
+        val wKeyRes: String = "pizza_kb_w",
+        val pKeyRes: String = "pizza_kb_p",
+        val uKeyRes: String = "pizza_kb_u",
+        val commaKeyRes: String = "pizza_kb_comma",
+        val enterKeyRes: String = "pizza_kb_enter",
+        val fullstopKeyRes: String = "pizza_kb_fullstop",
+        val numberpadKeyRes: String = "pizza_kb_numberpad",
+        val smileyKeyRes: String = "pizza_kb_smieley",
+        val spacebarRes: String = "pizza_kb_space",
+        val saucepanIconRes: String = "pizza_kb_ic_pizza_saucepan",
+        val pizzaPeelIconRes: String = "pizza_kb_ic_pizza_peel",
+        val cutterGearIconRes: String = "pizza_kb_ic_pizza_cutter_gear",
+        val cheeseShakerIconRes: String = "ic_pizza_cheese_shaker",
+        val stickersStIconRes: String = "pizza_kb_ic_pizza_stickers_st",
+        val emojiPizzaIconRes: String = "pizza_kb_ic_pizza_emoji_slice",
+        val sauceTextColorHex: String = "#931B0D",
+        val gorgonzolaTextColorHex: String = "#2F1E14",
+        val enterTextColorHex: String = "#FFFFFF"
+    ) : KeyVisualStyle()
+
+    /**
+     * Steampunk / Industrial 3D visual style.
+     */
+    @Serializable
+    @SerialName("steampunk_industrial")
+    data class SteampunkIndustrial(
+        val enamelKeyRes: String = "key_base_enamel",
+        val leatherSquareRes: String = "key_base_leather_square",
+        val leatherWideRes: String = "key_base_leather_wide",
+        val nixieTubeRes: String = "base_nixie_tube",
+        val spacebarNixieRes: String = "spacebar_nixie_tube",
+        val clockworkGearsRes: String = "bg_clockwork_gears",
+        val dialThemeRes: String = "ic_dial_theme",
+        val dialClipRes: String = "ic_dial_clipboard",
+        val dialGearRes: String = "ic_dial_settings",
+        val dialMicRes: String = "ic_dial_mic",
+        val dialFontRes: String = "ic_dial_font",
+        val enamelTextColorHex: String = "#1B120C",
+        val leatherTextColorHex: String = "#CFA679",
+        val nixieGlowColorHex: String = "#FF9326"
+    ) : KeyVisualStyle()
+
+    /**
+     * Synthwave Cyberpunk Neon visual style.
+     */
+    @Serializable
+    @SerialName("synthwave_cyberpunk_neon")
+    data class SynthwaveCyberpunkNeon(
+        val cyanKeyBgColorHex: String = "#0C081D",
+        val cyanKeyBorderColorHex: String = "#00E5FF",
+        val cyanKeyGlowColorHex: String = "#00E5FF",
+        val cyanTextColorHex: String = "#FFFFFF",
+        val magentaKeyBgColorHex: String = "#14081E",
+        val magentaKeyBorderColorHex: String = "#FF2A85",
+        val magentaKeyGlowColorHex: String = "#FF2A85",
+        val magentaTextColorHex: String = "#FF2A85",
+        val topRibbonBgColorHex: String = "#170E36",
+        val skylineBgRes: String = "bg_synthwave_skyline",
+        val speedometerIconRes: String = "ic_nav_speedometer",
+
+        val clipboardIconRes: String = "ic_nav_clipboard",
+        val settingsIconRes: String = "ic_nav_settings",
+        val micIconRes: String = "ic_nav_mic",
+        val fontTtIconRes: String = "ic_nav_font_tt",
+        val shiftArrowIconRes: String = "ic_shift_arrow",
+        val backspaceTagIconRes: String = "ic_backspace_tag",
+        val enterArrowIconRes: String = "ic_enter_arrow",
+        val emojiSmileIconRes: String = "ic_emoji_smile"
+    ) : KeyVisualStyle()
 }
+
+
 
 /**
  * Background specification for the keyboard surface.
@@ -140,20 +290,13 @@ sealed class ThemeBackground {
     @Serializable
     @SerialName("image")
     data class Image(
-        val assetPath: String,
-        val compactAssetPath: String? = null,
-        val defaultAssetPath: String? = null,
-        val tallAssetPath: String? = null
+        val assetPath: String
     ) : ThemeBackground() {
         /**
-         * Resolve the appropriate asset path corresponding to the given [KeyboardHeight].
+         * Resolve the asset path.
          */
         fun getAssetPathForHeight(height: KeyboardHeight): String {
-            return when (height) {
-                KeyboardHeight.COMPACT -> compactAssetPath ?: assetPath
-                KeyboardHeight.DEFAULT -> defaultAssetPath ?: assetPath
-                KeyboardHeight.TALL -> tallAssetPath ?: assetPath
-            }
+            return assetPath
         }
     }
 }
@@ -190,18 +333,34 @@ data class KeyboardTheme(
     val keyBackgroundColor: String,
     val keyTextColor: String,
     val keyboardBackground: ThemeBackground,
-    val keyShape: KeyShape = KeyShape.ROUNDED,
+    val keyShape: KeyShape = KeyShape.SQUARE_ROUNDED,
+    val keyOpacityAlpha: Float = 1.0f,
     val accentColor: String,
     val keyBorderColor: String? = null,
     val keyBorderWidthDp: Float = 0f,
     val keyShadowColor: String? = null,
     val keyShadowOffsetDp: Float = 0f,
-    val keyStyle: KeyVisualStyle = KeyVisualStyle.Flat
+    val keyStyle: KeyVisualStyle = KeyVisualStyle.Flat,
+    val decorativeIcon: String? = null,
+    val fontSizeSp: Int = 16,
+    val fontStyleName: String = "rounded",
+    val hasTextShadow: Boolean = false
 ) {
 
     companion object {
         /** The default theme ID — must match a theme in themes.json. */
         const val DEFAULT_THEME_ID = "default_dark"
+
+        /** Default fallback KeyboardTheme instance. */
+        val DEFAULT = KeyboardTheme(
+            id = DEFAULT_THEME_ID,
+            name = "Default Dark",
+            keyBackgroundColor = "#3A3A3C",
+            keyTextColor = "#FFFFFF",
+            keyboardBackground = ThemeBackground.SolidColor("#1C1C1E"),
+            keyShape = KeyShape.SQUARE_ROUNDED,
+            accentColor = "#7C4DFF"
+        )
     }
 }
 

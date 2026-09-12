@@ -6,7 +6,6 @@ import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.ExtractedText
 import android.view.inputmethod.ExtractedTextRequest
-import android.view.inputmethod.HeaderSize
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputContentInfo
 

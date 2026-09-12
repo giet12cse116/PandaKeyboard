@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,7 +87,7 @@ fun ImageCropScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Crop Keyboard Background",
+                        text = "Crop Image",
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -113,15 +114,19 @@ fun ImageCropScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedButton(
                         onClick = onCancel,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(24.dp)
                     ) {
-                        Text(text = "Cancel", color = Color.White)
+                        Text(text = "Cancel", color = Color.White, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -163,10 +168,14 @@ fun ImageCropScreen(
                                 onConfirmCrop(cropped)
                             }
                         },
-                        modifier = Modifier.weight(1f)
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color(0xFF10B981)),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(24.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                        Text(text = "Confirm Crop", fontWeight = FontWeight.Bold)
+                        Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.padding(end = 4.dp), tint = Color.White)
+                        Text(text = "Crop Image", fontWeight = FontWeight.Bold, color = Color.White)
                     }
                 }
             }

@@ -28,7 +28,7 @@ class DictionaryQualityEvaluationTest {
         @JvmStatic
         fun setUpClass() {
             loadTimeMs = measureTimeMillis {
-                trie = DictionaryLoader.loadFromResource("/dictionary_en.txt")
+                trie = DictionaryLoader.loadFromResource("/dictionary_en.txt", "/dictionary_proper_nouns.txt")
             }
             userDict = InMemoryUserDictionary()
             engine = SuggestionEngine(trie, userDict)

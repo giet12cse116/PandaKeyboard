@@ -5,7 +5,9 @@ package com.panda.keyboards.autocomplete
  */
 data class WordFrequency(
     val word: String,
-    val frequency: Int
+    val frequency: Int,
+    val isProperNoun: Boolean = false,
+    val canonicalWord: String = word
 ) : Comparable<WordFrequency> {
     override fun compareTo(other: WordFrequency): Int {
         // Order by frequency descending; secondary order alphabetical ascending
@@ -26,6 +28,8 @@ class WordTrie {
         var frequency: Int = 0
         var isWord: Boolean = false
         var fullWord: String? = null
+        var isProperNoun: Boolean = false
+        var canonicalWord: String? = null
     }
 
     private val root = TrieNode(char = '\u0000')
@@ -41,9 +45,10 @@ class WordTrie {
      * Insert a word with a frequency rank into the Trie.
      * Always converts the word to lowercase for consistent prefix matching.
      */
-    fun insert(word: String, frequency: Int) {
+    fun insert(word: String, frequency: Int, isProperNoun: Boolean = false) {
         if (word.isBlank()) return
-        val normalized = word.trim().lowercase()
+        val rawTrimmed = word.trim()
+        val normalized = rawTrimmed.lowercase()
 
         var current = root
         for (ch in normalized) {
@@ -53,9 +58,22 @@ class WordTrie {
         if (!current.isWord) {
             current.isWord = true
             _wordCount++
+            current.frequency = frequency
+            current.fullWord = normalized
+            current.isProperNoun = isProperNoun
+            current.canonicalWord = rawTrimmed
+        } else {
+            // Merge metadata for duplicate entries: keep highest frequency score
+            if (frequency > current.frequency) {
+                current.frequency = frequency
+            }
+            if (isProperNoun) {
+                current.isProperNoun = true
+                current.canonicalWord = rawTrimmed
+            } else if (current.canonicalWord == null) {
+                current.canonicalWord = rawTrimmed
+            }
         }
-        current.frequency = frequency
-        current.fullWord = normalized
     }
 
     /**
@@ -72,6 +90,22 @@ class WordTrie {
     fun getFrequency(word: String): Int {
         val node = findNode(word.trim().lowercase())
         return if (node?.isWord == true) node.frequency else 0
+    }
+
+    /**
+     * Check if an exact word in the Trie is flagged as a proper noun.
+     */
+    fun isProperNoun(word: String): Boolean {
+        val node = findNode(word.trim().lowercase())
+        return node?.isWord == true && node.isProperNoun
+    }
+
+    /**
+     * Retrieve the canonical form of an exact word in the Trie, or null if not present.
+     */
+    fun getCanonicalWord(word: String): String? {
+        val node = findNode(word.trim().lowercase())
+        return if (node?.isWord == true) node.canonicalWord ?: node.fullWord else null
     }
 
     /**
@@ -102,7 +136,14 @@ class WordTrie {
 
     private fun collectWords(node: TrieNode, result: MutableList<WordFrequency>) {
         if (node.isWord && node.fullWord != null) {
-            result.add(WordFrequency(node.fullWord!!, node.frequency))
+            result.add(
+                WordFrequency(
+                    word = node.fullWord!!,
+                    frequency = node.frequency,
+                    isProperNoun = node.isProperNoun,
+                    canonicalWord = node.canonicalWord ?: node.fullWord!!
+                )
+            )
         }
         for (child in node.children.values) {
             collectWords(child, result)

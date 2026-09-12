@@ -23,10 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Numbers
@@ -83,7 +83,6 @@ fun SettingsScreen(
     val context = LocalContext.current
 
     var showQwertyDialog by remember { mutableStateOf(false) }
-    var showHeightDialog by remember { mutableStateOf(false) }
     var stubTitle by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
@@ -126,7 +125,7 @@ fun SettingsScreen(
                 SettingsItem(
                     title = "Widget Guide",
                     subtitle = "Learn how to add quick widgets to your home screen",
-                    icon = Icons.Default.HelpOutline,
+                    icon = Icons.AutoMirrored.Filled.HelpOutline,
                     onClick = { stubTitle = "Widget Guide" }
                 )
                 SettingsDivider()
@@ -142,13 +141,6 @@ fun SettingsScreen(
                     subtitle = settings.qwertyOrder.displayName,
                     icon = Icons.Default.Keyboard,
                     onClick = { showQwertyDialog = true }
-                )
-                SettingsDivider()
-                SettingsItem(
-                    title = "Keyboard Height",
-                    subtitle = settings.keyboardHeight.displayName,
-                    icon = Icons.Default.Height,
-                    onClick = { showHeightDialog = true }
                 )
                 SettingsDivider()
                 SettingsSwitchItem(
@@ -313,44 +305,7 @@ fun SettingsScreen(
         )
     }
 
-    // ── Keyboard Height Dialog ──────────────────────────────────────────────
-    if (showHeightDialog) {
-        AlertDialog(
-            onDismissRequest = { showHeightDialog = false },
-            title = { Text("Select Keyboard Height") },
-            text = {
-                Column {
-                    KeyboardHeight.entries.forEach { height ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.setKeyboardHeight(height)
-                                    showHeightDialog = false
-                                }
-                                .padding(vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (height == settings.keyboardHeight),
-                                onClick = {
-                                    viewModel.setKeyboardHeight(height)
-                                    showHeightDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = height.displayName)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showHeightDialog = false }) {
-                    Text("Close")
-                }
-            }
-        )
-    }
+
 
     // ── Generic Stub Dialog ─────────────────────────────────────────────────
     stubTitle?.let { title ->

@@ -8,10 +8,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299774_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299774_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299774_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299774_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299774_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00E5FF",
@@ -25,10 +22,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299775_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299775_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299775_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299775_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299775_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF007F",
@@ -42,10 +36,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299776_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299776_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299776_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299776_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299776_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FFD700",
@@ -59,10 +50,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299779_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299779_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299779_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299779_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299779_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#7C4DFF",
@@ -76,10 +64,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299780_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299780_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299780_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299780_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299780_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF5722",
@@ -93,14 +78,188 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299781_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299781_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299781_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299781_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299781_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#E91E63",
                        "category":  "Abstract"
+                   },
+                   {
+                       "id":  "carved_wood_brass",
+                       "name":  "Carved Wood \u0026 Brass",
+                       "isPro":  true,
+                       "isExperimental":  false,
+                       "category":  "Modern UI",
+                       "previewImage":  "carved_wood_brass_preview",
+                       "keyBackgroundColor":  "#3D2410",
+                       "keyTextColor":  "#4A2B10",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#3E2723",
+                                                                 "#271913",
+                                                                 "#1B100C"
+                                                             ],
+                                                  "angle":  180.0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#D4AF37",
+                       "keyStyle":  {
+                                        "type":  "asset_skin",
+                                        "letterTemplateRes":  "skin_wood_brass_letter_template",
+                                        "functionTemplateRes":  "skin_wood_brass_function_template",
+                                        "functionTemplateBlankRes":  "skin_wood_brass_function_template_blank",
+                                        "spacebarRes":  "skin_wood_brass_spacebar",
+                                        "settingsIconRes":  "skin_wood_brass_icon_settings",
+                                        "embossDarkColorHex":  "#4A2B10",
+                                        "embossLightColorHex":  "#FFF8E1",
+                                        "brassTextColorHex":  "#D4AF37"
+                                    }
+                   },
+                   {
+                       "id":  "origami_paper_craft",
+                       "name":  "Low-Poly Origami",
+                       "isPro":  false,
+                       "isExperimental":  false,
+                       "category":  "Modern UI",
+                       "previewImage":  "origami_paper_craft_preview",
+                       "keyBackgroundColor":  "#A8E6C1",
+                       "keyTextColor":  "#4A3B6B",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#E8F5EE",
+                                                                 "#ECE8F8"
+                                                             ],
+                                                  "angle":  135.0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#79B8CE",
+                       "keyStyle":  {
+                                        "type":  "origami_paper_craft",
+                                        "mintKeyRes":  "standard_origami_mint",
+                                        "purpleKeyRes":  "standard_origami_purple",
+                                        "peachKeyRes":  "standard_origami_peach",
+                                        "blueKeyRes":  "standard_origami_blue",
+                                        "shiftKeyRes":  "special_origami_shift_peach",
+                                        "backspaceKeyRes":  "special_origami_backspace_pink",
+                                        "enterKeyRes":  "special_origami_enter_blue",
+                                        "spacebarRes":  "special_origami_spacebar_mint",
+                                        "emojiKeyRes":  "special_origami_emoji_purple",
+                                        "symbolKeyRes":  "special_origami_symbol_peach",
+                                        "topToolbarRes":  "origami_top_toolbar",
+                                        "labelColorHex":  "#4A3B6B"
+                                    }
+                   },
+                   {
+                       "id":  "slice_pizza_keyboard",
+                       "name":  "Slice Keyboards",
+                       "isPro":  false,
+                       "isExperimental":  false,
+                       "category":  "Modern UI",
+                       "previewImage":  "slice_pizza_keyboard_preview",
+                       "keyBackgroundColor":  "#FFF5D8",
+                       "keyTextColor":  "#931B0D",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#C8783E"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#295777",
+                       "keyStyle":  {
+                                        "type":  "pizza_slice",
+                                        "standardKeyRes":  "pizza_kb_u",
+                                        "bKeyRes":  "pizza_kb_b",
+                                        "qKeyRes":  "pizza_kb_q",
+                                        "wKeyRes":  "pizza_kb_w",
+                                        "pKeyRes":  "pizza_kb_p",
+                                        "uKeyRes":  "pizza_kb_u",
+                                        "commaKeyRes":  "pizza_kb_comma",
+                                        "enterKeyRes":  "pizza_kb_enter",
+                                        "fullstopKeyRes":  "pizza_kb_fullstop",
+                                        "numberpadKeyRes":  "pizza_kb_numberpad",
+                                        "smileyKeyRes":  "pizza_kb_smieley",
+                                        "spacebarRes":  "pizza_kb_space",
+                                        "saucepanIconRes":  "pizza_kb_ic_pizza_saucepan",
+                                        "pizzaPeelIconRes":  "pizza_kb_ic_pizza_peel",
+                                        "cutterGearIconRes":  "pizza_kb_ic_pizza_cutter_gear",
+                                        "cheeseShakerIconRes":  "ic_pizza_cheese_shaker",
+                                        "stickersStIconRes":  "pizza_kb_ic_pizza_stickers_st",
+                                        "emojiPizzaIconRes":  "pizza_kb_ic_pizza_emoji_slice",
+                                        "sauceTextColorHex":  "#931B0D",
+                                        "gorgonzolaTextColorHex":  "#2F1E14",
+                                        "enterTextColorHex":  "#FFFFFF"
+                                    }
+                   },
+                   {
+                       "id":  "steampunk_industrial",
+                       "name":  "Steampunk Industrial",
+                       "isPro":  false,
+                       "isExperimental":  false,
+                       "category":  "Modern UI",
+                       "previewImage":  "steampunk_keyboard_preview",
+                       "keyBackgroundColor":  "#F5EEDC",
+                       "keyTextColor":  "#1B120C",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#88452E"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF9326",
+                       "keyStyle":  {
+                                        "type":  "steampunk_industrial",
+                                        "enamelKeyRes":  "key_base_enamel",
+                                        "leatherSquareRes":  "key_base_leather_square",
+                                        "leatherWideRes":  "key_base_leather_wide",
+                                        "nixieTubeRes":  "base_nixie_tube",
+                                        "spacebarNixieRes":  "spacebar_nixie_tube",
+                                        "clockworkGearsRes":  "bg_clockwork_gears",
+                                        "dialThemeRes":  "ic_dial_theme",
+                                        "dialClipRes":  "ic_dial_clipboard",
+                                        "dialGearRes":  "ic_dial_settings",
+                                        "dialMicRes":  "ic_dial_mic",
+                                        "dialFontRes":  "ic_dial_font",
+                                        "enamelTextColorHex":  "#1B120C",
+                                        "leatherTextColorHex":  "#CFA679",
+                                        "nixieGlowColorHex":  "#FF9326"
+                                    }
+                   },
+                   {
+                       "id":  "synthwave_cyberpunk_neon",
+                       "name":  "Synthwave Cyberpunk Neon",
+                       "isPro":  false,
+                       "isExperimental":  false,
+                       "category":  "Modern UI",
+                       "previewImage":  "synthwave_cyberpunk_neon_preview",
+                       "keyBackgroundColor":  "#0C081D",
+                       "keyTextColor":  "#FFFFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "solid",
+                                                  "color":  "#120B29"
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#FF2A85",
+                       "keyStyle":  {
+                                        "type":  "synthwave_cyberpunk_neon",
+                                        "cyanKeyBgColorHex":  "#0C081D",
+                                        "cyanKeyBorderColorHex":  "#00E5FF",
+                                        "cyanKeyGlowColorHex":  "#00E5FF",
+                                        "cyanTextColorHex":  "#FFFFFF",
+                                        "magentaKeyBgColorHex":  "#14081E",
+                                        "magentaKeyBorderColorHex":  "#FF2A85",
+                                        "magentaKeyGlowColorHex":  "#FF2A85",
+                                        "magentaTextColorHex":  "#FF2A85",
+                                        "topRibbonBgColorHex":  "#170E36",
+                                        "speedometerIconRes":  "ic_nav_speedometer",
+                                        "clipboardIconRes":  "ic_nav_clipboard",
+                                        "settingsIconRes":  "ic_nav_settings",
+                                        "micIconRes":  "ic_nav_mic",
+                                        "fontTtIconRes":  "ic_nav_font_tt",
+                                        "shiftArrowIconRes":  "ic_shift_arrow",
+                                        "backspaceTagIconRes":  "ic_backspace_tag",
+                                        "enterArrowIconRes":  "ic_enter_arrow",
+                                        "emojiSmileIconRes":  "ic_emoji_smile"
+                                    }
                    },
                    {
                        "id":  "test_typographic_maximalism",
@@ -242,33 +401,33 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
-                        "keyBackgroundColor":  "#507C4DFF",
-                        "keyTextColor":  "#FFFFFF",
-                        "keyboardBackground":  {
-                                                   "type":  "gradient",
-                                                   "colors":  [
-                                                                  "#120826",
-                                                                  "#2A093D",
-                                                                  "#00F5FF"
-                                                              ],
-                                                   "angle":  45.0
-                                               },
-                        "keyShape":  "rounded",
-                        "accentColor":  "#00F5FF",
-                        "keyBorderColor":  "#8000F5FF",
-                        "keyBorderWidthDp":  1.2,
-                        "keyStyle":  {
-                                         "type":  "glassmorphic",
-                                         "blurRadiusDp":  18.0,
-                                         "translucencyAlpha":  0.30,
-                                         "borderColorHex":  "#8000F5FF",
-                                         "glowGradientColors":  [
-                                                                    "#B000F5FF",
-                                                                    "#707C4DFF",
-                                                                    "#00000000"
-                                                                ]
-                                     }
-                    },
+                       "keyBackgroundColor":  "#507C4DFF",
+                       "keyTextColor":  "#FFFFFF",
+                       "keyboardBackground":  {
+                                                  "type":  "gradient",
+                                                  "colors":  [
+                                                                 "#120826",
+                                                                 "#2A093D",
+                                                                 "#00F5FF"
+                                                             ],
+                                                  "angle":  45.0
+                                              },
+                       "keyShape":  "rounded",
+                       "accentColor":  "#00F5FF",
+                       "keyBorderColor":  "#8000F5FF",
+                       "keyBorderWidthDp":  1.2,
+                       "keyStyle":  {
+                                        "type":  "glassmorphic",
+                                        "blurRadiusDp":  18.0,
+                                        "translucencyAlpha":  0.30,
+                                        "borderColorHex":  "#8000F5FF",
+                                        "glowGradientColors":  [
+                                                                   "#B000F5FF",
+                                                                   "#707C4DFF",
+                                                                   "#00000000"
+                                                               ]
+                                    }
+                   },
                    {
                        "id":  "abstract_ocean_vortex",
                        "name":  "Ocean Vortex",
@@ -277,10 +436,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299782_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299782_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299782_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299782_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299782_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00E676",
@@ -294,10 +450,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299783_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299783_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299783_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299783_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299783_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#B388FF",
@@ -311,10 +464,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299608_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299608_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299608_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299608_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299608_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FFC107",
@@ -328,10 +478,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299609_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299609_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299609_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299609_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299609_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00E5FF",
@@ -345,10 +492,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299639_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299639_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299639_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299639_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299639_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF6E40",
@@ -362,10 +506,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299967_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299967_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299967_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299967_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299967_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF3D00",
@@ -379,10 +520,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299966_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299966_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299966_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299966_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299966_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00E5FF",
@@ -396,10 +534,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299965_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299965_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299965_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299965_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299965_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF007F",
@@ -413,10 +548,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299964_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299964_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299964_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299964_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299964_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#7C4DFF",
@@ -430,10 +562,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299623_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299623_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299623_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299623_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299623_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF4081",
@@ -447,10 +576,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299605_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299605_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299605_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299605_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299605_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF007F",
@@ -464,10 +590,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299613_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299613_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299613_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299613_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299613_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00B0FF",
@@ -481,10 +604,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299606_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299606_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299606_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299606_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299606_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#9C27B0",
@@ -498,10 +618,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299612_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299612_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299612_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299612_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299612_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF3D00",
@@ -515,10 +632,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299635_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299635_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299635_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299635_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299635_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#AA00FF",
@@ -532,10 +646,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299644_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299644_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299644_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299644_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299644_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#78909C",
@@ -549,10 +660,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299643_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299643_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299643_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299643_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299643_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#40C4FF",
@@ -566,10 +674,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299640_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299640_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299640_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299640_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299640_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#B0BEC5",
@@ -583,10 +688,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299624_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299624_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299624_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299624_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299624_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#7C4DFF",
@@ -600,10 +702,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299629_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299629_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299629_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299629_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299629_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF9100",
@@ -617,10 +716,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299971_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299971_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299971_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299971_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299971_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#29B6F6",
@@ -634,10 +730,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299627_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299627_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299627_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299627_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299627_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#448AFF",
@@ -651,10 +744,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299632_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299632_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299632_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299632_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299632_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#1DE9B6",
@@ -668,10 +758,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299625_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299625_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299625_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299625_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299625_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#69F0AE",
@@ -685,10 +772,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299636_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299636_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299636_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299636_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299636_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FFD700",
@@ -702,10 +786,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299970_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299970_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299970_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299970_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299970_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#FF80AB",
@@ -719,10 +800,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299969_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299969_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299969_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299969_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299969_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#00E676",
@@ -736,10 +814,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299633_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299633_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299633_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299633_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299633_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#D50000",
@@ -753,10 +828,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299631_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299631_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299631_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299631_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299631_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#E040FB",
@@ -770,10 +842,7 @@
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
                                                   "type":  "image",
-                                                  "assetPath":  "themes/abstract/1000299637_Default.jpg",
-                                                  "compactAssetPath":  "themes/abstract/1000299637_Compact.jpg",
-                                                  "defaultAssetPath":  "themes/abstract/1000299637_Default.jpg",
-                                                  "tallAssetPath":  "themes/abstract/1000299637_Tall.jpg"
+                                                  "assetPath":  "themes/abstract/1000299637_Default.jpg"
                                               },
                        "keyShape":  "rounded",
                        "accentColor":  "#18FFFF",

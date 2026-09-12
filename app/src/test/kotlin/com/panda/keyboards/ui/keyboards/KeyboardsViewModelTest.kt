@@ -98,34 +98,32 @@ class KeyboardsViewModelTest {
     }
 
     @Test
-    fun themes_returnsAllThemesInSelectedCategory() = runTest {
+    fun allThemes_returnsCatalogThemes() = runTest {
         val viewModel = KeyboardsViewModel(fakeRepository, fakeImeChecker)
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.themes.collect {}
+            viewModel.allThemes.collect {}
         }
         testDispatcher.scheduler.advanceUntilIdle()
 
-        val initialResult = viewModel.themes.value
+        val initialResult = viewModel.allThemes.value
         assertEquals(10, initialResult.size)
         assertEquals("Theme 1", initialResult[0].name)
     }
 
     @Test
-    fun selectCategory_filtersThemesCorrectly() = runTest {
+    fun categorizedThemes_filtersThemesBySection() = runTest {
         val viewModel = KeyboardsViewModel(fakeRepository, fakeImeChecker)
 
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.themes.collect {}
+            viewModel.allThemes.collect {}
+        }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.solidThemes.collect {}
         }
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertEquals(10, viewModel.themes.value.size)
-
-        viewModel.selectCategory("solid")
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(10, viewModel.themes.value.size)
+        assertEquals(10, viewModel.allThemes.value.size)
     }
 
     @Test

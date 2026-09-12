@@ -18,8 +18,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.navigationBarsPadding
 import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+
 import com.panda.keyboards.fonts.FontStyle
 import com.panda.keyboards.ime.KeyboardActionHandler
 import com.panda.keyboards.theme.KeyboardTheme
@@ -217,15 +220,28 @@ fun PandaKeyboardLayout(
         }
     }
 
+    val synthwaveStyle = resolvedTheme.synthwaveCyberpunkNeonStyle
     // Apply keyboard background — image background takes priority, then gradient brush, then solid color
-    val backgroundModifier = if (bgImageBitmap == null) {
-        if (resolvedTheme.keyboardBackgroundBrush != null) {
-            Modifier.background(resolvedTheme.keyboardBackgroundBrush)
-        } else {
-            Modifier.background(resolvedTheme.keyboardBackground)
+    val backgroundModifier = when {
+        synthwaveStyle != null -> Modifier.background(
+            Brush.verticalGradient(
+                colors = listOf(
+                    Color(0xFF031B24),
+                    Color(0xFF074554),
+                    Color(0xFF0C6B7D),
+                    Color(0xFF0F939A),
+                    Color(0xFF10B981)
+                )
+            )
+        )
+        bgImageBitmap == null -> {
+            if (resolvedTheme.keyboardBackgroundBrush != null) {
+                Modifier.background(resolvedTheme.keyboardBackgroundBrush)
+            } else {
+                Modifier.background(resolvedTheme.keyboardBackground)
+            }
         }
-    } else {
-        Modifier
+        else -> Modifier
     }
 
     val baseHeightDp = settings.keyboardHeight.heightDp.dp
@@ -233,7 +249,8 @@ fun PandaKeyboardLayout(
     val keyRowsCount = if (rows.isEmpty()) 4 else rows.size
     val keyRowsHeightDp = rowHeightDp * keyRowsCount
     val suggestionBarHeightDp = if (keyboardState.mode == KeyboardMode.EMOJI || keyboardState.mode == KeyboardMode.CLIPBOARD || keyboardState.mode == KeyboardMode.VOICE) 36.dp else if (settings.autoCorrectionEnabled) 36.dp else 0.dp
-    val totalHeightDp = keyRowsHeightDp + 44.dp + suggestionBarHeightDp
+    val totalHeightDp = keyRowsHeightDp + 44.dp + suggestionBarHeightDp + 6.dp
+
 
 
     Box(
@@ -242,7 +259,7 @@ fun PandaKeyboardLayout(
             .then(backgroundModifier)
             .navigationBarsPadding()
     ) {
-        if (bgImageBitmap != null) {
+        if (bgImageBitmap != null && synthwaveStyle == null) {
             androidx.compose.foundation.Image(
                 bitmap = bgImageBitmap,
                 contentDescription = null,
@@ -251,11 +268,13 @@ fun PandaKeyboardLayout(
             )
         }
 
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(totalHeightDp)
-                .padding(horizontal = 3.dp, vertical = 3.dp)
+                .padding(start = 3.dp, end = 3.dp, top = 3.dp, bottom = 9.dp)
         ) {
             if (keyboardState.mode == KeyboardMode.EMOJI) {
                 // ── Full Emoji & Stickers Panel View ────────────────────────
@@ -371,6 +390,13 @@ fun PandaKeyboardLayout(
                     }
                 }
 
+                val steampunkStyle = resolvedTheme.steampunkIndustrialStyle
+                val gearsResId = remember(steampunkStyle) {
+                    if (steampunkStyle != null && steampunkStyle.clockworkGearsRes.isNotEmpty()) {
+                        context.resources.getIdentifier(steampunkStyle.clockworkGearsRes, "drawable", context.packageName)
+                    } else 0
+                }
+
                 val glowBrush = resolvedTheme.glassmorphicGlowBrush
                 val keyMatrixUnderlayModifier = if (glowBrush != null) {
                     Modifier.background(glowBrush)
@@ -383,6 +409,14 @@ fun PandaKeyboardLayout(
                         .fillMaxWidth()
                         .then(keyMatrixUnderlayModifier)
                 ) {
+                    if (gearsResId != 0) {
+                        androidx.compose.foundation.Image(
+                            painter = androidx.compose.ui.res.painterResource(id = gearsResId),
+                            contentDescription = null,
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                            modifier = Modifier.matchParentSize()
+                        )
+                    }
                     Column {
                         rows.forEach { row ->
                             val isMiddleRow = (row.size == 9 && row.firstOrNull()?.type == KeyType.CHARACTER)
