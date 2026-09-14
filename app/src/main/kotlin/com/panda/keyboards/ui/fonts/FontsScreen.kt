@@ -176,7 +176,7 @@ fun FontsScreen(
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
                 .imePadding()
-                .drawVerticalScrollbar(lazyListState, primaryColor)
+                .drawVerticalScrollbar(lazyListState, Color(0xFF383838))
         ) {
             // ── Item 0: Preview Card ────────────────────────────────────────
             item(key = "preview_card") {
@@ -302,7 +302,7 @@ private fun PreviewCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            containerColor = Color(0xFF1A1717)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -419,7 +419,7 @@ fun FontStyleRow(
         targetValue = if (isSelected)
             MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
         else
-            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+            Color(0xFF1A1717),
         label = "rowBackground"
     )
 
@@ -562,7 +562,7 @@ private fun Modifier.drawVerticalScrollbar(
             val scrollRatio = (firstVisibleIndex.toFloat() / maxScrollIndex.toFloat()).coerceIn(0f, 1f)
             val barOffsetY = (size.height - barHeight) * scrollRatio
             drawRoundRect(
-                color = color.copy(alpha = 0.6f),
+                color = color.copy(alpha = 0.9f),
                 topLeft = Offset(size.width - 6.dp.toPx(), barOffsetY),
                 size = Size(4.dp.toPx(), barHeight),
                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(2.dp.toPx())

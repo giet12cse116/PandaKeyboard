@@ -346,10 +346,23 @@ fun KeyView(
         val origamiStyle = theme.origamiPaperCraftStyle
         val pizzaStyle = theme.pizzaSliceStyle
         val steampunkStyle = theme.steampunkIndustrialStyle
+        val themeKeyBackgroundsStyle = theme.themeKeyBackgroundsStyle
         val context = androidx.compose.ui.platform.LocalContext.current
 
-        if (assetSkinStyle != null || origamiStyle != null || pizzaStyle != null || steampunkStyle != null) {
+        if (assetSkinStyle != null || origamiStyle != null || pizzaStyle != null || steampunkStyle != null || themeKeyBackgroundsStyle != null) {
             val templateResName = when {
+                themeKeyBackgroundsStyle != null -> {
+                    when (key.type) {
+                        KeyType.SPACE -> themeKeyBackgroundsStyle.spaceBackgroundRes
+                        KeyType.SHIFT,
+                        KeyType.BACKSPACE,
+                        KeyType.ENTER,
+                        KeyType.SYMBOLS -> themeKeyBackgroundsStyle.specialKeyBackgroundRes
+                        KeyType.EMOJI,
+                        KeyType.CHARACTER -> themeKeyBackgroundsStyle.emojiBackgroundRes
+                        else -> themeKeyBackgroundsStyle.emojiBackgroundRes
+                    }
+                }
                 steampunkStyle != null -> {
                     val raw = key.label.lowercase()
                     when {
@@ -416,12 +429,15 @@ fun KeyView(
                     context.resources.getIdentifier(templateResName, "drawable", context.packageName)
                 } else 0
             }
+            val hasBackgroundAsset = resId != 0
+
+            val effectiveClipShape = if (theme.keyShape == RoundedCornerShape(0.dp)) RoundedCornerShape(8.dp) else theme.keyShape
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .offset(y = currentSurfaceOffsetYDp)
-                    .clip(theme.keyShape)
+                    .clip(effectiveClipShape)
             ) {
                 if (resId != 0) {
                     androidx.compose.foundation.Image(
@@ -431,23 +447,36 @@ fun KeyView(
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    Box(modifier = Modifier.fillMaxSize().background(backgroundColor))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(backgroundColor)
+                            .then(
+                                if (hasBorder) {
+                                    Modifier.border(
+                                        width = theme.keyBorderWidthDp.dp,
+                                        color = theme.keyBorderColor!!,
+                                        shape = effectiveClipShape
+                                    )
+                                } else Modifier
+                            )
+                    )
                 }
             }
         } else {
             val isSpaceKey = key.type == KeyType.SPACE
             val effectiveBgColor = when {
                 isSpaceKey && !theme.decorativeIcon.isNullOrEmpty() -> {
-                    (if (backgroundColor.alpha > 0f) backgroundColor else theme.keyBackground).copy(alpha = 0.85f)
+                    if (backgroundColor.alpha > 0f) backgroundColor.copy(alpha = 0.85f) else Color.Transparent
                 }
                 isSpaceKey && backgroundColor.alpha == 0f -> {
-                    textColor.copy(alpha = 0.85f)
+                    Color.Transparent
                 }
                 else -> backgroundColor
             }
             val effectiveShape = when {
                 isSpaceKey && !theme.decorativeIcon.isNullOrEmpty() -> RoundedCornerShape(8.dp)
-                isSpaceKey -> theme.keyShape
+                !theme.decorativeIcon.isNullOrEmpty() && theme.keyShape == RoundedCornerShape(0.dp) -> RoundedCornerShape(8.dp)
                 else -> theme.keyShape
             }
 
@@ -566,6 +595,56 @@ fun KeyView(
 
             val origamiStyle = theme.origamiPaperCraftStyle
             val pizzaStyle = theme.pizzaSliceStyle
+
+            Box(contentAlignment = Alignment.Center) {
+                val isCharacterKey = key.type == KeyType.CHARACTER
+                val hasBackgroundAsset = themeKeyBackgroundsStyle?.let { style ->
+                    val resName = when (key.type) {
+                        KeyType.SPACE -> style.spaceBackgroundRes
+                        KeyType.SHIFT, KeyType.BACKSPACE, KeyType.ENTER, KeyType.SYMBOLS -> style.specialKeyBackgroundRes
+                        KeyType.EMOJI, KeyType.CHARACTER -> style.emojiBackgroundRes
+                        else -> style.emojiBackgroundRes
+                    }
+                    if (resName.isNotEmpty()) {
+                        context.resources.getIdentifier(resName, "drawable", context.packageName) != 0
+                    } else false
+                } ?: false
+
+                val shouldDrawDecorativeIcon = !theme.decorativeIcon.isNullOrEmpty() && (
+                    if (themeKeyBackgroundsStyle != null) (isCharacterKey && !hasBackgroundAsset) else key.type != KeyType.SPACE
+                )
+
+                if (shouldDrawDecorativeIcon) {
+                    val decorativeAlpha = theme.keyOpacityAlpha.coerceIn(0.0f, 1.0f)
+                    val iconName = theme.decorativeIcon!!
+                    val context = LocalContext.current
+                    val resId = remember(iconName) {
+                        val direct = context.resources.getIdentifier(iconName, "drawable", context.packageName)
+                        if (direct != 0) direct else {
+                            context.resources.getIdentifier("ic_popular_$iconName", "drawable", context.packageName)
+                        }
+                    }
+                    if (resId != 0) {
+                        Image(
+                            painter = painterResource(id = resId),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(38.dp)
+                                .graphicsLayer(alpha = decorativeAlpha),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Text(
+                            text = iconName,
+                            fontSize = 34.sp,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.Default,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            modifier = Modifier.graphicsLayer(alpha = decorativeAlpha)
+                        )
+                    }
+                }
+            }
 
             if (pizzaStyle != null) {
                 val sauceColor = remember(pizzaStyle.sauceTextColorHex) { KeyboardThemeMapper.parseColor(pizzaStyle.sauceTextColorHex) }
@@ -796,14 +875,32 @@ fun KeyView(
                 }
             } else {
                 Box(contentAlignment = Alignment.Center) {
-                    if (!theme.decorativeIcon.isNullOrEmpty() && key.type != KeyType.SPACE) {
+                    val isCharacterKey = key.type == KeyType.CHARACTER
+                    val hasBackgroundAsset = themeKeyBackgroundsStyle?.let { style ->
+                        val resName = when (key.type) {
+                            KeyType.SPACE -> style.spaceBackgroundRes
+                            KeyType.SHIFT, KeyType.BACKSPACE, KeyType.ENTER, KeyType.SYMBOLS -> style.specialKeyBackgroundRes
+                            KeyType.EMOJI, KeyType.CHARACTER -> style.emojiBackgroundRes
+                            else -> style.emojiBackgroundRes
+                        }
+                        if (resName.isNotEmpty()) {
+                            context.resources.getIdentifier(resName, "drawable", context.packageName) != 0
+                        } else false
+                    } ?: false
+
+                    val shouldDrawDecorativeIcon = !theme.decorativeIcon.isNullOrEmpty() && (
+                        if (themeKeyBackgroundsStyle != null) (isCharacterKey && !hasBackgroundAsset) else key.type != KeyType.SPACE
+                    )
+
+                    if (shouldDrawDecorativeIcon) {
                         val decorativeAlpha = theme.keyOpacityAlpha.coerceIn(0.0f, 1.0f)
                         val iconName = theme.decorativeIcon!!
                         val context = LocalContext.current
                         val resId = remember(iconName) {
-                            if (iconName.startsWith("ic_")) {
-                                context.resources.getIdentifier(iconName, "drawable", context.packageName)
-                            } else 0
+                            val direct = context.resources.getIdentifier(iconName, "drawable", context.packageName)
+                            if (direct != 0) direct else {
+                                context.resources.getIdentifier("ic_popular_$iconName", "drawable", context.packageName)
+                            }
                         }
                         if (resId != 0) {
                             Image(
@@ -825,16 +922,24 @@ fun KeyView(
                             )
                         }
                     }
-                    Text(
-                        text = displayLabel,
-                        color = textColor,
-                        fontSize = fontSize,
-                        fontFamily = activeFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        style = TextStyle(shadow = textShadow),
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
-                    )
+
+                    val shouldDrawText = when {
+                        themeKeyBackgroundsStyle != null && key.type == KeyType.EMOJI -> false
+                        else -> true
+                    }
+
+                    if (shouldDrawText) {
+                        Text(
+                            text = displayLabel,
+                            color = textColor,
+                            fontSize = fontSize,
+                            fontFamily = activeFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            style = TextStyle(shadow = textShadow),
+                            textAlign = TextAlign.Center,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
 

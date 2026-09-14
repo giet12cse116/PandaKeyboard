@@ -28,6 +28,11 @@ class ThemeStudioActivity : ComponentActivity() {
                     viewModel = editorViewModel,
                     onBackClick = { finish() },
                     onThemeSaved = { appliedId ->
+                        val intent = android.content.Intent().apply {
+                            putExtra("OPEN_FONTS_TAB", true)
+                            putExtra("APPLIED_THEME_ID", appliedId)
+                        }
+                        setResult(RESULT_OK, intent)
                         finish()
                     },
                     modifier = Modifier.fillMaxSize()

@@ -43,7 +43,7 @@ class KeyboardActionHandlerTest {
     }
 
     @Test
-    fun `autoCap enabled capitalizes first letter when buffer is empty`() {
+    fun `autoCap enabled reports true for first letter when buffer is empty and commits character verbatim`() {
         val committed = mutableListOf<String>()
         val buffer = StringBuilder()
         val mockIc = createMockInputConnection(committed, buffer)
@@ -54,12 +54,13 @@ class KeyboardActionHandlerTest {
             isAutoCapEnabled = { true }
         )
 
-        handler.onTextInput("h")
+        org.junit.Assert.assertTrue(handler.shouldAutoCapitalize())
+        handler.onTextInput("H")
         assertEquals("H", committed.last())
     }
 
     @Test
-    fun `autoCap enabled capitalizes letter after dot space`() {
+    fun `autoCap enabled reports true after dot space and commits character verbatim`() {
         val committed = mutableListOf<String>()
         val buffer = StringBuilder("Hello world. ")
         val mockIc = createMockInputConnection(committed, buffer)
@@ -70,7 +71,8 @@ class KeyboardActionHandlerTest {
             isAutoCapEnabled = { true }
         )
 
-        handler.onTextInput("t")
+        org.junit.Assert.assertTrue(handler.shouldAutoCapitalize())
+        handler.onTextInput("T")
         assertEquals("T", committed.last())
     }
 
@@ -86,6 +88,7 @@ class KeyboardActionHandlerTest {
             isAutoCapEnabled = { true }
         )
 
+        org.junit.Assert.assertFalse(handler.shouldAutoCapitalize())
         handler.onTextInput("l")
         assertEquals("l", committed.last())
     }
@@ -102,6 +105,7 @@ class KeyboardActionHandlerTest {
             isAutoCapEnabled = { false }
         )
 
+        org.junit.Assert.assertFalse(handler.shouldAutoCapitalize())
         handler.onTextInput("h")
         assertEquals("h", committed.last())
     }
@@ -157,5 +161,27 @@ class KeyboardActionHandlerTest {
         buffer.clear()
         buffer.append("Mid")
         org.junit.Assert.assertFalse("Middle of word should not trigger auto-cap", handler.shouldAutoCapitalize())
+    }
+
+    @Test
+    fun `shouldAutoCapitalize returns false for password fields`() {
+        val committed = mutableListOf<String>()
+        val buffer = StringBuilder()
+        val mockIc = createMockInputConnection(committed, buffer)
+
+        val passwordEditorInfo = android.view.inputmethod.EditorInfo().apply {
+            inputType = android.view.inputmethod.EditorInfo.TYPE_CLASS_TEXT or android.view.inputmethod.EditorInfo.TYPE_TEXT_VARIATION_PASSWORD
+        }
+
+        val handler = DefaultKeyboardActionHandler(
+            inputConnectionProvider = { mockIc },
+            editorInfoProvider = { passwordEditorInfo },
+            isAutoCapEnabled = { true }
+        )
+
+        org.junit.Assert.assertFalse("Password field should not trigger auto-cap", handler.shouldAutoCapitalize())
+
+        handler.onTextInput("a")
+        assertEquals("a", committed.last())
     }
 }

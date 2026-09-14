@@ -103,7 +103,7 @@ fun WidgetsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                    containerColor = Color(0xFF1A1717)
                 )
             ) {
                 Column(
@@ -153,7 +153,7 @@ fun WidgetsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                    containerColor = Color(0xFF1A1717)
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {

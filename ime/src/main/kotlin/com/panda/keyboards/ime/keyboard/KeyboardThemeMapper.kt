@@ -91,7 +91,9 @@ data class ResolvedTheme(
     /** Font style name (Default, Bold, Rounded, Modern, Playful). */
     val fontStyleName: String = "rounded",
     /** Whether text shadow is enabled. */
-    val hasTextShadow: Boolean = false
+    val hasTextShadow: Boolean = false,
+    /** Whether this is a user-created custom theme. */
+    val isCustom: Boolean = false
 ) {
     /** Helper property to retrieve [KeyVisualStyle.AssetSkin] if active. */
     val assetSkinStyle: com.panda.keyboards.theme.KeyVisualStyle.AssetSkin?
@@ -113,6 +115,10 @@ data class ResolvedTheme(
     val synthwaveCyberpunkNeonStyle: com.panda.keyboards.theme.KeyVisualStyle.SynthwaveCyberpunkNeon?
         get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SynthwaveCyberpunkNeon
 
+    /** Helper property to retrieve [KeyVisualStyle.ThemeKeyBackgrounds] if active. */
+    val themeKeyBackgroundsStyle: com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds?
+        get() = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds
+
     companion object {
 
         /** Default dark theme — matches the Sprint 2 hardcoded appearance. */
@@ -130,6 +136,33 @@ data class ResolvedTheme(
             )
 
         /**
+         * Map decorativeIcon string to ThemeKeyBackgrounds if keyStyle is Flat.
+         */
+        fun resolveThemeKeyBackgrounds(decorativeIcon: String?): com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds? {
+            return when (decorativeIcon) {
+                "ic_popular_sun", "sun", "theme_sun" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_sun_space", "theme_sun_special", "theme_sun_emoji")
+                "ic_popular_sunflower", "sunflower", "theme_sunflower" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_sunflower_space", "theme_sunflower_special", "theme_sunflower_emoji")
+                "ic_popular_burger", "burger", "theme_burger" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_burger_space", "theme_burger_special", "theme_burger_emoji")
+                "ic_popular_pizza", "pizza", "theme_pizza" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_pizza_space", "theme_pizza_special", "theme_pizza_emoji")
+                "ic_popular_cookie", "cookie", "theme_cookie" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_cookie_space", "theme_cookie_special", "theme_cookie_emoji")
+                "ic_popular_donut", "donut", "theme_donut" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_donut_space", "theme_donut_special", "theme_donut_emoji")
+                "ic_popular_mango", "mango", "theme_mango" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_mango_space", "theme_mango_special", "theme_mango_emoji")
+                "ic_popular_heart", "heart", "theme_heart" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_heart_space", "theme_heart_special", "theme_heart_emoji")
+                "ic_popular_star", "star", "theme_star" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_star_space", "theme_star_special", "theme_star_emoji")
+                "ic_popular_panda", "panda", "theme_panda" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_panda_space", "theme_panda_special", "theme_panda_emoji")
+                "ic_popular_pig", "pig", "theme_pig" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_pig_space", "theme_pig_special", "theme_pig_emoji")
+                "ic_popular_flower", "flower", "theme_flower" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_flower_space", "theme_flower_special", "theme_flower_emoji")
+                "ic_popular_fire", "fire", "theme_fire" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_fire_space", "theme_fire_special", "theme_fire_emoji")
+                "ic_popular_earth", "earth", "theme_earth" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_earth_space", "theme_earth_special", "theme_earth_emoji")
+                "ic_popular_butterfly", "butterfly", "theme_butterfly" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_butterfly_space", "theme_butterfly_special", "theme_butterfly_emoji")
+                "ic_popular_football", "football", "theme_football" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_football_space", "theme_football_special", "theme_football_emoji")
+                "ic_popular_basketball", "basketball", "theme_basketball" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_basketball_space", "theme_basketball_special", "theme_basketball_emoji")
+                "ic_popular_gift", "gift", "theme_gift" -> com.panda.keyboards.theme.KeyVisualStyle.ThemeKeyBackgrounds("theme_gift_space", "theme_gift_special", "theme_gift_emoji")
+                else -> null
+            }
+        }
+
+        /**
          * Convert a [KeyboardTheme] into a [ResolvedTheme] ready for rendering,
          * taking [KeyboardHeight] into account for height-aware image backgrounds.
          */
@@ -137,7 +170,11 @@ data class ResolvedTheme(
             theme: KeyboardTheme,
             height: com.panda.keyboards.theme.KeyboardHeight = com.panda.keyboards.theme.KeyboardHeight.DEFAULT
         ): ResolvedTheme {
-            val keyStyle = theme.keyStyle
+            val keyStyle = if (theme.keyStyle is com.panda.keyboards.theme.KeyVisualStyle.Flat && !theme.decorativeIcon.isNullOrEmpty()) {
+                resolveThemeKeyBackgrounds(theme.decorativeIcon) ?: theme.keyStyle
+            } else {
+                theme.keyStyle
+            }
             val glassStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Glassmorphic
             val semiFlatStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.SemiFlat
             val neobrutalistStyle = keyStyle as? com.panda.keyboards.theme.KeyVisualStyle.Neobrutalist
@@ -233,7 +270,8 @@ data class ResolvedTheme(
                 decorativeIcon = theme.decorativeIcon,
                 fontSizeSp = theme.fontSizeSp,
                 fontStyleName = theme.fontStyleName,
-                hasTextShadow = theme.hasTextShadow
+                hasTextShadow = theme.hasTextShadow,
+                isCustom = theme.isCustom
             )
         }
 

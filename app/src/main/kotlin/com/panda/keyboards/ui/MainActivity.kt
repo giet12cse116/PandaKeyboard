@@ -149,8 +149,24 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                val themeStudioLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                    contract = androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == RESULT_OK) {
+                        val openFonts = result.data?.getBooleanExtra("OPEN_FONTS_TAB", false) ?: false
+                        val appliedId = result.data?.getStringExtra("APPLIED_THEME_ID")
+                        if (openFonts) {
+                            if (!appliedId.isNullOrEmpty()) {
+                                readyAppliedThemeId = appliedId
+                            }
+                            selectedTab = MainTab.FONTS
+                            autoFocusFontsInput = true
+                        }
+                    }
+                }
+
                 val openThemeStudio = {
-                    startActivity(android.content.Intent(this@MainActivity, com.panda.keyboards.ui.themeeditor.ThemeStudioActivity::class.java))
+                    themeStudioLauncher.launch(android.content.Intent(this@MainActivity, com.panda.keyboards.ui.themeeditor.ThemeStudioActivity::class.java))
                 }
 
                 if (showThemeReadyScreen) {

@@ -195,4 +195,30 @@ object KeyboardLayouts {
     )
 
     val symbols2Rows = listOf(symbolsRow2_1, symbolsRow2_2, symbolsRow2_3, symbolsRow2_4)
+
+    // ── Number Pad Layer ────────────────────────────────────────────────
+
+    private val numberPadRow1 = listOf(
+        KeyData("1"), KeyData("2"), KeyData("3"),
+        KeyData("⌫", type = KeyType.BACKSPACE)
+    )
+
+    private val numberPadRow2 = listOf(
+        KeyData("4"), KeyData("5"), KeyData("6"),
+        KeyData(",")
+    )
+
+    private val numberPadRow3 = listOf(
+        KeyData("7"), KeyData("8"), KeyData("9"),
+        KeyData(".")
+    )
+
+    private val numberPadRow4 = listOf(
+        KeyData("ABC", type = KeyType.SYMBOLS),
+        KeyData("0"),
+        KeyData("space", type = KeyType.SPACE, output = " "),
+        KeyData("↵", type = KeyType.ENTER)
+    )
+
+    val numberPadRows = listOf(numberPadRow1, numberPadRow2, numberPadRow3, numberPadRow4)
 }

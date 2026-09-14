@@ -20,9 +20,9 @@ val PandaTertiary = Color(0xFFFF6F61)      // Warm coral accent
 val PandaTertiaryDark = Color(0xFFFF8A80)  // Light coral for dark theme
 
 // ── Surface Colors ──────────────────────────────────────────────────────
-val DarkSurface = Color(0xFF121218)
-val DarkSurfaceVariant = Color(0xFF1E1E2A)
-val DarkSurfaceContainer = Color(0xFF252533)
+val DarkSurface = Color(0xFF000000)
+val DarkSurfaceVariant = Color(0xFF1A1717)
+val DarkSurfaceContainer = Color(0xFF1A1717)
 val LightSurface = Color(0xFFFFFBFE)
 val LightSurfaceVariant = Color(0xFFF3EDF7)
 val LightSurfaceContainer = Color(0xFFEDE7F2)

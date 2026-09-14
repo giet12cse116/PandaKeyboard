@@ -5,14 +5,23 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,6 +84,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,8 +97,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.panda.keyboards.ui.setup.ImeSetupDialog
+import com.panda.keyboards.ui.keyboards.KeyboardThemePreviewImage
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.panda.keyboards.theme.KeyShape
@@ -151,9 +167,9 @@ private val EmeraldPrimary = Color(0xFF10B981)
 private val EmeraldDark = Color(0xFF006C49)
 private val PlayfulViolet = Color(0xFF8B5CF6)
 private val SolarAmber = Color(0xFFF59E0B)
-private val SurfaceSlate = Color(0xFFF8FAFC)
-private val DeepSlate = Color(0xFF0F172A)
-private val SoftSlateBg = Color(0xFFE7EEFF)
+private val SurfaceSlate = Color(0xFF1A1717)
+private val DeepSlate = Color(0xFF000000)
+private val SoftSlateBg = Color(0xFF1A1717)
 private val PrimaryFixedContainer = Color(0xFF6FFBBE)
 private val OnPrimaryFixed = Color(0xFF002113)
 
@@ -172,6 +188,9 @@ fun CustomThemeEditorScreen(
     val draftTheme = viewModel.currentDraftTheme
     var showCustomColorDialog by remember { mutableStateOf(false) }
     var showDiscardDialog by remember { mutableStateOf(false) }
+    var showUnlockDialog by remember { mutableStateOf(false) }
+    var showThemeReadyScreen by remember { mutableStateOf(false) }
+    var savedAppliedThemeId by remember { mutableStateOf<String?>(null) }
     var customHexInput by remember { mutableStateOf("#10B981") }
 
     BackHandler(enabled = true) {
@@ -179,16 +198,29 @@ fun CustomThemeEditorScreen(
     }
 
     val fontColorPresets = listOf(
-        "#FFFFFF" to "White",
-        "#000000" to "Black",
-        "#64748B" to "Gray",
-        "#EF4444" to "Red",
-        "#F97316" to "Orange",
-        "#F59E0B" to "Yellow",
-        "#10B981" to "Green",
-        "#3B82F6" to "Blue",
-        "#8B5CF6" to "Purple",
-        "#EC4899" to "Pink"
+        "#FFFFFF" to "Pure White",
+        "#000000" to "Pitch Black",
+        "#94A3B8" to "Slate Gray",
+        "#64748B" to "Muted Gray",
+        "#EF4444" to "Bright Red",
+        "#F87171" to "Soft Coral",
+        "#F97316" to "Vibrant Orange",
+        "#FB923C" to "Warm Peach",
+        "#F59E0B" to "Amber Gold",
+        "#FACC15" to "Lemon Yellow",
+        "#10B981" to "Emerald Green",
+        "#34D399" to "Mint Green",
+        "#06B6D4" to "Cyan",
+        "#0284C7" to "Sky Blue",
+        "#3B82F6" to "Electric Blue",
+        "#6366F1" to "Indigo",
+        "#8B5CF6" to "Playful Violet",
+        "#A855F7" to "Purple",
+        "#D946EF" to "Magenta",
+        "#EC4899" to "Hot Pink",
+        "#F472B6" to "Pastel Pink",
+        "#E2E8F0" to "Silver",
+        "#78350F" to "Deep Amber"
     )
 
     val colorPresets = listOf(
@@ -211,27 +243,24 @@ fun CustomThemeEditorScreen(
     )
 
     val popularKeyBackgroundIcons = listOf(
-        "ic_popular_panda" to "Panda",
-        "ic_popular_pig" to "Pig",
+        "ic_popular_sun" to "Sun",
+        "ic_popular_sunflower" to "Sunflower",
         "ic_popular_burger" to "Burger",
         "ic_popular_pizza" to "Pizza",
         "ic_popular_cookie" to "Cookie",
         "ic_popular_donut" to "Donut",
-        "ic_popular_cheesecake" to "Cheesecake",
         "ic_popular_mango" to "Mango",
         "ic_popular_heart" to "Heart",
         "ic_popular_star" to "Star",
-        "ic_popular_sun" to "Sun",
-        "ic_popular_sunflower" to "Sunflower",
+        "ic_popular_panda" to "Panda",
+        "ic_popular_pig" to "Pig",
         "ic_popular_flower" to "Flower",
         "ic_popular_fire" to "Fire",
         "ic_popular_earth" to "Earth",
         "ic_popular_butterfly" to "Butterfly",
-        "ic_popular_foot_ball" to "Football",
+        "ic_popular_football" to "Football",
         "ic_popular_basketball" to "Basketball",
-        "ic_popular_gift_box" to "Gift",
-        "ic_popular_pizza_kb_numberpad" to "Pad",
-        "ic_popular_pizza_kb_p" to "Pizza P"
+        "ic_popular_gift" to "Gift"
     )
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -389,7 +418,7 @@ fun CustomThemeEditorScreen(
                             } else {
                                 Button(
                                     onClick = {
-                                        viewModel.saveTheme(context, onThemeSaved)
+                                        showUnlockDialog = true
                                     },
                                     enabled = !viewModel.isSaving,
                                     colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
@@ -495,6 +524,39 @@ fun CustomThemeEditorScreen(
             )
         }
 
+        if (showUnlockDialog) {
+            UnlockThemeDialog(
+                theme = draftTheme,
+                onDismiss = { showUnlockDialog = false },
+                onUnlockClicked = {
+                    showUnlockDialog = false
+                    viewModel.saveTheme(context, onThemeSaved)
+                }
+            )
+        }
+
+        if (viewModel.showSetupDialog) {
+            ImeSetupDialog(
+                imeStatusChecker = viewModel.imeStatusChecker,
+                onDismiss = {
+                    viewModel.showSetupDialog = false
+                    viewModel.showThemeReadyDialog = true
+                }
+            )
+        }
+
+        if (viewModel.showThemeReadyDialog) {
+            ThemeReadyDialog(
+                theme = viewModel.savedThemeForDialog,
+                onStartWritingClick = {
+                    val savedId = viewModel.savedThemeForDialog?.id ?: com.panda.keyboards.theme.KeyboardTheme.DEFAULT_THEME_ID
+                    viewModel.showThemeReadyDialog = false
+                    viewModel.resetScreen()
+                    onThemeSaved(savedId)
+                }
+            )
+        }
+
         if (viewModel.showCropScreen && viewModel.uncroppedSourceBitmap != null) {
             ImageCropScreen(
                 sourceBitmap = viewModel.uncroppedSourceBitmap!!,
@@ -502,18 +564,24 @@ fun CustomThemeEditorScreen(
                 onConfirmCrop = { cropped -> viewModel.onCropConfirmed(context, cropped) }
             )
         } else {
+            val scrollState = rememberScrollState()
+
+            LaunchedEffect(viewModel.currentStep) {
+                scrollState.scrollTo(0)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // ── Progress Stepper Wizard Card ─────────────────────────────
                 Card(
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1717)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -627,7 +695,7 @@ fun CustomThemeEditorScreen(
                                         )
                                     },
                                 shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1717))
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
                                     Surface(
@@ -672,7 +740,7 @@ fun CustomThemeEditorScreen(
                                         viewModel.backgroundMode = 1
                                     },
                                 shape = RoundedCornerShape(16.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1717))
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
                                     Surface(
@@ -710,7 +778,7 @@ fun CustomThemeEditorScreen(
                             // All Classic Color Customization Options
                             Card(
                                 shape = RoundedCornerShape(20.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)),
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1717)),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Column(
@@ -726,9 +794,9 @@ fun CustomThemeEditorScreen(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        FilterChip(selected = (viewModel.colorType == 0), onClick = { viewModel.colorType = 0 }, label = { Text("Solid") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
-                                        FilterChip(selected = (viewModel.colorType == 1), onClick = { viewModel.colorType = 1 }, label = { Text("2-Gradient") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
-                                        FilterChip(selected = (viewModel.colorType == 2), onClick = { viewModel.colorType = 2 }, label = { Text("3-Gradient") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.colorType == 0), onClick = { viewModel.colorType = 0 }, label = { Text("Solid") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.colorType == 1), onClick = { viewModel.colorType = 1 }, label = { Text("2-Gradient") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.colorType == 2), onClick = { viewModel.colorType = 2 }, label = { Text("3-Gradient") }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black), modifier = Modifier.weight(1f))
                                     }
 
                                     Text(
@@ -740,9 +808,9 @@ fun CustomThemeEditorScreen(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        FilterChip(selected = (viewModel.gradientDirection == 0), onClick = { viewModel.gradientDirection = 0 }, label = { Text("Horizontal") }, leadingIcon = { Icon(Icons.Default.East, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
-                                        FilterChip(selected = (viewModel.gradientDirection == 1), onClick = { viewModel.gradientDirection = 1 }, label = { Text("Vertical") }, leadingIcon = { Icon(Icons.Default.South, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
-                                        FilterChip(selected = (viewModel.gradientDirection == 2), onClick = { viewModel.gradientDirection = 2 }, label = { Text("Diagonal") }, leadingIcon = { Icon(Icons.Default.SouthEast, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.White), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.gradientDirection == 0), onClick = { viewModel.gradientDirection = 0 }, label = { Text("Horizontal") }, leadingIcon = { Icon(Icons.Default.East, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black, selectedLeadingIconColor = Color.Black), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.gradientDirection == 1), onClick = { viewModel.gradientDirection = 1 }, label = { Text("Vertical") }, leadingIcon = { Icon(Icons.Default.South, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black, selectedLeadingIconColor = Color.Black), modifier = Modifier.weight(1f))
+                                        FilterChip(selected = (viewModel.gradientDirection == 2), onClick = { viewModel.gradientDirection = 2 }, label = { Text("Diagonal") }, leadingIcon = { Icon(Icons.Default.SouthEast, contentDescription = null, modifier = Modifier.size(14.dp)) }, colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black, selectedLeadingIconColor = Color.Black), modifier = Modifier.weight(1f))
                                     }
 
                                     Text(text = "Color 1", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
@@ -774,7 +842,7 @@ fun CustomThemeEditorScreen(
                                 )
                                 .clickable { viewModel.backgroundMode = 2 },
                             shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1717))
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Row(
@@ -861,11 +929,11 @@ fun CustomThemeEditorScreen(
 
                                     Spacer(modifier = Modifier.height(8.dp))
 
-                                    // Abstract Grid (Grid of 2)
-                                    abstractPresets.chunked(2).forEach { rowPresets ->
+                                    // Abstract Grid (Grid of 3)
+                                    abstractPresets.chunked(3).forEach { rowPresets ->
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             rowPresets.forEach { item ->
                                                 StitchWallpaperCard(
@@ -878,11 +946,11 @@ fun CustomThemeEditorScreen(
                                                     onClick = { viewModel.selectedBuiltinImage = item.assetPath }
                                                 )
                                             }
-                                            if (rowPresets.size == 1) {
+                                            repeat(3 - rowPresets.size) {
                                                 Spacer(modifier = Modifier.weight(1f))
                                             }
                                         }
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(6.dp))
                                     }
 
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -916,11 +984,11 @@ fun CustomThemeEditorScreen(
 
                                     Spacer(modifier = Modifier.height(8.dp))
 
-                                    // HD Wallpapers Grid (Grid of 2)
-                                    hdWallpaperPresets.chunked(2).forEach { rowPresets ->
+                                    // HD Wallpapers Grid (Grid of 3)
+                                    hdWallpaperPresets.chunked(3).forEach { rowPresets ->
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             rowPresets.forEach { item ->
                                                 StitchWallpaperCard(
@@ -933,11 +1001,11 @@ fun CustomThemeEditorScreen(
                                                     onClick = { viewModel.selectedBuiltinImage = item.assetPath }
                                                 )
                                             }
-                                            if (rowPresets.size == 1) {
+                                            repeat(3 - rowPresets.size) {
                                                 Spacer(modifier = Modifier.weight(1f))
                                             }
                                         }
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(6.dp))
                                     }
 
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -971,11 +1039,11 @@ fun CustomThemeEditorScreen(
 
                                     Spacer(modifier = Modifier.height(8.dp))
 
-                                    // Nature Grid (Grid of 2)
-                                    naturePresets.chunked(2).forEach { rowPresets ->
+                                    // Nature Grid (Grid of 3)
+                                    naturePresets.chunked(3).forEach { rowPresets ->
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                                         ) {
                                             rowPresets.forEach { item ->
                                                 StitchWallpaperCard(
@@ -988,11 +1056,11 @@ fun CustomThemeEditorScreen(
                                                     onClick = { viewModel.selectedBuiltinImage = item.assetPath }
                                                 )
                                             }
-                                            if (rowPresets.size == 1) {
+                                            repeat(3 - rowPresets.size) {
                                                 Spacer(modifier = Modifier.weight(1f))
                                             }
                                         }
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(6.dp))
                                     }
                                 }
                             }
@@ -1024,6 +1092,21 @@ fun CustomThemeEditorScreen(
 
                     // ── STEP 2: KEY STYLE ───────────────────────────────────
                     2 -> {
+                        EditorSectionHeader(title = "Key Opacity (${(viewModel.keyOpacity * 100).roundToInt()}%)")
+                        Slider(
+                            value = viewModel.keyOpacity,
+                            onValueChange = { viewModel.keyOpacity = it },
+                            valueRange = 0.0f..1.0f,
+                            colors = SliderDefaults.colors(
+                                thumbColor = EmeraldPrimary,
+                                activeTrackColor = EmeraldPrimary,
+                                inactiveTrackColor = EmeraldPrimary.copy(alpha = 0.20f)
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         EditorSectionHeader(title = "Key Background Type")
                         val shapesList = listOf(
                             KeyShape.NONE to "None",
@@ -1040,11 +1123,11 @@ fun CustomThemeEditorScreen(
                             parseHexColor(viewModel.keyTextColor)
                         }
 
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            contentPadding = PaddingValues(vertical = 4.dp)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            items(shapesList) { (shape, name) ->
+                            shapesList.forEach { (shape, name) ->
                                 val isSelected = (viewModel.keyShape == shape && viewModel.decorativeIcon == null) || (shape == KeyShape.NONE && !viewModel.decorativeIcon.isNullOrEmpty())
                                 val cornerRadius = when (shape) {
                                     KeyShape.NONE -> 0.dp
@@ -1057,12 +1140,12 @@ fun CustomThemeEditorScreen(
 
                                 Card(
                                     modifier = Modifier
-                                        .width(72.dp)
-                                        .height(84.dp)
+                                        .weight(1f)
+                                        .height(74.dp)
                                         .border(
                                             width = if (isSelected && viewModel.decorativeIcon == null) 2.5.dp else 1.dp,
                                             color = if (isSelected && viewModel.decorativeIcon == null) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                                            shape = RoundedCornerShape(14.dp)
+                                            shape = RoundedCornerShape(12.dp)
                                         )
                                         .clickable {
                                             viewModel.keyShape = shape
@@ -1070,7 +1153,7 @@ fun CustomThemeEditorScreen(
                                                 viewModel.decorativeIcon = null
                                             }
                                         },
-                                    shape = RoundedCornerShape(14.dp),
+                                    shape = RoundedCornerShape(12.dp),
                                     colors = CardDefaults.cardColors(
                                         containerColor = Color.Transparent
                                     )
@@ -1080,11 +1163,11 @@ fun CustomThemeEditorScreen(
                                         verticalArrangement = Arrangement.Center,
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .padding(vertical = 6.dp, horizontal = 4.dp)
+                                            .padding(vertical = 4.dp, horizontal = 2.dp)
                                     ) {
                                         Box(
                                             modifier = Modifier
-                                                .size(width = 42.dp, height = 44.dp)
+                                                .size(width = 34.dp, height = 36.dp)
                                                 .clip(shapeObj)
                                                 .background(if (shape == KeyShape.NONE) Color.Transparent else currentBgColor)
                                                 .border(
@@ -1095,16 +1178,16 @@ fun CustomThemeEditorScreen(
                                             contentAlignment = Alignment.Center
                                         ) {
                                             if (shape == KeyShape.NONE) {
-                                                Text(text = "∅", fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                Text(text = "∅", fontSize = 15.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                             } else {
-                                                Text(text = "A", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = currentTextColor)
+                                                Text(text = "A", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = currentTextColor)
                                             }
                                         }
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = name,
                                             style = MaterialTheme.typography.labelSmall,
-                                            fontSize = 12.sp,
+                                            fontSize = 10.sp,
                                             fontWeight = if (isSelected && viewModel.decorativeIcon == null) FontWeight.Bold else FontWeight.SemiBold,
                                             color = if (isSelected && viewModel.decorativeIcon == null) EmeraldPrimary else MaterialTheme.colorScheme.onSurface,
                                             maxLines = 1
@@ -1116,193 +1199,273 @@ fun CustomThemeEditorScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Section 1: Classic Key background
+                        // Section 1: Classic Key background (Non-scrolling grid of 6)
                         EditorSectionHeader(title = "Classic Key Background")
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
-                            item {
-                                val isNoneSelected = viewModel.decorativeIcon.isNullOrEmpty()
-                                Card(
-                                    modifier = Modifier
-                                        .size(width = 72.dp, height = 84.dp)
-                                        .border(
-                                            width = if (isNoneSelected) 2.5.dp else 1.dp,
-                                            color = if (isNoneSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                                            shape = RoundedCornerShape(14.dp)
-                                        )
-                                        .clickable {
-                                            viewModel.decorativeIcon = null
-                                            if (viewModel.keyShape == KeyShape.NONE) {
-                                                viewModel.keyShape = KeyShape.SQUARE_ROUNDED
-                                            }
-                                        },
-                                    shape = RoundedCornerShape(14.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.Transparent
-                                    )
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Text(text = "🚫", fontSize = 22.sp)
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(text = "None", style = MaterialTheme.typography.labelSmall, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                                        }
-                                    }
-                                }
-                            }
-                            items(classicKeyBackgroundIcons) { (resName, label) ->
-                                val isSelected = viewModel.decorativeIcon == resName
-                                val resId = remember(resName) {
-                                    context.resources.getIdentifier(resName, "drawable", context.packageName)
-                                }
-                                Card(
-                                    modifier = Modifier
-                                        .size(width = 72.dp, height = 84.dp)
-                                        .border(
-                                            width = if (isSelected) 2.5.dp else 1.dp,
-                                            color = if (isSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                                            shape = RoundedCornerShape(14.dp)
-                                        )
-                                        .clickable {
-                                            viewModel.decorativeIcon = resName
-                                            viewModel.keyShape = KeyShape.NONE
-                                        },
-                                    shape = RoundedCornerShape(14.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.Transparent
-                                    )
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            if (resId != 0) {
-                                                Image(
-                                                    painter = androidx.compose.ui.res.painterResource(id = resId),
-                                                    contentDescription = label,
-                                                    modifier = Modifier.size(46.dp),
-                                                    contentScale = ContentScale.Fit
+                        val classicItemsWithNone = remember {
+                            listOf<Pair<String?, String>>(null to "None") + classicKeyBackgroundIcons.map { it.first to it.second }
+                        }
+                        classicItemsWithNone.chunked(6).forEach { rowItems ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                rowItems.forEach { (resName, label) ->
+                                    if (resName == null) {
+                                        val isNoneSelected = viewModel.decorativeIcon.isNullOrEmpty()
+                                        Card(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(64.dp)
+                                                .border(
+                                                    width = if (isNoneSelected) 2.5.dp else 1.dp,
+                                                    color = if (isNoneSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                                                    shape = RoundedCornerShape(10.dp)
                                                 )
-                                            } else {
-                                                Text(text = resName, fontSize = 26.sp)
+                                                .clickable {
+                                                    viewModel.decorativeIcon = null
+                                                    if (viewModel.keyShape == KeyShape.NONE) {
+                                                        viewModel.keyShape = KeyShape.SQUARE_ROUNDED
+                                                    }
+                                                },
+                                            shape = RoundedCornerShape(10.dp),
+                                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        ) {
+                                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                                Column(
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Text(text = "🚫", fontSize = 16.sp)
+                                                    Spacer(modifier = Modifier.height(2.dp))
+                                                    Text(text = "None", style = MaterialTheme.typography.labelSmall, fontSize = 9.sp, fontWeight = FontWeight.SemiBold)
+                                                }
                                             }
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(text = label, style = MaterialTheme.typography.labelSmall, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                        }
+                                    } else {
+                                        val isSelected = viewModel.decorativeIcon == resName
+                                        val resId = remember(resName) {
+                                            context.resources.getIdentifier(resName, "drawable", context.packageName)
+                                        }
+                                        Card(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(64.dp)
+                                                .border(
+                                                    width = if (isSelected) 2.5.dp else 1.dp,
+                                                    color = if (isSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                                                    shape = RoundedCornerShape(10.dp)
+                                                )
+                                                .clickable {
+                                                    viewModel.decorativeIcon = resName
+                                                    viewModel.keyShape = KeyShape.NONE
+                                                },
+                                            shape = RoundedCornerShape(10.dp),
+                                            colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                        ) {
+                                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                                Column(
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    if (resId != 0) {
+                                                        Image(
+                                                            painter = androidx.compose.ui.res.painterResource(id = resId),
+                                                            contentDescription = label,
+                                                            modifier = Modifier.size(34.dp),
+                                                            contentScale = ContentScale.Fit
+                                                        )
+                                                    } else {
+                                                        Text(text = resName, fontSize = 18.sp)
+                                                    }
+                                                    Spacer(modifier = Modifier.height(2.dp))
+                                                    Text(text = label, style = MaterialTheme.typography.labelSmall, fontSize = 9.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                                repeat(6 - rowItems.size) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
+                            Spacer(modifier = Modifier.height(6.dp))
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Section 2: Popular Key background
+                        // Section 2: Popular Key background (Non-scrolling grid of 6)
                         EditorSectionHeader(title = "Popular Key Background")
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
-                            items(popularKeyBackgroundIcons) { (resName, label) ->
-                                val isSelected = viewModel.decorativeIcon == resName
-                                val resId = remember(resName) {
-                                    context.resources.getIdentifier(resName, "drawable", context.packageName)
-                                }
-                                Card(
-                                    modifier = Modifier
-                                        .size(width = 72.dp, height = 84.dp)
-                                        .border(
-                                            width = if (isSelected) 2.5.dp else 1.dp,
-                                            color = if (isSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
-                                            shape = RoundedCornerShape(14.dp)
-                                        )
-                                        .clickable {
-                                            viewModel.decorativeIcon = resName
-                                            viewModel.keyShape = KeyShape.NONE
-                                        },
-                                    shape = RoundedCornerShape(14.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = Color.Transparent
-                                    )
-                                ) {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            if (resId != 0) {
-                                                Image(
-                                                    painter = androidx.compose.ui.res.painterResource(id = resId),
-                                                    contentDescription = label,
-                                                    modifier = Modifier.size(46.dp),
-                                                    contentScale = ContentScale.Fit
-                                                )
-                                            } else {
-                                                Text(text = resName, fontSize = 26.sp)
+                        popularKeyBackgroundIcons.chunked(6).forEach { rowItems ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                rowItems.forEach { (resName, label) ->
+                                    val isSelected = viewModel.decorativeIcon == resName
+                                    val resId = remember(resName) {
+                                        var id = context.resources.getIdentifier(resName, "drawable", context.packageName)
+                                        if (id == 0) {
+                                            val fallbackName = when (resName) {
+                                                "ic_popular_sun", "sun" -> "theme_sun_emoji"
+                                                "ic_popular_sunflower", "sunflower" -> "theme_sunflower_emoji"
+                                                "ic_popular_burger", "burger" -> "theme_burger_emoji"
+                                                "ic_popular_pizza", "pizza" -> "theme_pizza_emoji"
+                                                "ic_popular_cookie", "cookie" -> "theme_cookie_emoji"
+                                                "ic_popular_donut", "donut" -> "theme_donut_emoji"
+                                                "ic_popular_mango", "mango" -> "theme_mango_emoji"
+                                                "ic_popular_heart", "heart" -> "theme_heart_emoji"
+                                                "ic_popular_star", "star" -> "theme_star_emoji"
+                                                "ic_popular_panda", "panda" -> "theme_panda_emoji"
+                                                "ic_popular_pig", "pig" -> "theme_pig_emoji"
+                                                "ic_popular_flower", "flower" -> "theme_flower_emoji"
+                                                "ic_popular_fire", "fire" -> "theme_fire_emoji"
+                                                "ic_popular_earth", "earth" -> "theme_earth_emoji"
+                                                "ic_popular_butterfly", "butterfly" -> "theme_butterfly_emoji"
+                                                "ic_popular_football", "football" -> "theme_football_emoji"
+                                                "ic_popular_basketball", "basketball" -> "theme_basketball_emoji"
+                                                "ic_popular_gift", "gift" -> "theme_gift_emoji"
+                                                else -> ""
                                             }
-                                            Spacer(modifier = Modifier.height(4.dp))
-                                            Text(text = label, style = MaterialTheme.typography.labelSmall, fontSize = 12.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                            if (fallbackName.isNotEmpty()) {
+                                                id = context.resources.getIdentifier(fallbackName, "drawable", context.packageName)
+                                            }
+                                        }
+                                        id
+                                    }
+                                    Card(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(64.dp)
+                                            .border(
+                                                width = if (isSelected) 2.5.dp else 1.dp,
+                                                color = if (isSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                                                shape = RoundedCornerShape(10.dp)
+                                            )
+                                            .clickable {
+                                                viewModel.decorativeIcon = resName
+                                                viewModel.keyShape = KeyShape.NONE
+                                            },
+                                        shape = RoundedCornerShape(10.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                                    ) {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                if (resId != 0) {
+                                                    Image(
+                                                        painter = androidx.compose.ui.res.painterResource(id = resId),
+                                                        contentDescription = label,
+                                                        modifier = Modifier.size(34.dp),
+                                                        contentScale = ContentScale.Fit
+                                                    )
+                                                } else {
+                                                    Text(text = resName, fontSize = 18.sp)
+                                                }
+                                                Spacer(modifier = Modifier.height(2.dp))
+                                                Text(text = label, style = MaterialTheme.typography.labelSmall, fontSize = 9.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                                            }
                                         }
                                     }
                                 }
+                                repeat(6 - rowItems.size) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        EditorSectionHeader(title = "Key Opacity (${(viewModel.keyOpacity * 100).roundToInt()}%)")
-                        Slider(
-                            value = viewModel.keyOpacity,
-                            onValueChange = { viewModel.keyOpacity = it },
-                            valueRange = 0.0f..1.0f,
-                            colors = SliderDefaults.colors(thumbColor = EmeraldPrimary, activeTrackColor = EmeraldPrimary),
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
 
                     // ── STEP 3: FONT & TEXT ─────────────────────────────────
                     3 -> {
                         EditorSectionHeader(title = "Font Color")
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), contentPadding = PaddingValues(vertical = 4.dp)) {
-                            items(fontColorPresets) { (hex, label) ->
-                                val color = parseHexColor(hex)
-                                val isSelected = hex.equals(viewModel.keyTextColor, ignoreCase = true)
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(CircleShape)
-                                        .background(color)
-                                        .border(width = if (isSelected) 3.dp else 1.dp, color = if (isSelected) EmeraldPrimary else Color.Gray, shape = CircleShape)
-                                        .clickable { viewModel.keyTextColor = hex },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (isSelected) {
-                                        Icon(imageVector = Icons.Default.Check, contentDescription = "Selected", tint = if (isLightColor(color)) Color.Black else Color.White, modifier = Modifier.size(20.dp))
-                                    }
-                                }
-                            }
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(CircleShape)
-                                        .border(1.5.dp, EmeraldPrimary, CircleShape)
-                                        .clickable { showCustomColorDialog = true },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(imageVector = Icons.Default.Palette, contentDescription = "Custom Color", tint = EmeraldPrimary, modifier = Modifier.size(20.dp))
-                                }
-                            }
+                        val allFontColorItems = remember {
+                            fontColorPresets.map { it.first to it.second } + listOf<Pair<String?, String>>(null to "Custom")
                         }
 
-
+                        allFontColorItems.chunked(6).forEach { rowItems ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                rowItems.forEach { (hex, label) ->
+                                    if (hex == null) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(44.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFF1A1717))
+                                                .border(1.5.dp, EmeraldPrimary, CircleShape)
+                                                .clickable { showCustomColorDialog = true },
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Palette,
+                                                contentDescription = "Custom Color Picker",
+                                                tint = EmeraldPrimary,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    } else {
+                                        val color = parseHexColor(hex)
+                                        val isSelected = hex.equals(viewModel.keyTextColor, ignoreCase = true)
+                                        Box(
+                                            modifier = Modifier
+                                                .size(44.dp)
+                                                .clip(CircleShape)
+                                                .background(color)
+                                                .border(
+                                                    width = if (isSelected) 3.dp else 1.dp,
+                                                    color = if (isSelected) EmeraldPrimary else Color.Gray.copy(alpha = 0.5f),
+                                                    shape = CircleShape
+                                                )
+                                                .clickable { viewModel.keyTextColor = hex },
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            if (isSelected) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Check,
+                                                    contentDescription = "Selected",
+                                                    tint = if (isLightColor(color)) Color.Black else Color.White,
+                                                    modifier = Modifier.size(20.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                                repeat(6 - rowItems.size) {
+                                    Spacer(modifier = Modifier.width(44.dp))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
 
                         Spacer(modifier = Modifier.height(12.dp))
 
                         EditorSectionHeader(title = "Font Size")
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                            FilterChip(selected = (viewModel.fontSizeSp == 14), onClick = { viewModel.fontSizeSp = 14 }, label = { Text("Small") }, modifier = Modifier.weight(1f))
-                            FilterChip(selected = (viewModel.fontSizeSp == 16), onClick = { viewModel.fontSizeSp = 16 }, label = { Text("Medium") }, modifier = Modifier.weight(1f))
-                            FilterChip(selected = (viewModel.fontSizeSp == 18), onClick = { viewModel.fontSizeSp = 18 }, label = { Text("Large") }, modifier = Modifier.weight(1f))
+                            FilterChip(
+                                selected = (viewModel.fontSizeSp == 14),
+                                onClick = { viewModel.fontSizeSp = 14 },
+                                label = { Text("Small") },
+                                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black),
+                                modifier = Modifier.weight(1f)
+                            )
+                            FilterChip(
+                                selected = (viewModel.fontSizeSp == 16),
+                                onClick = { viewModel.fontSizeSp = 16 },
+                                label = { Text("Medium") },
+                                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black),
+                                modifier = Modifier.weight(1f)
+                            )
+                            FilterChip(
+                                selected = (viewModel.fontSizeSp == 18),
+                                onClick = { viewModel.fontSizeSp = 18 },
+                                label = { Text("Large") },
+                                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = EmeraldPrimary, selectedLabelColor = Color.Black),
+                                modifier = Modifier.weight(1f)
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -1377,39 +1540,14 @@ fun CustomThemeEditorScreen(
         )
     }
 
-    // ── Custom Hex Color Picker Dialog ──────────────────────
+    // ── Custom Color Picker Dialog matching Jetpack Compose Specification ──────────────────────
     if (showCustomColorDialog) {
-        AlertDialog(
-            onDismissRequest = { showCustomColorDialog = false },
-            title = { Text("Custom Font Color") },
-            text = {
-                Column {
-                    Text("Enter hex color code:")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = customHexInput,
-                        onValueChange = { customHexInput = it },
-                        singleLine = true,
-                        placeholder = { Text("#10B981") }
-                    )
-                }
+        AdvancedColorPickerDialog(
+            initialColorHex = viewModel.keyTextColor,
+            onColorSelected = { selectedHex ->
+                viewModel.keyTextColor = selectedHex
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    if (customHexInput.isNotBlank()) {
-                        val formatted = if (customHexInput.startsWith("#")) customHexInput else "#$customHexInput"
-                        viewModel.keyTextColor = formatted
-                    }
-                    showCustomColorDialog = false
-                }) {
-                    Text("Select", fontWeight = FontWeight.Bold, color = EmeraldPrimary)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCustomColorDialog = false }) {
-                    Text("Cancel")
-                }
-            }
+            onDismiss = { showCustomColorDialog = false }
         )
     }
 }
@@ -1492,14 +1630,14 @@ private fun StitchWallpaperCard(
 
     Card(
         modifier = modifier
-            .height(125.dp)
+            .height(105.dp)
             .border(
-                width = if (isSelected) 3.dp else 1.dp,
+                width = if (isSelected) 2.5.dp else 1.dp,
                 color = if (isSelected) EmeraldPrimary else MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(14.dp)
+                shape = RoundedCornerShape(10.dp)
             )
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -1528,7 +1666,7 @@ private fun StitchWallpaperCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
+                    .padding(6.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
@@ -1538,15 +1676,15 @@ private fun StitchWallpaperCard(
                 ) {
                     if (badgeText != null) {
                         Surface(
-                            shape = RoundedCornerShape(6.dp),
+                            shape = RoundedCornerShape(5.dp),
                             color = EmeraldPrimary
                         ) {
                             Text(
                                 text = badgeText,
-                                fontSize = 9.sp,
+                                fontSize = 8.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
-                                modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
                             )
                         }
                     } else {
@@ -1558,15 +1696,17 @@ private fun StitchWallpaperCard(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleSmall,
-                        fontSize = 13.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
+                        maxLines = 1
                     )
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodySmall,
-                        fontSize = 10.sp,
-                        color = Color.White.copy(alpha = 0.85f)
+                        fontSize = 8.5.sp,
+                        color = Color.White.copy(alpha = 0.85f),
+                        maxLines = 1
                     )
                 }
             }
@@ -1657,4 +1797,719 @@ private fun parseHexColor(hex: String): Color {
 private fun isLightColor(color: Color): Boolean {
     val luminance = (0.299f * color.red) + (0.587f * color.green) + (0.114f * color.blue)
     return luminance > 0.6f
+}
+
+/**
+ * Jetpack Compose Color Picker with HEX/RGB/HSL/CMYK values, Interactive Color Wheel Ring,
+ * and Color Guide Swatches matching exact design specification.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AdvancedColorPickerDialog(
+    initialColorHex: String,
+    onColorSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val initialColor = remember(initialColorHex) { parseHexColor(initialColorHex) }
+    var selectedColor by remember { mutableStateOf(initialColor) }
+
+    var selectedMode by remember { mutableStateOf("HEX") }
+    var selectedGuideTab by remember { mutableStateOf("COLOR GUIDE") }
+
+    var hsvHue by remember { mutableFloatStateOf(0f) }
+    var hsvSat by remember { mutableFloatStateOf(1f) }
+    var hsvValue by remember { mutableFloatStateOf(1f) }
+
+    LaunchedEffect(initialColor) {
+        val hsv = FloatArray(3)
+        android.graphics.Color.colorToHSV(initialColor.toArgb(), hsv)
+        hsvHue = hsv[0]
+        hsvSat = hsv[1]
+        hsvValue = hsv[2]
+        selectedColor = initialColor
+    }
+
+    val updateColorFromHSV = { h: Float, s: Float, v: Float ->
+        hsvHue = h.coerceIn(0f, 360f)
+        hsvSat = s.coerceIn(0f, 1f)
+        hsvValue = v.coerceIn(0f, 1f)
+        val argb = android.graphics.Color.HSVToColor(floatArrayOf(hsvHue, hsvSat, hsvValue))
+        selectedColor = Color(argb)
+    }
+
+    val hexFormatted = remember(selectedColor) {
+        String.format("#%06X", (0xFFFFFF and selectedColor.toArgb()))
+    }
+
+    val formattedDisplayValue = remember(selectedColor, selectedMode) {
+        val argb = selectedColor.toArgb()
+        val r = (argb shr 16) and 0xFF
+        val g = (argb shr 8) and 0xFF
+        val b = argb and 0xFF
+        when (selectedMode) {
+            "RGB" -> "RGB: $r, $g, $b"
+            "HSL" -> "HSL: ${hsvHue.roundToInt()}°, ${(hsvSat * 100).roundToInt()}%, ${(hsvValue * 100).roundToInt()}%"
+            "CMYK" -> {
+                val k = 1f - maxOf(r / 255f, g / 255f, b / 255f)
+                val c = if (k < 1f) (1f - r / 255f - k) / (1f - k) else 0f
+                val m = if (k < 1f) (1f - g / 255f - k) / (1f - k) else 0f
+                val y = if (k < 1f) (1f - b / 255f - k) / (1f - k) else 0f
+                "CMYK: ${(c * 100).roundToInt()}%, ${(m * 100).roundToInt()}%, ${(y * 100).roundToInt()}%, ${(k * 100).roundToInt()}%"
+            }
+            else -> "HEX: $hexFormatted"
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {},
+        dismissButton = {},
+        containerColor = Color(0xFF141417),
+        shape = RoundedCornerShape(24.dp),
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 4.dp)
+            ) {
+                // 1. Top Mode Selector Tabs (HEX | RGB | HSL | CMYK)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFF222228))
+                        .padding(3.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    listOf("HEX", "RGB", "HSL", "CMYK").forEach { mode ->
+                        val isModeSelected = selectedMode == mode
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(if (isModeSelected) EmeraldPrimary else Color.Transparent)
+                                .clickable { selectedMode = mode }
+                                .padding(vertical = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = mode,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isModeSelected) Color.Black else Color.Gray
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 2. Formatted Value Header (HEX: #F21D4D)
+                Text(
+                    text = formattedDisplayValue,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 3. Interactive Color Wheel Canvas
+                InteractiveColorWheel(
+                    hue = hsvHue,
+                    sat = hsvSat,
+                    valVal = hsvValue,
+                    onHueChanged = { newHue -> updateColorFromHSV(newHue, hsvSat, hsvValue) },
+                    onSatValChanged = { newSat, newVal -> updateColorFromHSV(hsvHue, newSat, newVal) },
+                    selectedColor = selectedColor
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 4. Sub Tabs (COLOR GUIDE | RANDOM)
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.85f),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    listOf("COLOR GUIDE", "RANDOM").forEach { tab ->
+                        val isTabActive = selectedGuideTab == tab
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { selectedGuideTab = tab }
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = tab,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isTabActive) Color.White else Color.Gray
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.6f)
+                                    .height(2.dp)
+                                    .background(if (isTabActive) EmeraldPrimary else Color.Transparent)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // 5. COLOR GUIDE or RANDOM view
+                if (selectedGuideTab == "COLOR GUIDE") {
+                    ColorGuideSection(
+                        currentHue = hsvHue,
+                        selectedColor = selectedColor,
+                        onColorPick = { newHex ->
+                            val c = parseHexColor(newHex)
+                            val hsv = FloatArray(3)
+                            android.graphics.Color.colorToHSV(c.toArgb(), hsv)
+                            updateColorFromHSV(hsv[0], hsv[1], hsv[2])
+                        }
+                    )
+                } else {
+                    RandomPaletteSection(
+                        onColorPick = { newHex ->
+                            val c = parseHexColor(newHex)
+                            val hsv = FloatArray(3)
+                            android.graphics.Color.colorToHSV(c.toArgb(), hsv)
+                            updateColorFromHSV(hsv[0], hsv[1], hsv[2])
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 6. Apply Button / Action
+                Button(
+                    onClick = {
+                        onColorSelected(hexFormatted)
+                        onDismiss()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary),
+                    shape = RoundedCornerShape(24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text(
+                        text = "APPLY COLOR ($hexFormatted)",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.Black
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Composable
+private fun InteractiveColorWheel(
+    hue: Float,
+    sat: Float,
+    valVal: Float,
+    onHueChanged: (Float) -> Unit,
+    onSatValChanged: (Float, Float) -> Unit,
+    selectedColor: Color
+) {
+    val sizePx = 220.dp
+
+    Box(
+        modifier = Modifier.size(sizePx),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        handleWheelInput(offset, size.width.toFloat(), onHueChanged, onSatValChanged)
+                    }
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, _ ->
+                        change.consume()
+                        handleWheelInput(change.position, size.width.toFloat(), onHueChanged, onSatValChanged)
+                    }
+                }
+        ) {
+            val center = Offset(size.width / 2f, size.height / 2f)
+            val outerRadius = size.width / 2f
+            val innerRadius = outerRadius * 0.72f
+            val strokeWidth = outerRadius - innerRadius
+
+            // 1. Draw Rainbow Sweep Hue Ring
+            val colors = listOf(
+                Color.Red, Color.Yellow, Color.Green, Color.Cyan, Color.Blue, Color.Magenta, Color.Red
+            )
+            drawCircle(
+                brush = Brush.sweepGradient(colors, center),
+                radius = outerRadius - strokeWidth / 2f,
+                style = Stroke(width = strokeWidth)
+            )
+
+            // 2. Draw Inner Circle with selected color gradient
+            drawCircle(
+                color = selectedColor,
+                radius = innerRadius - 4.dp.toPx()
+            )
+
+            // 3. Draw Outer Ring Selector Handle (Hue Angle)
+            val angleRad = Math.toRadians(hue.toDouble())
+            val ringHandleRadius = outerRadius - strokeWidth / 2f
+            val ringHandleX = center.x + ringHandleRadius * Math.cos(angleRad).toFloat()
+            val ringHandleY = center.y + ringHandleRadius * Math.sin(angleRad).toFloat()
+
+            drawCircle(
+                color = Color.White,
+                radius = 12.dp.toPx(),
+                center = Offset(ringHandleX, ringHandleY)
+            )
+            drawCircle(
+                color = Color.Black.copy(alpha = 0.5f),
+                radius = 10.dp.toPx(),
+                center = Offset(ringHandleX, ringHandleY),
+                style = Stroke(width = 2.dp.toPx())
+            )
+
+            // 4. Draw Inner Center Selector Handle
+            val innerDist = (innerRadius - 20.dp.toPx()) * sat
+            val innerAngle = Math.toRadians(hue.toDouble())
+            val innerHandleX = center.x + innerDist * Math.cos(innerAngle).toFloat()
+            val innerHandleY = center.y + innerDist * Math.sin(innerAngle).toFloat()
+
+            drawCircle(
+                color = Color.White,
+                radius = 8.dp.toPx(),
+                center = Offset(innerHandleX, innerHandleY)
+            )
+            drawCircle(
+                color = selectedColor,
+                radius = 6.dp.toPx(),
+                center = Offset(innerHandleX, innerHandleY)
+            )
+        }
+    }
+}
+
+private fun handleWheelInput(
+    pos: Offset,
+    size: Float,
+    onHueChanged: (Float) -> Unit,
+    onSatValChanged: (Float, Float) -> Unit
+) {
+    val center = size / 2f
+    val dx = pos.x - center
+    val dy = pos.y - center
+    val dist = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+    val outerRadius = size / 2f
+    val innerRadius = outerRadius * 0.72f
+
+    var angleDeg = Math.toDegrees(Math.atan2(dy.toDouble(), dx.toDouble())).toFloat()
+    if (angleDeg < 0) angleDeg += 360f
+
+    if (dist >= innerRadius - 10f) {
+        onHueChanged(angleDeg)
+    } else {
+        val newSat = (dist / innerRadius).coerceIn(0f, 1f)
+        onSatValChanged(newSat, 1.0f)
+    }
+}
+
+@Composable
+private fun ColorGuideSection(
+    currentHue: Float,
+    selectedColor: Color,
+    onColorPick: (String) -> Unit
+) {
+    val activeHex = String.format("#%06X", (0xFFFFFF and selectedColor.toArgb()))
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        GuideSwatchRow(
+            label = "PRIMARY",
+            hues = listOf(currentHue),
+            activeHex = activeHex,
+            onColorPick = onColorPick
+        )
+
+        GuideSwatchRow(
+            label = "COMPLEMENTARY",
+            hues = listOf((currentHue + 180f) % 360f),
+            activeHex = activeHex,
+            onColorPick = onColorPick
+        )
+
+        GuideSwatchRow(
+            label = "ANALOGOUS",
+            hues = listOf((currentHue + 330f) % 360f, currentHue, (currentHue + 30f) % 360f),
+            activeHex = activeHex,
+            onColorPick = onColorPick
+        )
+
+        GuideSwatchRow(
+            label = "TRIADIC",
+            hues = listOf(currentHue, (currentHue + 120f) % 360f, (currentHue + 240f) % 360f),
+            activeHex = activeHex,
+            onColorPick = onColorPick
+        )
+    }
+}
+
+@Composable
+private fun GuideSwatchRow(
+    label: String,
+    hues: List<Float>,
+    activeHex: String,
+    onColorPick: (String) -> Unit
+) {
+    Column {
+        Text(
+            text = label,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val swatches = remember(hues) {
+                val list = mutableListOf<String>()
+                hues.forEach { h ->
+                    listOf(0.3f, 0.5f, 0.7f, 0.85f, 1.0f, 0.6f).forEach { s ->
+                        val argb = android.graphics.Color.HSVToColor(floatArrayOf(h, s, 0.95f))
+                        list.add(String.format("#%06X", (0xFFFFFF and argb)))
+                    }
+                }
+                list.take(6)
+            }
+
+            swatches.forEach { hex ->
+                val c = parseHexColor(hex)
+                val isSelected = hex.equals(activeHex, ignoreCase = true)
+
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(c)
+                        .border(
+                            width = if (isSelected) 2.5.dp else 0.5.dp,
+                            color = if (isSelected) Color.White else Color.Gray.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                        .clickable { onColorPick(hex) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isSelected) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = Color.Black.copy(alpha = 0.75f),
+                            modifier = Modifier.padding(horizontal = 2.dp)
+                        ) {
+                            Text(
+                                text = "Added",
+                                fontSize = 7.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(horizontal = 3.dp, vertical = 1.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RandomPaletteSection(
+    onColorPick: (String) -> Unit
+) {
+    var seed by remember { mutableIntStateOf(0) }
+    val randomSwatches = remember(seed) {
+        val list = mutableListOf<String>()
+        val baseHue = (0..360).random().toFloat()
+        listOf(0.2f, 0.4f, 0.6f, 0.8f, 1.0f).forEach { sat ->
+            val argb = android.graphics.Color.HSVToColor(floatArrayOf(baseHue, sat, 0.9f))
+            list.add(String.format("#%06X", (0xFFFFFF and argb)))
+        }
+        list
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(
+            text = "PALETTE",
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Gray
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            randomSwatches.forEach { hex ->
+                val c = parseHexColor(hex)
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(c)
+                        .clickable { onColorPick(hex) }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Button(
+            onClick = { seed++ },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEC4899)),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth(0.7f)
+        ) {
+            Icon(imageVector = Icons.Default.Shuffle, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(text = "GENERATE RANDOM", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = Color.White)
+        }
+    }
+}
+
+@Composable
+private fun ThemeReadyDialog(
+    theme: com.panda.keyboards.theme.KeyboardTheme?,
+    onStartWritingClick: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onStartWritingClick,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(64.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(text = "🎉", fontSize = 32.sp)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text(
+                    text = "Your theme is ready",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                val themeName = theme?.name ?: "Custom Theme"
+                Text(
+                    text = "'$themeName' is now applied as your active keyboard style.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Theme Preview Card
+                if (theme != null) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.6f)
+                            .clip(RoundedCornerShape(16.dp)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Black.copy(alpha = 0.05f)
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            KeyboardThemePreviewImage(theme = theme)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onStartWritingClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                ) {
+                    Text(
+                        text = "Start Writing",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UnlockThemeDialog(
+    theme: com.panda.keyboards.theme.KeyboardTheme?,
+    onDismiss: () -> Unit,
+    onUnlockClicked: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            shape = RoundedCornerShape(28.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Unlock Custom Theme",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                if (theme != null) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.6f)
+                            .clip(RoundedCornerShape(16.dp)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Black.copy(alpha = 0.05f)
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            KeyboardThemePreviewImage(theme = theme)
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Option 1: Unlock Forever (PRO)
+                Button(
+                    onClick = onUnlockClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFD700),
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "Unlock Forever (PRO)",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = "All Feature No Limit",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Option 2: Unlock For Free (Watch ad to unlock)
+                Button(
+                    onClick = onUnlockClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldPrimary)
+                ) {
+                    Text(
+                        text = "Unlock For Free (Watch ad to unlock)",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+    }
 }

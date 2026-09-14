@@ -11,6 +11,7 @@ enum class KeyboardMode {
     CAPS_LOCK,
     SYMBOLS_1,
     SYMBOLS_2,
+    NUMBER_PAD,
     EMOJI,
     CLIPBOARD,
     VOICE

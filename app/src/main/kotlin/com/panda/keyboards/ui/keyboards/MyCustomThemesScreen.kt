@@ -200,15 +200,15 @@ fun MyCustomThemesScreen(
                 }
             }
         } else {
-            // 2-Column Grid of Custom Themes
+            // 4-Column Grid of Custom Themes
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(4),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
                     items = customThemes,
@@ -269,14 +269,14 @@ private fun CustomThemeItemCard(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+            containerColor = Color(0xFF1A1717)
         )
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.33f)
+                    .aspectRatio(1.59f)
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     .background(Color.Black.copy(alpha = 0.05f)),
                 contentAlignment = Alignment.Center
@@ -329,7 +329,7 @@ private fun CustomThemeItemCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

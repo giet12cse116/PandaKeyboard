@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.nativeCanvas
 import kotlin.math.roundToInt
 import androidx.compose.foundation.Canvas
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -878,14 +879,42 @@ internal fun KeyboardThemePreviewImage(
 
     val decorativeIconBitmap = remember(resolvedTheme.decorativeIcon) {
         resolvedTheme.decorativeIcon?.let { iconName ->
-            if (iconName.startsWith("ic_")) {
-                try {
-                    val resId = context.resources.getIdentifier(iconName, "drawable", context.packageName)
-                    if (resId != 0) {
-                        BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap()
-                    } else null
-                } catch (e: Exception) { null }
-            } else null
+            try {
+                val directId = context.resources.getIdentifier(iconName, "drawable", context.packageName)
+                val resId = if (directId != 0) directId else {
+                    context.resources.getIdentifier("ic_popular_$iconName", "drawable", context.packageName)
+                }
+                if (resId != 0) {
+                    BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap()
+                } else null
+            } catch (e: Exception) { null }
+        }
+    }
+
+    val spaceBgBitmap = remember(resolvedTheme.themeKeyBackgroundsStyle?.spaceBackgroundRes) {
+        resolvedTheme.themeKeyBackgroundsStyle?.spaceBackgroundRes?.let { resName ->
+            try {
+                val resId = context.resources.getIdentifier(resName, "drawable", context.packageName)
+                if (resId != 0) BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap() else null
+            } catch (e: Exception) { null }
+        }
+    }
+
+    val specialBgBitmap = remember(resolvedTheme.themeKeyBackgroundsStyle?.specialKeyBackgroundRes) {
+        resolvedTheme.themeKeyBackgroundsStyle?.specialKeyBackgroundRes?.let { resName ->
+            try {
+                val resId = context.resources.getIdentifier(resName, "drawable", context.packageName)
+                if (resId != 0) BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap() else null
+            } catch (e: Exception) { null }
+        }
+    }
+
+    val emojiBgBitmap = remember(resolvedTheme.themeKeyBackgroundsStyle?.emojiBackgroundRes) {
+        resolvedTheme.themeKeyBackgroundsStyle?.emojiBackgroundRes?.let { resName ->
+            try {
+                val resId = context.resources.getIdentifier(resName, "drawable", context.packageName)
+                if (resId != 0) BitmapFactory.decodeResource(context.resources, resId)?.asImageBitmap() else null
+            } catch (e: Exception) { null }
         }
     }
 
@@ -918,8 +947,9 @@ internal fun KeyboardThemePreviewImage(
                 val totalRowsHeight = (rowHeight * 4) + (rowSpacing * 3)
                 val startY = rowsTop + ((availableRowsHeight - totalRowsHeight) / 2f).coerceAtLeast(0f)
 
+                val isImageKeyTheme = resolvedTheme.themeKeyBackgroundsStyle != null || resolvedTheme.assetSkinStyle != null || !theme.decorativeIcon.isNullOrEmpty()
                 val keyCornerRadiusPx = when (theme.keyShape) {
-                    com.panda.keyboards.theme.KeyShape.NONE -> 0f
+                    com.panda.keyboards.theme.KeyShape.NONE -> if (isImageKeyTheme) 7.dp.toPx() else 0f
                     com.panda.keyboards.theme.KeyShape.SQUARE -> 2.dp.toPx()
                     com.panda.keyboards.theme.KeyShape.SQUARE_ROUNDED -> 7.dp.toPx()
                     com.panda.keyboards.theme.KeyShape.OVAL -> (rowHeight / 2f)
@@ -1100,28 +1130,56 @@ internal fun KeyboardThemePreviewImage(
                         val isSemiTransparent = key.color.alpha < 0.95f
                         val labelStr = key.textLayout?.layoutInput?.text?.text ?: ""
                         val isSpaceKey = labelStr == "space"
-                        val isFuncKey = labelStr == "?123" || labelStr == "⌫" || labelStr == "↵" || labelStr == "⇧" || labelStr == "🌐" || labelStr == "😀"
-                        val isCharacterKey = key.textLayout != null && !isSpaceKey && !isFuncKey
+                        val isFuncKey = labelStr == "?123" || labelStr == "⌫" || labelStr == "↵" || labelStr == "⇧" || labelStr == "🌐"
+                        val isEmojiKey = labelStr == "😀"
+                        val isCharacterKey = key.textLayout != null && !isSpaceKey && !isFuncKey && !isEmojiKey
 
-                        if (isSpaceKey) {
+                        val keyBgBitmap = when {
+                            isSpaceKey -> spaceBgBitmap
+                            isFuncKey -> specialBgBitmap
+                            isEmojiKey -> emojiBgBitmap
+                            isCharacterKey -> emojiBgBitmap
+                            else -> null
+                        }
+
+                        if (keyBgBitmap != null) {
+                            val clipRadius = if (keyCornerRadiusPx > 0f) keyCornerRadiusPx else 7.dp.toPx()
+                            val roundedKeyPath = androidx.compose.ui.graphics.Path().apply {
+                                addRoundRect(
+                                    androidx.compose.ui.geometry.RoundRect(
+                                        rect = androidx.compose.ui.geometry.Rect(key.rectTopLeft, key.rectSize),
+                                        cornerRadius = CornerRadius(clipRadius, clipRadius)
+                                    )
+                                )
+                            }
+                            clipPath(roundedKeyPath) {
+                                drawImage(
+                                    image = keyBgBitmap,
+                                    dstOffset = androidx.compose.ui.unit.IntOffset(key.rectTopLeft.x.toInt(), key.rectTopLeft.y.toInt()),
+                                    dstSize = androidx.compose.ui.unit.IntSize(key.rectSize.width.toInt(), key.rectSize.height.toInt())
+                                )
+                            }
+                        } else if (isSpaceKey) {
                             val spaceCornerRadius = if (!resolvedTheme.decorativeIcon.isNullOrEmpty()) {
                                 CornerRadius(8.dp.toPx(), 8.dp.toPx())
                             } else {
                                 keyCornerRadius
                             }
                             val spaceColor = if (!resolvedTheme.decorativeIcon.isNullOrEmpty()) {
-                                (if (keyColor.alpha > 0f) keyColor else keyTextColor).copy(alpha = 0.85f)
+                                if (keyColor.alpha > 0f) keyColor.copy(alpha = 0.85f) else Color.Transparent
                             } else if (key.color.alpha > 0f) {
                                 key.color
                             } else {
-                                keyTextColor.copy(alpha = 0.85f)
+                                Color.Transparent
                             }
-                            drawRoundRect(
-                                color = spaceColor,
-                                topLeft = key.rectTopLeft,
-                                size = key.rectSize,
-                                cornerRadius = spaceCornerRadius
-                            )
+                            if (spaceColor.alpha > 0f) {
+                                drawRoundRect(
+                                    color = spaceColor,
+                                    topLeft = key.rectTopLeft,
+                                    size = key.rectSize,
+                                    cornerRadius = spaceCornerRadius
+                                )
+                            }
                         } else {
                             if (previewShadowOffsetPx > 0f && shadowColor != null && !isNoneShape && !isSemiTransparent) {
                                 drawRoundRect(
@@ -1140,7 +1198,7 @@ internal fun KeyboardThemePreviewImage(
                                 )
                             }
                         }
-                        if (previewBorderWidthPx > 0f && resolvedTheme.keyBorderColor != null) {
+                        if (keyBgBitmap == null && previewBorderWidthPx > 0f && resolvedTheme.keyBorderColor != null) {
                             drawRoundRect(
                                 color = resolvedTheme.keyBorderColor!!,
                                 topLeft = key.rectTopLeft,
@@ -1149,7 +1207,13 @@ internal fun KeyboardThemePreviewImage(
                                 style = Stroke(width = previewBorderWidthPx)
                             )
                         }
-                        if (!resolvedTheme.decorativeIcon.isNullOrEmpty() && key.textLayout != null && !isSpaceKey) {
+
+                        val hasBackgroundAsset = keyBgBitmap != null
+                        val shouldDrawDecorativeIcon = !resolvedTheme.decorativeIcon.isNullOrEmpty() && key.textLayout != null && (
+                            if (resolvedTheme.themeKeyBackgroundsStyle != null) (isCharacterKey && !hasBackgroundAsset) else !isSpaceKey
+                        )
+
+                        if (shouldDrawDecorativeIcon) {
                             val decorativeAlpha = resolvedTheme.keyOpacityAlpha.coerceIn(0.0f, 1.0f)
                             if (decorativeAlpha > 0f) {
                                 if (decorativeIconBitmap != null) {
@@ -1222,7 +1286,9 @@ internal fun KeyboardThemePreviewImage(
                                 }
                             }
                         }
-                        if (key.textLayout != null) {
+
+                        val shouldDrawText = !(isEmojiKey && emojiBgBitmap != null)
+                        if (shouldDrawText && key.textLayout != null) {
                             drawText(
                                 textLayoutResult = key.textLayout,
                                 topLeft = key.textTopLeft

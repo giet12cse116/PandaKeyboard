@@ -90,10 +90,14 @@ open class ImeStatusChecker @Inject constructor(
 
     private fun startPolling() {
         scope.launch {
-            while (isActive) {
-                val status = checkStatus()
-                _imeStatus.value = status
-                delay(POLL_INTERVAL_MS)
+            try {
+                while (isActive) {
+                    val status = checkStatus()
+                    _imeStatus.value = status
+                    delay(POLL_INTERVAL_MS)
+                }
+            } catch (e: Throwable) {
+                if (e is kotlinx.coroutines.CancellationException) throw e
             }
         }
     }
@@ -119,15 +123,15 @@ open class ImeStatusChecker @Inject constructor(
             imm?.enabledInputMethodList?.any { imi ->
                 imi.packageName.equals(pkgName, ignoreCase = true) || imi.id.contains(pkgName, ignoreCase = true)
             } ?: false
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             false
         }
 
         // 2. Check Settings.Secure.ENABLED_INPUT_METHODS string (handles full & short component formats)
-        val resolver = try { ctx.contentResolver } catch (e: Exception) { null }
+        val resolver = try { ctx.contentResolver } catch (e: Throwable) { null }
         val enabledMethodsSetting = try {
             if (resolver != null) Settings.Secure.getString(resolver, Settings.Secure.ENABLED_INPUT_METHODS) ?: "" else ""
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             ""
         }
 
@@ -145,7 +149,7 @@ open class ImeStatusChecker @Inject constructor(
         // 3. Check Settings.Secure.DEFAULT_INPUT_METHOD string for active default IME
         val defaultMethodSetting = try {
             if (resolver != null) Settings.Secure.getString(resolver, Settings.Secure.DEFAULT_INPUT_METHOD) ?: "" else ""
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             ""
         }
 

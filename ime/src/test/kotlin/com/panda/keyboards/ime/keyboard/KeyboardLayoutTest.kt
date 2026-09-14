@@ -91,4 +91,23 @@ class KeyboardLayoutTest {
         val showNumberHints = !numberRowEnabled
         assertTrue("When dedicated number row is disabled, number hints on QWERTY keys must be shown for long press", showNumberHints)
     }
+
+    @Test
+    fun `numberPadRows contains digits 0-9 and comma and fullstop keys`() {
+        val numberPadRows = KeyboardLayouts.numberPadRows
+        assertEquals(4, numberPadRows.size)
+
+        val allKeys = numberPadRows.flatten()
+        val labels = allKeys.map { it.label }
+
+        assertTrue("Number pad must contain digit 0", labels.contains("0"))
+        assertTrue("Number pad must contain digit 1", labels.contains("1"))
+        assertTrue("Number pad must contain digit 9", labels.contains("9"))
+
+        val commaKey = allKeys.find { it.output == "," }
+        assertNotNull("Comma ',' key must be present in number pad", commaKey)
+
+        val periodKey = allKeys.find { it.output == "." }
+        assertNotNull("Period '.' key must be present in number pad", periodKey)
+    }
 }

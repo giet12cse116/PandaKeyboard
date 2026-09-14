@@ -247,6 +247,22 @@ sealed class KeyVisualStyle {
         val enterArrowIconRes: String = "ic_enter_arrow",
         val emojiSmileIconRes: String = "ic_emoji_smile"
     ) : KeyVisualStyle()
+
+    /**
+     * Theme-Specific Keyboard Key Background System.
+     *
+     * Supports 3 aspect-ratio background assets per theme:
+     * @property spaceBackgroundRes Resource name for 7:1 wide Space bar background asset.
+     * @property specialKeyBackgroundRes Resource name for 2:1 Special key background asset (Enter, Shift, ?123, Backspace).
+     * @property emojiBackgroundRes Resource name for 1:1 Custom Mascot Emoji key background asset.
+     */
+    @Serializable
+    @SerialName("theme_key_backgrounds")
+    data class ThemeKeyBackgrounds(
+        val spaceBackgroundRes: String,
+        val specialKeyBackgroundRes: String,
+        val emojiBackgroundRes: String
+    ) : KeyVisualStyle()
 }
 
 

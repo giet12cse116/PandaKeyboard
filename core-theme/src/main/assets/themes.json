@@ -1,7 +1,403 @@
 {
-    "themes":  [
-                   {
-                       "id":  "abstract_cyber_waves",
+    "themes": [
+        {
+            "id": "theme_sun",
+            "name": "Sun ☀️",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_sun_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#090D16", "#1E1202"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F59E0B",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_sun_space",
+                "specialKeyBackgroundRes": "theme_sun_special",
+                "emojiBackgroundRes": "theme_sun_emoji"
+            }
+        },
+        {
+            "id": "theme_sunflower",
+            "name": "Sunflower 🌻",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_sunflower_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#061E14", "#1E1502"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#EAB308",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_sunflower_space",
+                "specialKeyBackgroundRes": "theme_sunflower_special",
+                "emojiBackgroundRes": "theme_sunflower_emoji"
+            }
+        },
+        {
+            "id": "theme_burger",
+            "name": "Burger 🍔",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_burger_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1C0E03", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F59E0B",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_burger_space",
+                "specialKeyBackgroundRes": "theme_burger_special",
+                "emojiBackgroundRes": "theme_burger_emoji"
+            }
+        },
+        {
+            "id": "theme_pizza",
+            "name": "Pizza 🍕",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_pizza_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1C0505", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#EF4444",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_pizza_space",
+                "specialKeyBackgroundRes": "theme_pizza_special",
+                "emojiBackgroundRes": "theme_pizza_emoji"
+            }
+        },
+        {
+            "id": "theme_cookie",
+            "name": "Cookie 🍪",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_cookie_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1A1006", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#D97706",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_cookie_space",
+                "specialKeyBackgroundRes": "theme_cookie_special",
+                "emojiBackgroundRes": "theme_cookie_emoji"
+            }
+        },
+        {
+            "id": "theme_donut",
+            "name": "Donut 🍩",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_donut_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1F0613", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#EC4899",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_donut_space",
+                "specialKeyBackgroundRes": "theme_donut_special",
+                "emojiBackgroundRes": "theme_donut_emoji"
+            }
+        },
+        {
+            "id": "theme_mango",
+            "name": "Mango 🥭",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_mango_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1A0C02", "#061A0C"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F97316",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_mango_space",
+                "specialKeyBackgroundRes": "theme_mango_special",
+                "emojiBackgroundRes": "theme_mango_emoji"
+            }
+        },
+        {
+            "id": "theme_heart",
+            "name": "Heart ❤️",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_heart_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#20040D", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F43F5E",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_heart_space",
+                "specialKeyBackgroundRes": "theme_heart_special",
+                "emojiBackgroundRes": "theme_heart_emoji"
+            }
+        },
+        {
+            "id": "theme_star",
+            "name": "Star ⭐",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_star_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#08081F", "#090D16"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#EAB308",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_star_space",
+                "specialKeyBackgroundRes": "theme_star_special",
+                "emojiBackgroundRes": "theme_star_emoji"
+            }
+        },
+        {
+            "id": "theme_panda",
+            "name": "Panda 🐼",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_panda_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#0B0F17", "#1D2636"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#68C58F",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_panda_space",
+                "specialKeyBackgroundRes": "theme_panda_special",
+                "emojiBackgroundRes": "theme_panda_emoji"
+            }
+        },
+        {
+            "id": "theme_pig",
+            "name": "Pig 🐷",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_pig_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1F0A14", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F472B6",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_pig_space",
+                "specialKeyBackgroundRes": "theme_pig_special",
+                "emojiBackgroundRes": "theme_pig_emoji"
+            }
+        },
+        {
+            "id": "theme_flower",
+            "name": "Flower 🌸",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_flower_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#1A0A10", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#FDA4AF",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_flower_space",
+                "specialKeyBackgroundRes": "theme_flower_special",
+                "emojiBackgroundRes": "theme_flower_emoji"
+            }
+        },
+        {
+            "id": "theme_fire",
+            "name": "Fire 🔥",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_fire_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#240A02", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#F97316",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_fire_space",
+                "specialKeyBackgroundRes": "theme_fire_special",
+                "emojiBackgroundRes": "theme_fire_emoji"
+            }
+        },
+        {
+            "id": "theme_earth",
+            "name": "Earth 🌍",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_earth_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#061A24", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#38BDF8",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_earth_space",
+                "specialKeyBackgroundRes": "theme_earth_special",
+                "emojiBackgroundRes": "theme_earth_emoji"
+            }
+        },
+        {
+            "id": "theme_butterfly",
+            "name": "Butterfly 🦋",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_butterfly_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#180A24", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#C084FC",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_butterfly_space",
+                "specialKeyBackgroundRes": "theme_butterfly_special",
+                "emojiBackgroundRes": "theme_butterfly_emoji"
+            }
+        },
+        {
+            "id": "theme_football",
+            "name": "Football ⚽",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_football_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#041D0D", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#22C55E",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_football_space",
+                "specialKeyBackgroundRes": "theme_football_special",
+                "emojiBackgroundRes": "theme_football_emoji"
+            }
+        },
+        {
+            "id": "theme_basketball",
+            "name": "Basketball 🏀",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_basketball_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#240C02", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#EA580C",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_basketball_space",
+                "specialKeyBackgroundRes": "theme_basketball_special",
+                "emojiBackgroundRes": "theme_basketball_emoji"
+            }
+        },
+        {
+            "id": "theme_gift",
+            "name": "Gift 🎁",
+            "isPro": false,
+            "category": "Predefined Themes",
+            "previewImage": "theme_gift_special",
+            "keyBackgroundColor": "#00000000",
+            "keyTextColor": "#FFFFFF",
+            "keyboardBackground": {
+                "type": "gradient",
+                "colors": ["#24050F", "#0B0F17"],
+                "angle": 180.0
+            },
+            "keyShape": "rounded",
+            "accentColor": "#E11D48",
+            "keyStyle": {
+                "type": "theme_key_backgrounds",
+                "spaceBackgroundRes": "theme_gift_space",
+                "specialKeyBackgroundRes": "theme_gift_special",
+                "emojiBackgroundRes": "theme_gift_emoji"
+            }
+        },
+        {
+            "id": "abstract_cyber_waves",
                        "name":  "Cyber Waves",
                        "isPro":  false,
                        "keyBackgroundColor":  "#B3FFFFFF",
@@ -267,6 +663,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "typographic_maximalism_preview",
                        "keyBackgroundColor":  "#111111",
                        "keyTextColor":  "#FFFF00",
                        "keyboardBackground":  {
@@ -289,6 +686,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "dark_futuristic_terminal_preview",
                        "keyBackgroundColor":  "#1A0F2E",
                        "keyTextColor":  "#00FF66",
                        "keyboardBackground":  {
@@ -320,6 +718,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "y2k_cyber_chic_preview",
                        "keyBackgroundColor":  "#50FF007F",
                        "keyTextColor":  "#00F5FF",
                        "keyboardBackground":  {
@@ -353,6 +752,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "neo_brutalism_preview",
                        "keyBackgroundColor":  "#FF5353",
                        "keyTextColor":  "#000000",
                        "keyboardBackground":  {
@@ -375,6 +775,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "claymorphism_3d_preview",
                        "keyBackgroundColor":  "#EEF2FF",
                        "keyTextColor":  "#312E81",
                        "keyboardBackground":  {
@@ -401,6 +802,7 @@
                        "isPro":  false,
                        "isExperimental":  true,
                        "category":  "Modern UI",
+                       "previewImage":  "generative_adaptive_ui_preview",
                        "keyBackgroundColor":  "#507C4DFF",
                        "keyTextColor":  "#FFFFFF",
                        "keyboardBackground":  {

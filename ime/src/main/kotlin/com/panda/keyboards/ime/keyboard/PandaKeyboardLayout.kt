@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 
 import com.panda.keyboards.fonts.FontStyle
 import com.panda.keyboards.ime.KeyboardActionHandler
+import com.panda.keyboards.ime.isNumericField
+import com.panda.keyboards.ime.isPasswordField
 import com.panda.keyboards.theme.KeyboardTheme
 
 /** Time threshold for double-tap shift → caps lock (ms). */
@@ -108,9 +110,18 @@ fun PandaKeyboardLayout(
     }
 
     // Reset to default alphabet screen whenever a new input session starts
-    androidx.compose.runtime.LaunchedEffect(inputSessionId) {
+    androidx.compose.runtime.LaunchedEffect(inputSessionId, editorInfo) {
         if (inputSessionId > 0) {
-            keyboardState = keyboardState.copy(mode = KeyboardMode.LOWERCASE)
+            val initialMode = if (editorInfo.isNumericField()) {
+                KeyboardMode.NUMBER_PAD
+            } else if (editorInfo.isPasswordField()) {
+                KeyboardMode.LOWERCASE
+            } else if (settings.autoCapitalizationEnabled && actionHandler?.shouldAutoCapitalize() == true) {
+                KeyboardMode.UPPERCASE
+            } else {
+                KeyboardMode.LOWERCASE
+            }
+            keyboardState = keyboardState.copy(mode = initialMode)
             currentTopPanel = TopToolbarPanel.NONE
         }
     }
@@ -129,6 +140,7 @@ fun PandaKeyboardLayout(
             KeyboardLayouts.getLetterRows(settings.qwertyOrder)
         KeyboardMode.SYMBOLS_1 -> KeyboardLayouts.symbols1Rows
         KeyboardMode.SYMBOLS_2 -> KeyboardLayouts.symbols2Rows
+        KeyboardMode.NUMBER_PAD -> KeyboardLayouts.numberPadRows
         KeyboardMode.EMOJI, KeyboardMode.CLIPBOARD, KeyboardMode.VOICE -> emptyList()
     }
 
@@ -179,6 +191,7 @@ fun PandaKeyboardLayout(
     }
 
     fun checkAutoCap() {
+        if (editorInfo.isPasswordField() || editorInfo.isNumericField()) return
         if (settings.autoCapitalizationEnabled && actionHandler != null && keyboardState.mode == KeyboardMode.LOWERCASE) {
             if (actionHandler.shouldAutoCapitalize()) {
                 keyboardState = keyboardState.copy(mode = KeyboardMode.UPPERCASE)
@@ -187,16 +200,15 @@ fun PandaKeyboardLayout(
     }
 
     fun refreshSuggestions() {
-        if (settings.autoCorrectionEnabled && actionHandler != null && keyboardState.mode != KeyboardMode.EMOJI && keyboardState.mode != KeyboardMode.CLIPBOARD && keyboardState.mode != KeyboardMode.VOICE) {
+        if (!editorInfo.isPasswordField() && !editorInfo.isNumericField() && settings.autoCorrectionEnabled && actionHandler != null && keyboardState.mode != KeyboardMode.EMOJI && keyboardState.mode != KeyboardMode.CLIPBOARD && keyboardState.mode != KeyboardMode.VOICE && keyboardState.mode != KeyboardMode.NUMBER_PAD) {
             val currentWord = actionHandler.getCurrentWord()
             suggestions = com.panda.keyboards.ime.autocomplete.SuggestionManager.getSuggestions(currentWord, 4)
         } else {
             suggestions = emptyList()
         }
-        checkAutoCap()
     }
 
-    androidx.compose.runtime.LaunchedEffect(settings.autoCorrectionEnabled, settings.autoCapitalizationEnabled, keyboardState.mode) {
+    androidx.compose.runtime.LaunchedEffect(settings.autoCorrectionEnabled, settings.autoCapitalizationEnabled, editorInfo) {
         refreshSuggestions()
         checkAutoCap()
     }
@@ -561,7 +573,7 @@ private fun handleKeyPress(
 
         KeyType.SYMBOLS -> {
             when (state.mode) {
-                KeyboardMode.SYMBOLS_1, KeyboardMode.SYMBOLS_2 -> {
+                KeyboardMode.SYMBOLS_1, KeyboardMode.SYMBOLS_2, KeyboardMode.NUMBER_PAD -> {
                     onStateChange(state.copy(mode = KeyboardMode.LOWERCASE))
                 }
                 else -> {

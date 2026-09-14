@@ -64,6 +64,9 @@ class DefaultKeyboardActionHandler(
 
     override fun shouldAutoCapitalize(): Boolean {
         if (!isAutoCapEnabled()) return false
+        val editorInfo = editorInfoProvider()
+        if (editorInfo.isPasswordField()) return false
+
         val ic = inputConnectionProvider() ?: return false
         val precedingText = ic.getTextBeforeCursor(2, 0)?.toString() ?: ""
         return precedingText.isEmpty() ||
@@ -76,8 +79,9 @@ class DefaultKeyboardActionHandler(
     override fun onTextInput(text: String) {
         val ic = inputConnectionProvider() ?: return
 
-        // Learning hook: if typing punctuation or word boundary, learn preceding completed word
-        if (text.length == 1 && SuggestionManager.isWordBoundary(text[0])) {
+        // Learning hook: if typing punctuation or word boundary, learn preceding completed word (disabled on password fields)
+        val editorInfo = editorInfoProvider()
+        if (!editorInfo.isPasswordField() && text.length == 1 && SuggestionManager.isWordBoundary(text[0])) {
             val precedingText = ic.getTextBeforeCursor(100, 0)?.toString() ?: ""
             val completedWord = SuggestionManager.extractCurrentWord(precedingText)
             if (completedWord.isNotEmpty()) {
@@ -85,22 +89,9 @@ class DefaultKeyboardActionHandler(
             }
         }
 
-        // Auto-capitalization check: if single lowercase char and preceded by sentence end or start of field
-        val textToCap = if (isAutoCapEnabled() && text.length == 1 && text[0].isLowerCase()) {
-            val precedingText = ic.getTextBeforeCursor(2, 0)?.toString() ?: ""
-            if (precedingText.isEmpty() ||
-                precedingText.endsWith(". ") ||
-                precedingText.endsWith("! ") ||
-                precedingText.endsWith("? ") ||
-                precedingText.endsWith("\n")
-            ) {
-                text.uppercase()
-            } else text
-        } else text
-
-        // Transform character using active FontStyle
+        // Commit exact text passed from keyboard UI layout (WYSIWYG), transformed using active FontStyle
         val activeStyle = activeFontStyleProvider()
-        val textToCommit = FontTransformer.transform(textToCap, activeStyle)
+        val textToCommit = FontTransformer.transform(text, activeStyle)
 
         ic.commitText(textToCommit, 1)
     }

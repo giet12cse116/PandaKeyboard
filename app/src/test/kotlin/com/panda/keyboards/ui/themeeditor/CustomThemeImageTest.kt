@@ -27,18 +27,26 @@ private class FakeThemeRepository : ThemeRepository(context = null) {
     }
 }
 
+private class FakeImeStatusChecker : com.panda.keyboards.ime.ImeStatusChecker(context = FakeContextForTest()) {
+    val statusFlow = MutableStateFlow(com.panda.keyboards.ime.ImeStatus(isEnabled = false, isDefault = false))
+    override val imeStatus: kotlinx.coroutines.flow.StateFlow<com.panda.keyboards.ime.ImeStatus> = statusFlow
+    override fun refresh() {}
+}
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class CustomThemeImageTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var fakeRepository: FakeThemeRepository
+    private lateinit var fakeImeChecker: FakeImeStatusChecker
     private lateinit var viewModel: CustomThemeEditorViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         fakeRepository = FakeThemeRepository()
-        viewModel = CustomThemeEditorViewModel(fakeRepository)
+        fakeImeChecker = FakeImeStatusChecker()
+        viewModel = CustomThemeEditorViewModel(fakeRepository, fakeImeChecker)
     }
 
     @After
@@ -83,15 +91,14 @@ class CustomThemeImageTest {
         viewModel.croppedImagePath = "/data/user/0/com.panda.keyboards/files/custom_theme_images/custom_9999.jpg"
         viewModel.themeName = "Sunset Keyboard"
 
-        var savedId = ""
-        viewModel.saveTheme(context = FakeContextForTest()) { id ->
-            savedId = id
-        }
+        viewModel.saveTheme(context = FakeContextForTest()) { _ -> }
 
         testDispatcher.scheduler.advanceUntilIdle()
 
-        assertTrue("Saved theme ID should start with custom_", savedId.startsWith("custom_"))
-        assertEquals(savedId, fakeRepository.selectedId)
+        val savedTheme = viewModel.savedThemeForDialog
+        org.junit.Assert.assertNotNull(savedTheme)
+        assertTrue("Saved theme ID should start with custom_", savedTheme?.id?.startsWith("custom_") == true)
+        assertEquals(savedTheme?.id, fakeRepository.selectedId)
     }
 }
 
